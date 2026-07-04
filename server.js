@@ -15,7 +15,7 @@ const app = express();
 
 // Allow requests from your Vercel frontend (and local dev)
 app.use(cors({
-  origin: ['https://niromovie.vercel.app', 'http://localhost:3000']
+  origin: ['https://niro-movie.vercel.app', 'http://localhost:3000']
 }));
 app.use(express.json({ limit: '200mb' }));
 
