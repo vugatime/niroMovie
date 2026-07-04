@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>niroMovie - Admin Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1" />
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:1rem}
+        .login-box{background:#141414;border-radius:20px;padding:2.5rem;max-width:420px;width:100%;border:1px solid #333;text-align:center}
+        .login-box .logo-icon{font-size:3rem;margin-bottom:0.5rem}
+        .login-box h2{background:linear-gradient(135deg,#E53935,#FFC107,#4CAF50);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:1.8rem;margin-bottom:0.3rem;font-weight:900}
+        .login-box .subtitle{color:#b3b3b3;font-size:0.85rem;margin-bottom:2rem}
+        .form-group{margin-bottom:1rem;text-align:left}
+        .form-group label{display:block;color:#b3b3b3;font-size:0.8rem;margin-bottom:0.4rem;font-weight:500}
+        .form-group input{width:100%;padding:0.8rem 1rem;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:12px;font-family:inherit;font-size:0.9rem;transition:all 0.3s}
+        .form-group input:focus{border-color:#E53935;outline:none;box-shadow:0 0 0 3px rgba(229,57,53,0.1)}
+        .btn{width:100%;padding:0.85rem;background:#E53935;color:#fff;border:none;border-radius:30px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;font-family:inherit;margin-top:0.5rem}
+        .btn:hover{background:#c62828;transform:translateY(-2px);box-shadow:0 6px 20px rgba(229,57,53,0.4)}
+        .btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+        .error{color:#E53935;font-size:0.8rem;margin-top:1rem;display:none;background:rgba(229,57,53,0.1);padding:0.6rem;border-radius:10px}
+        .success{color:#4CAF50;font-size:0.8rem;margin-top:1rem;display:none;background:rgba(76,175,80,0.1);padding:0.6rem;border-radius:10px}
+        .back-link{color:#E53935;text-decoration:none;font-size:0.8rem;margin-top:1.5rem;display:inline-block;cursor:pointer;transition:all 0.3s}
+        .back-link:hover{text-decoration:underline;color:#ff6f60}
+        .info-text{color:#777;font-size:0.7rem;margin-top:1.5rem;line-height:1.5}
+        @media(max-width:480px){.login-box{padding:1.8rem}.login-box h2{font-size:1.5rem}}
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo-icon">🔒</div>
+        <h2>Admin Access</h2>
+        <p class="subtitle">niroMovie Control Panel</p>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" placeholder="admin@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password">
+        </div>
+        <button class="btn" id="loginBtn" onclick="adminLogin()">🔐 Access Dashboard</button>
+        <p class="error" id="errorMsg"></p>
+        <p class="success" id="successMsg"></p>
+        <a class="back-link" href="/">← Back to niroMovie</a>
+        <p class="info-text">👑 Head Admin: agasobanuyenews@gmail.com<br>👤 Content Admin: vugatime@gmail.com</p>
+    </div>
+
+    <script>
+        var API = '/api';
+        // When deploying to Vercel: var API = 'https://niromovie-api.onrender.com/api';
+        
+        async function adminLogin() {
+            var email = document.getElementById('loginEmail').value.trim();
+            var password = document.getElementById('loginPassword').value.trim();
+            var errorEl = document.getElementById('errorMsg');
+            var successEl = document.getElementById('successMsg');
+            var btn = document.getElementById('loginBtn');
+            
+            // Reset messages
+            errorEl.style.display = 'none';
+            successEl.style.display = 'none';
+            
+            // Validate
+            if (!email) {
+                errorEl.textContent = '⚠️ Please enter your email address';
+                errorEl.style.display = 'block';
+                return;
+            }
+            if (!password) {
+                errorEl.textContent = '⚠️ Please enter your password';
+                errorEl.style.display = 'block';
+                return;
+            }
+            
+            // Show loading
+            btn.textContent = '⏳ Authenticating...';
+            btn.disabled = true;
+            
+            try {
+                var res = await fetch(API + '/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Device-ID': 'admin_' + Date.now(),
+                        'X-Device-Name': 'Admin Panel'
+                    },
+                    body: JSON.stringify({ email: email, password: password })
+                });
+                
+                var data = await res.json();
+                
+                if (res.ok && data.user && data.user.role === 'admin') {
+                    // Success!
+                    successEl.textContent = '✅ Login successful! Redirecting...';
+                    successEl.style.display = 'block';
+                    localStorage.setItem('token', data.token);
+                    
+                    // Redirect after short delay
+                    setTimeout(function() {
+                        window.location.href = '/admin?token=' + data.token;
+                    }, 500);
+                    
+                } else if (res.ok && data.user && data.user.role !== 'admin') {
+                    errorEl.textContent = '⛔ Access denied. This account is not an admin.';
+                    errorEl.style.display = 'block';
+                    btn.textContent = '🔐 Access Dashboard';
+                    btn.disabled = false;
+                    
+                } else {
+                    errorEl.textContent = '❌ ' + (data.error || 'Invalid email or password. Please try again.');
+                    errorEl.style.display = 'block';
+                    btn.textContent = '🔐 Access Dashboard';
+                    btn.disabled = false;
+                }
+                
+            } catch (e) {
+                errorEl.textContent = '🌐 Network error. Please check your connection and try again.';
+                errorEl.style.display = 'block';
+                btn.textContent = '🔐 Access Dashboard';
+                btn.disabled = false;
+            }
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                adminLogin();
+            }
+        });
+        document.getElementById('loginEmail').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginPassword').focus();
+            }
+        });
+        
+        // Auto-focus email field
+        document.getElementById('loginEmail').focus();
+    </script>
+</body>
+</html>
