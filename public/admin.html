@@ -122,7 +122,7 @@
 <div class="modal-overlay" id="screenshotModal"><div class="modal-box"><div class="modal-header"><h3>Payment Screenshot</h3><span class="close-btn" onclick="document.getElementById('screenshotModal').classList.remove('active')">&times;</span></div><div class="modal-body" style="text-align:center"><img id="screenshotFull" style="max-width:100%;max-height:70vh;border-radius:var(--radius)"></div></div></div>
 
 <script>
-var API='/api',token=localStorage.getItem('token'),currentAdmin=null,isHeadAdmin=false,currentAdminLevel=null,allContents=[],currentEditId=null,currentSubFilter='pending';
+var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentAdmin=null,isHeadAdmin=false,currentAdminLevel=null,allContents=[],currentEditId=null,currentSubFilter='pending';
 // When deploying to Vercel, set: var API='https://niromovie-api.onrender.com/api';
 function showMsg(msg,isErr){var el=document.getElementById(isErr?'errorMsg':'successMsg');el.textContent=msg;el.style.display='block';setTimeout(function(){el.style.display='none'},4000)}
 async function fetchAuth(url,options){options=options||{};if(token)options.headers=Object.assign({},options.headers,{'Authorization':'Bearer '+token});var r=await fetch(API+url,options);var d=await r.json();if(!r.ok&&d.error&&(d.error.indexOf('token')!==-1||d.error.indexOf('login')!==-1)){logout()}return d}
