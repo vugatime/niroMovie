@@ -651,46 +651,44 @@ app.post('/api/mylist/:contentId', authMiddleware, async (req, res) => { const u
 app.delete('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); user.myList = user.myList.filter(id => id.toString() !== req.params.contentId); await user.save(); res.json({ success: true }); });
 app.get('/api/mylist', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id).populate('myList'); res.json(user.myList || []); });
 
-// Stream proxy for direct MP4 links (Pixeldrain etc.)
+// Stream proxy for Pixeldrain direct MP4 links
 app.get('/api/stream', async (req, res) => {
     try {
         const videoUrl = req.query.url;
         if (!videoUrl) return res.status(400).send('Missing url');
-        if (!videoUrl.startsWith('https://pixeldrain.com/api/file/') && !videoUrl.startsWith('https://pd.whale.nahted.com/')) {
+
+        // Only allow approved sources
+        if (!videoUrl.startsWith('https://pixeldrain.com/api/file/') &&
+            !videoUrl.startsWith('https://pd.whale.nahted.com/')) {
             return res.status(403).send('Unsupported source');
         }
 
-        // Use native fetch (Node 18+) – handles redirects automatically
+        // Use native fetch (Node 18+) to get the video stream
         const response = await fetch(videoUrl, {
-            headers: {
-                'User-Agent': 'niroMovie/1.0'
-            }
+            headers: { 'User-Agent': 'niroMovie/1.0' }
         });
 
         if (!response.ok) {
             return res.status(response.status).send('Upstream error');
         }
 
-        // Forward headers that exist
+        // Set headers that exist, avoiding undefined
         const headers = {
             'Content-Type': response.headers.get('content-type') || 'video/mp4',
             'Accept-Ranges': 'bytes',
             'Access-Control-Allow-Origin': '*'
         };
-        const contentLength = response.headers.get('content-length');
-        if (contentLength) headers['Content-Length'] = contentLength;
+        const len = response.headers.get('content-length');
+        if (len) headers['Content-Length'] = len;
 
         res.writeHead(response.status, headers);
 
-        // Pipe the video stream to the client
+        // Stream the body
         const reader = response.body.getReader();
         const pump = async () => {
             while (true) {
                 const { done, value } = await reader.read();
-                if (done) {
-                    res.end();
-                    break;
-                }
+                if (done) { res.end(); break; }
                 res.write(value);
             }
         };
@@ -700,7 +698,6 @@ app.get('/api/stream', async (req, res) => {
         res.status(500).send('Stream error');
     }
 });
-
 // Health check for UptimeRobot
 app.get('/health', (req, res) => { res.status(200).send('OK'); });
 
