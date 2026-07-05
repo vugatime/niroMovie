@@ -650,7 +650,43 @@ app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) =>
 app.post('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); if (!user.myList.includes(req.params.contentId)) { user.myList.push(req.params.contentId); await user.save(); } res.json({ success: true }); });
 app.delete('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); user.myList = user.myList.filter(id => id.toString() !== req.params.contentId); await user.save(); res.json({ success: true }); });
 app.get('/api/mylist', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id).populate('myList'); res.json(user.myList || []); });
-
+// Stream proxy for direct MP4 links (Pixeldrain etc.)
+app.get('/api/stream', async (req, res) => {
+    try {
+        const videoUrl = req.query.url;
+        if (!videoUrl) return res.status(400).send('Missing url');
+        // Only allow Pixeldrain direct links (basic safety)
+        if (!videoUrl.startsWith('https://pixeldrain.com/api/files/') && !videoUrl.startsWith('https://pd.whale.nahted.com/')) {
+            return res.status(403).send('Unsupported source');
+        }
+        const https = require('https');
+        const parsed = new URL(videoUrl);
+        const options = {
+            hostname: parsed.hostname,
+            path: parsed.pathname + parsed.search,
+            method: 'GET',
+            headers: {
+                'User-Agent': 'niroMovie/1.0'
+            }
+        };
+        const externalReq = https.request(options, (externalRes) => {
+            // Forward headers that matter
+            res.writeHead(externalRes.statusCode, {
+                'Content-Type': externalRes.headers['content-type'] || 'video/mp4',
+                'Content-Length': externalRes.headers['content-length'],
+                'Accept-Ranges': 'bytes',
+                'Access-Control-Allow-Origin': '*'
+            });
+            externalRes.pipe(res);
+        });
+        externalReq.on('error', (e) => {
+            res.status(500).send('Stream error');
+        });
+        externalReq.end();
+    } catch (e) {
+        res.status(500).send('Stream error');
+    }
+});
 // Health check for UptimeRobot
 app.get('/health', (req, res) => { res.status(200).send('OK'); });
 
