@@ -193,8 +193,15 @@ async function watchPart(index){
         if(userStatus!=='active'){showMessage('Subscription Required','This part requires '+item.accessLevel.toUpperCase()+' plan. Please subscribe!');showPlans();return}
         if((planLevels[userPlan]||0)<(planLevels[item.accessLevel]||0)){showMessage('Upgrade Required','This part requires '+item.accessLevel.toUpperCase()+' plan.');showPlans();return}
     }
-    if(item.streamUrl.includes('pixeldrain.com/api/files/') || item.streamUrl.includes('pd.whale.nahted.com')){
-        var proxyUrl='https://niromovie-api.onrender.com/api/stream?url='+encodeURIComponent(item.streamUrl);
+    var streamUrl=item.streamUrl;
+    // Convert regular Pixeldrain link to direct MP4 link
+    if(streamUrl.includes('pixeldrain.com/u/')){
+        var fileId=streamUrl.split('/u/')[1].split('/')[0].split('?')[0];
+        streamUrl='https://pixeldrain.com/api/files/'+fileId;
+    }
+    // If it's a Pixeldrain direct MP4 link, play inside our own video modal
+    if(streamUrl.includes('pixeldrain.com/api/files/') || streamUrl.includes('pd.whale.nahted.com')){
+        var proxyUrl='https://niromovie-api.onrender.com/api/stream?url='+encodeURIComponent(streamUrl);
         var playerModal=document.getElementById('playerModal');
         var videoPlayer=document.getElementById('videoPlayer');
         videoPlayer.src=proxyUrl;
@@ -202,10 +209,12 @@ async function watchPart(index){
         playerModal.style.display='flex';
         videoPlayer.play().catch(function(){});
     } else {
-        window.open(item.streamUrl,'_blank');
+        // For any other link, open in a new tab (old behaviour)
+        window.open(streamUrl,'_blank');
     }
     await fetch(API+'/contents/'+currentContentId+'/stream?part='+(item.index||0)+'&season='+(item.seasonIndex||0)+'&episode='+(item.episodeIndex||0));
 }
+    
 async function downloadPart(index){if(!currentPartsItems.length)return;var item=currentPartsItems[index];if(!item||!item.videoUrl){showMessage('Error','No video available for download.');return}if(item.accessLevel&&item.accessLevel!=='free'){if(!currentUser){showMessage('Login Required','Please login to download premium content.');return}var userPlan=currentUser.subscription.plan||'free';var userStatus=currentUser.subscription.status||'none';var planLevels={free:0,basic:1,standard:2,premium:3,ultimate:4};if(userStatus!=='active'){showMessage('Subscription Required','Your subscription is pending approval.');showPlans();return}if((planLevels[userPlan]||0)<(planLevels[item.accessLevel]||0)){showMessage('Upgrade Required','This part requires '+item.accessLevel.toUpperCase()+' plan.');showPlans();return}}window.open(item.downloadUrl,'_blank');try{await fetch(API+'/contents/'+currentContentId+'/download',{method:'POST',headers:token?{'Authorization':'Bearer '+token,'Content-Type':'application/json'}:{'Content-Type':'application/json'},body:JSON.stringify({part:item.index||0,season:item.seasonIndex||0,episode:item.episodeIndex||0})})}catch(e){}}
 
 function loadRelated(id,c){var r=allContents.filter(function(x){return x._id!==id&&(x.category===c.category||x.accessLevel===c.accessLevel)}).slice(0,8);var items=r.length?r:allContents.filter(function(x){return x._id!==id}).slice(0,8);var ct=document.getElementById('relatedMovies');if(!ct||!items.length)return;ct.innerHTML=items.map(function(m){var epCount=getEpCount(m);return'<div class="related-card" onclick="closeModal(\'movieModal\');openContent(\''+m._id+'\')"><img class="related-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'"><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+(epCount>1?' ('+epCount+')':'')+'</div></div></div>'}).join('')}
