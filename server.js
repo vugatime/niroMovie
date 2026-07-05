@@ -665,7 +665,11 @@ app.get('/api/stream', async (req, res) => {
 
         // Use native fetch (Node 18+) to get the video stream
         const response = await fetch(videoUrl, {
-            headers: { 'User-Agent': 'niroMovie/1.0' }
+            headers: {
+                'User-Agent': 'niroMovie/1.0',
+                'Referer': 'https://pixeldrain.com/',
+                'Accept': '*/*'
+            }
         });
 
         if (!response.ok) {
