@@ -650,6 +650,7 @@ app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) =>
 app.post('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); if (!user.myList.includes(req.params.contentId)) { user.myList.push(req.params.contentId); await user.save(); } res.json({ success: true }); });
 app.delete('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); user.myList = user.myList.filter(id => id.toString() !== req.params.contentId); await user.save(); res.json({ success: true }); });
 app.get('/api/mylist', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id).populate('myList'); res.json(user.myList || []); });
+
 // Stream proxy for direct MP4 links (Pixeldrain etc.)
 app.get('/api/stream', async (req, res) => {
     try {
@@ -658,61 +659,48 @@ app.get('/api/stream', async (req, res) => {
         if (!videoUrl.startsWith('https://pixeldrain.com/api/files/') && !videoUrl.startsWith('https://pd.whale.nahted.com/')) {
             return res.status(403).send('Unsupported source');
         }
-        const https = require('https');
-        const parsed = new URL(videoUrl);
-        const options = {
-            hostname: parsed.hostname,
-            path: parsed.pathname + parsed.search,
-            method: 'GET',
+
+        // Use native fetch (Node 18+) – handles redirects automatically
+        const response = await fetch(videoUrl, {
             headers: {
-                'User-Agent': 'niroMovie/1.0',
-                'Accept': '*/*'
+                'User-Agent': 'niroMovie/1.0'
+            }
+        });
+
+        if (!response.ok) {
+            return res.status(response.status).send('Upstream error');
+        }
+
+        // Forward headers that exist
+        const headers = {
+            'Content-Type': response.headers.get('content-type') || 'video/mp4',
+            'Accept-Ranges': 'bytes',
+            'Access-Control-Allow-Origin': '*'
+        };
+        const contentLength = response.headers.get('content-length');
+        if (contentLength) headers['Content-Length'] = contentLength;
+
+        res.writeHead(response.status, headers);
+
+        // Pipe the video stream to the client
+        const reader = response.body.getReader();
+        const pump = async () => {
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    res.end();
+                    break;
+                }
+                res.write(value);
             }
         };
-        const externalReq = https.request(options, (externalRes) => {
-            // Follow redirect if needed
-            if (externalRes.statusCode >= 300 && externalRes.statusCode < 400 && externalRes.headers.location) {
-                const redirectUrl = new URL(externalRes.headers.location, videoUrl);
-                const redirectReq = https.request({
-                    hostname: redirectUrl.hostname,
-                    path: redirectUrl.pathname + redirectUrl.search,
-                    method: 'GET',
-                    headers: { 'User-Agent': 'niroMovie/1.0' }
-                }, (redirectRes) => {
-                    const headers = {
-                        'Content-Type': redirectRes.headers['content-type'] || 'video/mp4',
-                        'Accept-Ranges': 'bytes',
-                        'Access-Control-Allow-Origin': '*'
-                    };
-                    if (redirectRes.headers['content-length']) {
-                        headers['Content-Length'] = redirectRes.headers['content-length'];
-                    }
-                    res.writeHead(redirectRes.statusCode, headers);
-                    redirectRes.pipe(res);
-                });
-                redirectReq.on('error', () => res.status(500).send('Stream error'));
-                redirectReq.end();
-                return;
-            }
-            // Forward successful response
-            const headers = {
-                'Content-Type': externalRes.headers['content-type'] || 'video/mp4',
-                'Accept-Ranges': 'bytes',
-                'Access-Control-Allow-Origin': '*'
-            };
-            if (externalRes.headers['content-length']) {
-                headers['Content-Length'] = externalRes.headers['content-length'];
-            }
-            res.writeHead(externalRes.statusCode, headers);
-            externalRes.pipe(res);
-        });
-        externalReq.on('error', () => res.status(500).send('Stream error'));
-        externalReq.end();
+        pump().catch(() => res.end());
     } catch (e) {
         console.error('Stream proxy error:', e.message);
         res.status(500).send('Stream error');
     }
 });
+
 // Health check for UptimeRobot
 app.get('/health', (req, res) => { res.status(200).send('OK'); });
 
