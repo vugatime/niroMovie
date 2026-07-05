@@ -650,13 +650,11 @@ app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) =>
 app.post('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); if (!user.myList.includes(req.params.contentId)) { user.myList.push(req.params.contentId); await user.save(); } res.json({ success: true }); });
 app.delete('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); user.myList = user.myList.filter(id => id.toString() !== req.params.contentId); await user.save(); res.json({ success: true }); });
 app.get('/api/mylist', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id).populate('myList'); res.json(user.myList || []); });
-
 // Stream proxy for direct MP4 links (Pixeldrain etc.)
 app.get('/api/stream', async (req, res) => {
     try {
         const videoUrl = req.query.url;
         if (!videoUrl) return res.status(400).send('Missing url');
-        // Only allow Pixeldrain direct links (basic safety)
         if (!videoUrl.startsWith('https://pixeldrain.com/api/files/') && !videoUrl.startsWith('https://pd.whale.nahted.com/')) {
             return res.status(403).send('Unsupported source');
         }
@@ -672,9 +670,8 @@ app.get('/api/stream', async (req, res) => {
             }
         };
         const externalReq = https.request(options, (externalRes) => {
-            // Check for redirect (301/302)
+            // Follow redirect if needed
             if (externalRes.statusCode >= 300 && externalRes.statusCode < 400 && externalRes.headers.location) {
-                // Follow redirect
                 const redirectUrl = new URL(externalRes.headers.location, videoUrl);
                 const redirectReq = https.request({
                     hostname: redirectUrl.hostname,
@@ -682,31 +679,34 @@ app.get('/api/stream', async (req, res) => {
                     method: 'GET',
                     headers: { 'User-Agent': 'niroMovie/1.0' }
                 }, (redirectRes) => {
-                    res.writeHead(redirectRes.statusCode, {
+                    const headers = {
                         'Content-Type': redirectRes.headers['content-type'] || 'video/mp4',
-                        'Content-Length': redirectRes.headers['content-length'],
                         'Accept-Ranges': 'bytes',
                         'Access-Control-Allow-Origin': '*'
-                    });
+                    };
+                    if (redirectRes.headers['content-length']) {
+                        headers['Content-Length'] = redirectRes.headers['content-length'];
+                    }
+                    res.writeHead(redirectRes.statusCode, headers);
                     redirectRes.pipe(res);
                 });
                 redirectReq.on('error', () => res.status(500).send('Stream error'));
                 redirectReq.end();
                 return;
             }
-            // Forward headers that matter
-            res.writeHead(externalRes.statusCode, {
+            // Forward successful response
+            const headers = {
                 'Content-Type': externalRes.headers['content-type'] || 'video/mp4',
-                'Content-Length': externalRes.headers['content-length'],
                 'Accept-Ranges': 'bytes',
                 'Access-Control-Allow-Origin': '*'
-            });
+            };
+            if (externalRes.headers['content-length']) {
+                headers['Content-Length'] = externalRes.headers['content-length'];
+            }
+            res.writeHead(externalRes.statusCode, headers);
             externalRes.pipe(res);
         });
-        externalReq.on('error', (e) => {
-            console.error('Stream proxy error:', e.message);
-            res.status(500).send('Stream error');
-        });
+        externalReq.on('error', () => res.status(500).send('Stream error'));
         externalReq.end();
     } catch (e) {
         console.error('Stream proxy error:', e.message);
