@@ -656,7 +656,7 @@ app.get('/api/stream', async (req, res) => {
     try {
         const videoUrl = req.query.url;
         if (!videoUrl) return res.status(400).send('Missing url');
-        if (!videoUrl.startsWith('https://pixeldrain.com/api/files/') && !videoUrl.startsWith('https://pd.whale.nahted.com/')) {
+        if (!videoUrl.startsWith('https://pixeldrain.com/api/file/') && !videoUrl.startsWith('https://pd.whale.nahted.com/')) {
             return res.status(403).send('Unsupported source');
         }
 
