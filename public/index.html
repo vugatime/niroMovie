@@ -197,7 +197,7 @@ async function watchPart(index){
     // Convert regular Pixeldrain link to direct MP4 link
     if(streamUrl.includes('pixeldrain.com/u/')){
         var fileId=streamUrl.split('/u/')[1].split('/')[0].split('?')[0];
-        streamUrl='https://pixeldrain.com/api/files/'+fileId;
+        streamUrl='https://pixeldrain.com/api/file/'+fileId;
     }
     // If it's a Pixeldrain direct MP4 link, play inside our own video modal
     if(streamUrl.includes('pixeldrain.com/api/files/') || streamUrl.includes('pd.whale.nahted.com')){
