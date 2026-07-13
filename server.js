@@ -378,15 +378,11 @@ app.get('/api/contents/:id', async (req, res) => {
         const content = await Content.findById(req.params.id);
         if (!content) return res.status(404).json({ error: 'Content not found!' });
         const userId = req.user?.id || null; const deviceId = req.headers['x-device-id'] || req.ip || 'unknown';
-        let alreadyViewed = false;
-        if (userId) { alreadyViewed = content.viewedBy && content.viewedBy.some(v => v.userId && v.userId.toString() === userId.toString()); }
-        else { alreadyViewed = content.viewedBy && content.viewedBy.some(v => v.deviceId === deviceId); }
-        if (!alreadyViewed) {
-            content.views = (content.views || 0) + 1;
-            if (!content.viewedBy) content.viewedBy = [];
-            content.viewedBy.push({ userId: userId, deviceId: deviceId, viewedAt: new Date() });
-            await content.save();
-        }
+        // Always count the view
+        content.views = (content.views || 0) + 1;
+        if (!content.viewedBy) content.viewedBy = [];
+        content.viewedBy.push({ userId: userId, deviceId: deviceId, viewedAt: new Date() });
+        await content.save();
         const related = await Content.find({ _id: { $ne: content._id }, category: content.category }).limit(12).select('-parts.videoUrl');
         res.json({ content, related });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -403,8 +399,11 @@ app.get('/api/contents/:id/stream', async (req, res) => {
         if (!videoUrl) return res.status(404).json({ error: 'No video URL found' });
         const streamUrl = getStreamUrl(videoUrl);
         const userId = req.user?.id || null; const deviceId = req.headers['x-device-id'] || req.ip || 'unknown';
-        let alreadyViewed = content.viewedBy && content.viewedBy.some(v => (userId && v.userId && v.userId.toString() === userId.toString()) || (!userId && v.deviceId === deviceId));
-        if (!alreadyViewed) { content.views = (content.views || 0) + 1; if (!content.viewedBy) content.viewedBy = []; content.viewedBy.push({ userId, deviceId, viewedAt: new Date() }); await content.save(); }
+        // Always count the view
+        content.views = (content.views || 0) + 1;
+        if (!content.viewedBy) content.viewedBy = [];
+        content.viewedBy.push({ userId, deviceId, viewedAt: new Date() });
+        await content.save();
         res.json({ streamUrl, canStream: canStream(videoUrl), title: content.title, quality: content.quality });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -434,8 +433,11 @@ app.post('/api/contents/:id/download', async (req, res) => {
         }
         const downloadUrl = getDownloadUrl(videoUrl);
         const userId = req.user?.id || null; const deviceId = req.headers['x-device-id'] || req.ip || 'unknown';
-        let alreadyDownloaded = content.downloadedBy && content.downloadedBy.some(d => (userId && d.userId && d.userId.toString() === userId.toString()) || (!userId && d.deviceId === deviceId));
-        if (!alreadyDownloaded) { content.downloads = (content.downloads || 0) + 1; if (!content.downloadedBy) content.downloadedBy = []; content.downloadedBy.push({ userId, deviceId, partIndex, seasonIndex, episodeIndex, downloadedAt: new Date() }); await content.save(); }
+        // Always count the download
+        content.downloads = (content.downloads || 0) + 1;
+        if (!content.downloadedBy) content.downloadedBy = [];
+        content.downloadedBy.push({ userId, deviceId, partIndex, seasonIndex, episodeIndex, downloadedAt: new Date() });
+        await content.save();
         res.json({ downloadUrl, quality: content.quality, title: content.title, canStream: canStream(videoUrl) });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -702,6 +704,7 @@ app.get('/api/stream', async (req, res) => {
         res.status(500).send('Stream error');
     }
 });
+
 // Health check for UptimeRobot
 app.get('/health', (req, res) => { res.status(200).send('OK'); });
 
