@@ -238,28 +238,46 @@ async function openContent(id){
     updateMyListButton();
     try{var partsRes=await fetch(API+'/contents/'+id+'/parts');var partsData=await partsRes.json();currentPartsItems=partsData.items||[]}catch(e){currentPartsItems=[]}
     
+    // IMPROVED canPlay detection
     var canPlay=false;
+    var videoUrlToPlay=null;
+    
+    // Check parts first
     if(currentPartsItems.length>0&&currentPartsItems[0]&&currentPartsItems[0].videoUrl){
-        var vurl=currentPartsItems[0].videoUrl;
-        canPlay=vurl.toLowerCase().endsWith('.mp4')||vurl.includes('pixeldrain.com')||vurl.includes('archive.org/download/');
-    }else if(c.parts&&c.parts[0]&&c.parts[0].videoUrl){
-        var vurl2=c.parts[0].videoUrl;
-        canPlay=vurl2.toLowerCase().endsWith('.mp4')||vurl2.includes('pixeldrain.com')||vurl2.includes('archive.org/download/');
+        videoUrlToPlay=currentPartsItems[0].videoUrl;
+        canPlay=isPlayableUrl(videoUrlToPlay);
+    }
+    // Fall back to direct parts array
+    if(!canPlay&&c.parts&&c.parts[0]&&c.parts[0].videoUrl){
+        videoUrlToPlay=c.parts[0].videoUrl;
+        canPlay=isPlayableUrl(videoUrlToPlay);
+    }
+    // Check if content itself has a videoUrl
+    if(!canPlay&&c.videoUrl){
+        videoUrlToPlay=c.videoUrl;
+        canPlay=isPlayableUrl(videoUrlToPlay);
     }
     
     var playerWrapper=document.getElementById('playerWrapper');
     var watchBtn=document.getElementById('watchBtn');
     var downloadBtn=document.getElementById('downloadMainBtn');
+    var videoPlayer=document.getElementById('videoPlayer');
     
     if(canPlay){
         playerWrapper.style.display='block';
         watchBtn.style.display='flex';
-        document.getElementById('videoPlayer').style.display='none';
         downloadBtn.style.flex='1';
+        // Pre-load the video so it's ready
+        videoPlayer.src=getStreamUrl(videoUrlToPlay);
+        videoPlayer.style.display='block';
+        videoPlayer.load();
     }else{
         playerWrapper.style.display='none';
         watchBtn.style.display='none';
         downloadBtn.style.flex='1';
+        // Clear any previous video
+        videoPlayer.src='';
+        videoPlayer.style.display='none';
     }
     
     renderPartsList();
@@ -269,13 +287,39 @@ async function openContent(id){
     loadRelated(id,c);
 }
 
-function renderPartsList(){
-    var pl=document.getElementById('partsList');
-    if(currentPartsItems.length>0){
-        pl.innerHTML=currentPartsItems.map(function(ep,i){
-            return'<div class="part-row'+(i===selectedPartIndex?' active':'')+'" onclick="selectPart('+i+')"><span class="part-name">'+escHtml(ep.number)+' - '+escHtml(ep.title)+(ep.seasonTitle?' ('+escHtml(ep.seasonTitle)+')':'')+'</span><span class="part-badge">'+(ep.accessLevel||'free').toUpperCase()+'</span>'+(ep.videoUrl?'<button class="cta-btn cta-outline cta-sm" onclick="event.stopPropagation();downloadPartItem(\''+i+'\')"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>':'')+'</div>';
-        }).join('');
-    }else{pl.innerHTML='<p style="color:var(--text3);font-size:0.82rem">No parts available</p>'}
+// NEW: Check if URL is playable
+function isPlayableUrl(url){
+    if(!url)return false;
+    var lower=url.toLowerCase();
+    return (
+        lower.endsWith('.mp4')||
+        lower.endsWith('.webm')||
+        lower.endsWith('.ogg')||
+        lower.endsWith('.mov')||
+        lower.endsWith('.mkv')||
+        lower.includes('pixeldrain.com')||
+        lower.includes('archive.org/download/')||
+        lower.includes('isatafilez.my')||
+        lower.includes('/files/')||
+        lower.includes('cdn.')||
+        lower.includes('stream.')||
+        lower.includes('video.')||
+        lower.includes('media.')
+    );
+}
+
+// NEW: Get proper stream URL
+function getStreamUrl(url){
+    if(!url)return'';
+    if(url.includes('pixeldrain.com/u/')){
+        var fid=url.split('/u/')[1].split('/')[0].split('?')[0];
+        return'https://pixeldrain.com/api/file/'+fid+'?download';
+    }
+    if(url.includes('pixeldrain.com/api/file/')){
+        return url+'?download';
+    }
+    // For direct mp4 and other video URLs, return as-is
+    return url;
 }
 
 function selectPart(i){
@@ -283,58 +327,74 @@ function selectPart(i){
     var item=currentPartsItems[i];
     var playerWrapper=document.getElementById('playerWrapper');
     var watchBtn=document.getElementById('watchBtn');
+    var videoPlayer=document.getElementById('videoPlayer');
+    
     if(item&&item.videoUrl){
-        var canPlay=item.videoUrl.toLowerCase().endsWith('.mp4')||item.videoUrl.includes('pixeldrain.com')||item.videoUrl.includes('archive.org/download/');
-        if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';playVideo(item.videoUrl)}
-        else{playerWrapper.style.display='none';watchBtn.style.display='none'}
-    }else{playerWrapper.style.display='none';watchBtn.style.display='none'}
-}
-
-// ============ DOWNLOAD WITH COUNT INCREMENT ============
-function downloadPartItem(i){
-    var item=currentPartsItems[i];
-    if(item&&item.videoUrl){
-        incrementDownload(currentContentId);
-        window.open(item.videoUrl,'_blank');
+        var canPlay=isPlayableUrl(item.videoUrl);
+        if(canPlay){
+            playerWrapper.style.display='block';
+            watchBtn.style.display='flex';
+            videoPlayer.src=getStreamUrl(item.videoUrl);
+            videoPlayer.style.display='block';
+            videoPlayer.load();
+            videoPlayer.play().catch(function(){});
+        }else{
+            playerWrapper.style.display='none';
+            watchBtn.style.display='none';
+            videoPlayer.src='';
+            videoPlayer.style.display='none';
+        }
+    }else{
+        playerWrapper.style.display='none';
+        watchBtn.style.display='none';
+        videoPlayer.src='';
+        videoPlayer.style.display='none';
     }
 }
 
 function watchCurrentContent(){
-    if(currentPartsItems.length>0){
-        var item=currentPartsItems[selectedPartIndex];
-        if(item&&item.videoUrl){playVideo(item.videoUrl);return}
+    var videoPlayer=document.getElementById('videoPlayer');
+    if(videoPlayer.src&&videoPlayer.style.display!=='none'){
+        videoPlayer.play().catch(function(e){
+            console.log('Play failed:',e);
+            // If autoplay fails, the user can still click the video to play
+        });
+        return;
     }
-    if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){
-        playVideo(currentContentData.parts[0].videoUrl);
-    }
-}
-
-function downloadCurrentContent(){
     if(currentPartsItems.length>0){
         var item=currentPartsItems[selectedPartIndex];
         if(item&&item.videoUrl){
-            incrementDownload(currentContentId);
-            window.open(item.videoUrl,'_blank');
+            var url=getStreamUrl(item.videoUrl);
+            videoPlayer.src=url;
+            videoPlayer.style.display='block';
+            videoPlayer.load();
+            videoPlayer.play().catch(function(){});
             return;
         }
     }
     if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){
-        incrementDownload(currentContentId);
-        window.open(currentContentData.parts[0].videoUrl,'_blank');
+        var url=getStreamUrl(currentContentData.parts[0].videoUrl);
+        videoPlayer.src=url;
+        videoPlayer.style.display='block';
+        videoPlayer.load();
+        videoPlayer.play().catch(function(){});
     }
 }
 
 function playVideo(url){
-    var isMP4=url.toLowerCase().endsWith('.mp4')||url.includes('pixeldrain.com')||url.includes('archive.org/download/');
-    if(isMP4){
-        var streamUrl=url;
-        if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];streamUrl='https://pixeldrain.com/api/file/'+fid+'?download'}
-        document.getElementById('videoPlayer').src=streamUrl;
-        document.getElementById('videoPlayer').style.display='block';
-        document.getElementById('videoPlayer').play().catch(function(){});
-    }else{window.open(url,'_blank')}
+    var videoPlayer=document.getElementById('videoPlayer');
+    var streamUrl=getStreamUrl(url);
+    if(isPlayableUrl(url)){
+        videoPlayer.src=streamUrl;
+        videoPlayer.style.display='block';
+        videoPlayer.load();
+        videoPlayer.play().catch(function(e){
+            console.log('Autoplay prevented, user can click play');
+        });
+    }else{
+        window.open(url,'_blank');
+    }
 }
-
 function shareMovie(p){
     var u=window.location.origin+'/?movie='+currentContentId;
     if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}
