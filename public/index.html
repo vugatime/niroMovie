@@ -128,8 +128,41 @@ async function register(){var n=document.getElementById('regName').value;var e=d
 function logout(){localStorage.removeItem('token');token=null;currentUser=null;updateProfileIcon();loadAllContent()}
 function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
 function toggleDescription(){var desc=document.getElementById('modalDesc');var link=document.getElementById('viewMoreLink');if(desc.classList.contains('desc-truncated')){desc.classList.remove('desc-truncated');desc.classList.add('desc-expanded');link.textContent='Show less'}else{desc.classList.add('desc-truncated');desc.classList.remove('desc-expanded');link.textContent='... View more'}}
-async function incrementView(id){try{await fetch(API+'/contents/'+id+'/view',{method:'POST'});var c=allContents.find(function(x){return x._id===id});if(c){c.views=(c.views||0)+1}}catch(e){}}
-async function incrementDownload(id){try{await fetch(API+'/contents/'+id+'/download',{method:'POST'});var c=allContents.find(function(x){return x._id===id});if(c){c.downloads=(c.downloads||0)+1}}catch(e){}}
+async function incrementView(id){
+    try{
+        var r=await fetch(API+'/contents/'+id+'/view',{method:'POST'});
+        var d=await r.json();
+        if(d&&d.views!==undefined){
+            // Use the count from the server
+            var c=allContents.find(function(x){return x._id===id});
+            if(c){c.views=d.views;}
+        }else{
+            // Fallback: increment locally
+            var c=allContents.find(function(x){return x._id===id});
+            if(c){c.views=(c.views||0)+1;}
+        }
+    }catch(e){
+        // If API fails, still increment locally
+        var c=allContents.find(function(x){return x._id===id});
+        if(c){c.views=(c.views||0)+1;}
+    }
+}
+async function incrementDownload(id){
+    try{
+        var r=await fetch(API+'/contents/'+id+'/download',{method:'POST'});
+        var d=await r.json();
+        if(d&&d.downloads!==undefined){
+            var c=allContents.find(function(x){return x._id===id});
+            if(c){c.downloads=d.downloads;}
+        }else{
+            var c=allContents.find(function(x){return x._id===id});
+            if(c){c.downloads=(c.downloads||0)+1;}
+        }
+    }catch(e){
+        var c=allContents.find(function(x){return x._id===id});
+        if(c){c.downloads=(c.downloads||0)+1;}
+    }
+}
 async function loadAllContent(){try{var res=await fetch(API+'/contents');var data=await res.json();if(Array.isArray(data)){var seen={};allContents=data.filter(function(c){if(seen[c._id])return false;seen[c._id]=true;return true});renderAll();loadAds()}}catch(e){console.error(e)}}
 function movieCardHTML(m,thumbH,clickHandler){
     var h=thumbH||'225px';
@@ -137,7 +170,7 @@ function movieCardHTML(m,thumbH,clickHandler){
     var ep=getEpCount(m);
     var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';
     var onclick=clickHandler||("openContent('"+m._id+"')");
-    return'<div class="movie-card" onclick="'+onclick+'"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'" style="height:'+h+'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta"><span>👁 '+((m.views||0)).toLocaleString()+'</span><span>⬇ '+((m.downloads||0)).toLocaleString()+'</span></div></div></div>';
+    return'<div class="movie-card" onclick="'+onclick+'"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'" style="height:'+h+'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta">'+(m.views>0?'<span>👁 '+((m.views||0)).toLocaleString()+'</span>':'')+(m.downloads>0?'<span>⬇ '+((m.downloads||0)).toLocaleString()+'</span>':'')+'</div></div></div>';
 }
 function relatedCardHTML(m){return movieCardHTML(m,'180px',"closeMovieModal();setTimeout(function(){openContent('"+m._id+"')},350)")}
 function relatedCardHTMLBottom(m){return movieCardHTML(m,'200px',"closeMovieModal();setTimeout(function(){openContent('"+m._id+"')},350)")}
