@@ -99,6 +99,13 @@ var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('tok
 function isPlayableUrl(url){
     if(!url)return false;
     var lower=url.toLowerCase();
+    // These sites serve download pages, NOT direct video streams — skip them
+    if(lower.includes('isatafilez.my'))return false;
+    if(lower.includes('drive.google.com'))return false;
+    if(lower.includes('dropbox.com'))return false;
+    if(lower.includes('mega.nz'))return false;
+    if(lower.includes('mediafire.com'))return false;
+    // These are actual playable video URLs
     return (
         lower.endsWith('.mp4')||
         lower.endsWith('.webm')||
@@ -108,15 +115,12 @@ function isPlayableUrl(url){
         lower.endsWith('.m3u8')||
         lower.includes('pixeldrain.com')||
         lower.includes('archive.org/download/')||
-        lower.includes('isatafilez.my')||
-        lower.includes('/files/')||
         lower.includes('cdn.')||
         lower.includes('stream.')||
         lower.includes('video.')||
         lower.includes('media.')
     );
 }
-
 // ============ HELPER: Get stream URL ============
 function getStreamUrl(url){
     if(!url)return'';
