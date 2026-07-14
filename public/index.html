@@ -92,9 +92,9 @@
 <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Privacy Policy</h2><span class="close-btn" onclick="closeModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">At niroMovie, we take your privacy seriously. We do not sell, trade, or share your personal information.</p></div></div></div>
 <div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Terms</h2><span class="close-btn" onclick="closeModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">By using niroMovie, you agree to these terms. All content is for personal, non-commercial use only.</p></div></div></div>
 <div class="whatsapp-btn" onclick="window.open('https://wa.me/250795064502','_blank')"><i class="fab fa-whatsapp" style="font-size:22px;color:#fff"></i></div>
-
 <script>
 var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],relatedOffset=0;
+
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
 function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
 function closeMovieModal(){closeModal('movieModal');history.pushState(null,'','/')}
@@ -113,30 +113,117 @@ async function register(){var n=document.getElementById('regName').value;var e=d
 function logout(){localStorage.removeItem('token');token=null;currentUser=null;updateProfileIcon();loadAllContent()}
 function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
 function toggleDescription(){var desc=document.getElementById('modalDesc');var link=document.getElementById('viewMoreLink');if(desc.classList.contains('desc-truncated')){desc.classList.remove('desc-truncated');desc.classList.add('desc-expanded');link.textContent='Show less'}else{desc.classList.add('desc-truncated');desc.classList.remove('desc-expanded');link.textContent='... View more'}}
+
+// ============ INCREMENT VIEWS ============
+async function incrementView(id){
+    try{
+        await fetch(API+'/contents/'+id+'/view',{method:'POST'});
+        // Update local data
+        var c=allContents.find(function(x){return x._id===id});
+        if(c){c.views=(c.views||0)+1}
+    }catch(e){}
+}
+
+// ============ INCREMENT DOWNLOADS ============
+async function incrementDownload(id){
+    try{
+        await fetch(API+'/contents/'+id+'/download',{method:'POST'});
+        // Update local data
+        var c=allContents.find(function(x){return x._id===id});
+        if(c){c.downloads=(c.downloads||0)+1}
+    }catch(e){}
+}
+
 async function loadAllContent(){try{var res=await fetch(API+'/contents');var data=await res.json();if(Array.isArray(data)){var seen={};allContents=data.filter(function(c){if(seen[c._id])return false;seen[c._id]=true;return true});renderAll();loadAds()}}catch(e){console.error(e)}}
-function movieCardHTML(m,thumbH,clickHandler){var h=thumbH||'225px';var bc={'free':'badge-free','basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};var ep=getEpCount(m);var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';var onclick=clickHandler||("openContent('"+m._id+"')");return'<div class="movie-card" onclick="'+onclick+'"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'" style="height:'+h+'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta"><span>👁 '+((m.views||0)).toLocaleString()+'</span><span>⬇ '+((m.downloads||0)).toLocaleString()+'</span></div></div></div>'}
+
+function movieCardHTML(m,thumbH,clickHandler){
+    var h=thumbH||'225px';
+    var bc={'free':'badge-free','basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};
+    var ep=getEpCount(m);
+    var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';
+    var onclick=clickHandler||("openContent('"+m._id+"')");
+    return'<div class="movie-card" onclick="'+onclick+'"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'" style="height:'+h+'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta"><span>👁 '+((m.views||0)).toLocaleString()+'</span><span>⬇ '+((m.downloads||0)).toLocaleString()+'</span></div></div></div>';
+}
+
 function relatedCardHTML(m){return movieCardHTML(m,'180px',"closeMovieModal();setTimeout(function(){openContent('"+m._id+"')},350)")}
 function relatedCardHTMLBottom(m){return movieCardHTML(m,'200px',"closeMovieModal();setTimeout(function(){openContent('"+m._id+"')},350)")}
+
 function getEpCount(c){if(c.type==='movie')return c.parts?c.parts.length:0;var count=0;if(c.seasons){c.seasons.forEach(function(s){count+=(s.episodes?s.episodes.length:0)})}return count}
-function renderAll(){if(!allContents.length)return;var latest=allContents.slice().sort(function(a,b){return new Date(b.uploadedAt)-new Date(a.uploadedAt)}).slice(0,10);document.getElementById('rowLatest').innerHTML=latest.map(function(m){return movieCardHTML(m)}).join('');var cats=[...new Set(allContents.map(function(c){return c.category}).filter(Boolean))];document.getElementById('catRow').innerHTML=cats.map(function(cat){return'<button class="cat-pill" onclick="filterByCategory(\''+escHtml(cat)+'\')">'+escHtml(cat)+'</button>'}).join('');var translators=[...new Set(allContents.map(function(c){return c.translator}).filter(function(t){return t&&t!=='Not translated'}))];document.getElementById('footerCats').innerHTML=cats.slice(0,6).map(function(cat){return'<a onclick="filterByCategory(\''+escHtml(cat)+'\')">'+escHtml(cat)+'</a>'}).join('');document.getElementById('footerTranslators').innerHTML=translators.slice(0,5).map(function(t){return'<a onclick="filterByTranslator(\''+escHtml(t)+'\')">'+escHtml(t)+'</a>'}).join('')||'<span style="color:var(--text3);font-size:0.78rem">Coming soon</span>';visibleRows=2;renderGrid();setupHero()}
-function renderGrid(){var total=visibleRows*moviesPerRow;var shown=allContents.slice(0,total);var grid=document.getElementById('movieGrid');grid.innerHTML=shown.map(function(m){return movieCardHTML(m,'240px')}).join('');var btn=document.getElementById('loadMoreBtn');if(total>=allContents.length){btn.textContent='All loaded ✓';btn.disabled=true;btn.style.opacity='0.5'}else{btn.textContent='Show More ▼';btn.disabled=false;btn.style.opacity='1'}}
+
+function renderAll(){
+    if(!allContents.length)return;
+    var latest=allContents.slice().sort(function(a,b){return new Date(b.uploadedAt)-new Date(a.uploadedAt)}).slice(0,10);
+    document.getElementById('rowLatest').innerHTML=latest.map(function(m){return movieCardHTML(m)}).join('');
+    var cats=[...new Set(allContents.map(function(c){return c.category}).filter(Boolean))];
+    document.getElementById('catRow').innerHTML=cats.map(function(cat){return'<button class="cat-pill" onclick="filterByCategory(\''+escHtml(cat)+'\')">'+escHtml(cat)+'</button>'}).join('');
+    var translators=[...new Set(allContents.map(function(c){return c.translator}).filter(function(t){return t&&t!=='Not translated'}))];
+    document.getElementById('footerCats').innerHTML=cats.slice(0,6).map(function(cat){return'<a onclick="filterByCategory(\''+escHtml(cat)+'\')">'+escHtml(cat)+'</a>'}).join('');
+    document.getElementById('footerTranslators').innerHTML=translators.slice(0,5).map(function(t){return'<a onclick="filterByTranslator(\''+escHtml(t)+'\')">'+escHtml(t)+'</a>'}).join('')||'<span style="color:var(--text3);font-size:0.78rem">Coming soon</span>';
+    visibleRows=2;renderGrid();setupHero();
+}
+
+function renderGrid(){
+    var total=visibleRows*moviesPerRow;
+    var shown=allContents.slice(0,total);
+    var grid=document.getElementById('movieGrid');
+    grid.innerHTML=shown.map(function(m){return movieCardHTML(m,'240px')}).join('');
+    var btn=document.getElementById('loadMoreBtn');
+    if(total>=allContents.length){btn.textContent='All loaded ✓';btn.disabled=true;btn.style.opacity='0.5'}
+    else{btn.textContent='Show More ▼';btn.disabled=false;btn.style.opacity='1'}
+}
+
 function loadMoreMovies(){visibleRows+=2;renderGrid()}
 function filterByCategory(cat){var f=allContents.filter(function(c){return c.category===cat});renderFiltered('Category: '+cat,f);scrollToResults()}
 function filterByTranslator(t){var f=allContents.filter(function(c){return c.translator===t});renderFiltered('Translator: '+t,f);scrollToResults()}
-function filterContent(type){closeSideMenu();var f=allContents.slice();if(type==='trending')f=f.sort(function(a,b){return(b.downloads||0)-(a.downloads||0)}).slice(0,20);else if(type==='latest')f=f.sort(function(a,b){return new Date(b.uploadedAt)-new Date(a.uploadedAt)}).slice(0,20);else if(type==='free')f=f.filter(function(c){return c.accessLevel==='free'});else if(type==='series')f=f.filter(function(c){return c.type==='series'});renderFiltered(type,f);scrollToResults()}
+
+function filterContent(type){
+    closeSideMenu();var f=allContents.slice();
+    if(type==='trending')f=f.sort(function(a,b){return(b.downloads||0)-(a.downloads||0)}).slice(0,20);
+    else if(type==='latest')f=f.sort(function(a,b){return new Date(b.uploadedAt)-new Date(a.uploadedAt)}).slice(0,20);
+    else if(type==='free')f=f.filter(function(c){return c.accessLevel==='free'});
+    else if(type==='series')f=f.filter(function(c){return c.type==='series'});
+    renderFiltered(type,f);scrollToResults();
+}
+
 function scrollToResults(){setTimeout(function(){var grid=document.getElementById('movieGrid');if(grid)grid.scrollIntoView({behavior:'smooth',block:'start'})},200)}
-function renderFiltered(title,items){var grid=document.getElementById('movieGrid');grid.innerHTML=items.length?items.map(function(m){return movieCardHTML(m,'240px')}).join(''):'<p style="color:var(--text2);padding:2rem;text-align:center">No movies found</p>';document.getElementById('loadMoreBtn').style.display='none'}
-function searchMovies(){var t=document.getElementById('searchInput').value.toLowerCase().trim();if(!t){loadAllContent();return}var f=allContents.filter(function(c){return c.title.toLowerCase().indexOf(t)!==-1||(c.category||'').toLowerCase().indexOf(t)!==-1||(c.country||'').toLowerCase().indexOf(t)!==-1||(c.translator||'').toLowerCase().indexOf(t)!==-1||(c.description||'').toLowerCase().indexOf(t)!==-1});renderFiltered('Search: '+t,f);scrollToResults()}
-function setupHero(){heroSlideData=allContents.slice().sort(function(a,b){return new Date(b.uploadedAt)-new Date(a.uploadedAt)}).slice(0,3);for(var i=0;i<3;i++){var s=heroSlideData[i];if(s){document.getElementById('heroSlide'+i).style.backgroundImage='url('+(s.thumbnailUrl||'')+')';document.getElementById('heroTitle'+i).textContent=s.title;document.getElementById('heroDesc'+i).textContent=(s.description||'').substring(0,120)}else{document.getElementById('heroSlide'+i).style.display='none'}}currentSlide=0;showSlide(0);startHeroRotation()}
+
+function renderFiltered(title,items){
+    var grid=document.getElementById('movieGrid');
+    grid.innerHTML=items.length?items.map(function(m){return movieCardHTML(m,'240px')}).join(''):'<p style="color:var(--text2);padding:2rem;text-align:center">No movies found</p>';
+    document.getElementById('loadMoreBtn').style.display='none';
+}
+
+function searchMovies(){
+    var t=document.getElementById('searchInput').value.toLowerCase().trim();
+    if(!t){loadAllContent();return}
+    var f=allContents.filter(function(c){return c.title.toLowerCase().indexOf(t)!==-1||(c.category||'').toLowerCase().indexOf(t)!==-1||(c.country||'').toLowerCase().indexOf(t)!==-1||(c.translator||'').toLowerCase().indexOf(t)!==-1||(c.description||'').toLowerCase().indexOf(t)!==-1});
+    renderFiltered('Search: '+t,f);scrollToResults();
+}
+
+function setupHero(){
+    heroSlideData=allContents.slice().sort(function(a,b){return new Date(b.uploadedAt)-new Date(a.uploadedAt)}).slice(0,3);
+    for(var i=0;i<3;i++){
+        var s=heroSlideData[i];
+        if(s){document.getElementById('heroSlide'+i).style.backgroundImage='url('+(s.thumbnailUrl||'')+')';document.getElementById('heroTitle'+i).textContent=s.title;document.getElementById('heroDesc'+i).textContent=(s.description||'').substring(0,120)}
+        else{document.getElementById('heroSlide'+i).style.display='none'}
+    }
+    currentSlide=0;showSlide(0);startHeroRotation();
+}
+
 function startHeroRotation(){if(heroTimer)clearInterval(heroTimer);heroTimer=setInterval(function(){currentSlide=(currentSlide+1)%3;showSlide(currentSlide)},10000)}
 function showSlide(i){currentSlide=i;document.querySelectorAll('.hero-slide').forEach(function(s){s.classList.remove('active')});document.querySelectorAll('.hero-dot').forEach(function(d){d.classList.remove('active')});var slide=document.getElementById('heroSlide'+i);if(slide)slide.classList.add('active');var dots=document.querySelectorAll('.hero-dot');if(dots[i])dots[i].classList.add('active')}
 function goToSlide(i){showSlide(i);startHeroRotation()}
 function heroClick(){var m=heroSlideData[currentSlide];if(m&&m._id)openContent(m._id)}
+
 async function openContent(id){
     currentContentId=id;selectedPartIndex=0;
     var c=allContents.find(function(x){return x._id===id});
     if(!c)return;
     currentContentData=c;
+    
+    // INCREMENT VIEW COUNT
+    incrementView(id);
+    
     history.pushState(null,'','/?movie='+id);
     document.getElementById('modalTitle').innerText=c.title;
     var desc=c.description||'No description available';
@@ -151,7 +238,6 @@ async function openContent(id){
     updateMyListButton();
     try{var partsRes=await fetch(API+'/contents/'+id+'/parts');var partsData=await partsRes.json();currentPartsItems=partsData.items||[]}catch(e){currentPartsItems=[]}
     
-    // Determine if video is playable
     var canPlay=false;
     if(currentPartsItems.length>0&&currentPartsItems[0]&&currentPartsItems[0].videoUrl){
         var vurl=currentPartsItems[0].videoUrl;
@@ -182,7 +268,16 @@ async function openContent(id){
     loadComments(id);
     loadRelated(id,c);
 }
-function renderPartsList(){var pl=document.getElementById('partsList');if(currentPartsItems.length>0){pl.innerHTML=currentPartsItems.map(function(ep,i){return'<div class="part-row'+(i===selectedPartIndex?' active':'')+'" onclick="selectPart('+i+')"><span class="part-name">'+escHtml(ep.number)+' - '+escHtml(ep.title)+(ep.seasonTitle?' ('+escHtml(ep.seasonTitle)+')':'')+'</span><span class="part-badge">'+(ep.accessLevel||'free').toUpperCase()+'</span>'+(ep.videoUrl?'<button class="cta-btn cta-outline cta-sm" onclick="event.stopPropagation();downloadPartItem(\''+i+'\')"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>':'')+'</div>'}).join('')}else{pl.innerHTML='<p style="color:var(--text3);font-size:0.82rem">No parts available</p>'}}
+
+function renderPartsList(){
+    var pl=document.getElementById('partsList');
+    if(currentPartsItems.length>0){
+        pl.innerHTML=currentPartsItems.map(function(ep,i){
+            return'<div class="part-row'+(i===selectedPartIndex?' active':'')+'" onclick="selectPart('+i+')"><span class="part-name">'+escHtml(ep.number)+' - '+escHtml(ep.title)+(ep.seasonTitle?' ('+escHtml(ep.seasonTitle)+')':'')+'</span><span class="part-badge">'+(ep.accessLevel||'free').toUpperCase()+'</span>'+(ep.videoUrl?'<button class="cta-btn cta-outline cta-sm" onclick="event.stopPropagation();downloadPartItem(\''+i+'\')"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>':'')+'</div>';
+        }).join('');
+    }else{pl.innerHTML='<p style="color:var(--text3);font-size:0.82rem">No parts available</p>'}
+}
+
 function selectPart(i){
     selectedPartIndex=i;renderPartsList();
     var item=currentPartsItems[i];
@@ -190,38 +285,144 @@ function selectPart(i){
     var watchBtn=document.getElementById('watchBtn');
     if(item&&item.videoUrl){
         var canPlay=item.videoUrl.toLowerCase().endsWith('.mp4')||item.videoUrl.includes('pixeldrain.com')||item.videoUrl.includes('archive.org/download/');
-        if(canPlay){
-            playerWrapper.style.display='block';
-            watchBtn.style.display='flex';
-            playVideo(item.videoUrl);
-        }else{
-            playerWrapper.style.display='none';
-            watchBtn.style.display='none';
-        }
-    }else{
-        playerWrapper.style.display='none';
-        watchBtn.style.display='none';
+        if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';playVideo(item.videoUrl)}
+        else{playerWrapper.style.display='none';watchBtn.style.display='none'}
+    }else{playerWrapper.style.display='none';watchBtn.style.display='none'}
+}
+
+// ============ DOWNLOAD WITH COUNT INCREMENT ============
+function downloadPartItem(i){
+    var item=currentPartsItems[i];
+    if(item&&item.videoUrl){
+        incrementDownload(currentContentId);
+        window.open(item.videoUrl,'_blank');
     }
 }
-function downloadPartItem(i){var item=currentPartsItems[i];if(item&&item.videoUrl){window.open(item.videoUrl,'_blank')}}
-function watchCurrentContent(){if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){playVideo(item.videoUrl);return}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){playVideo(currentContentData.parts[0].videoUrl)}}
-function downloadCurrentContent(){if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){window.open(item.videoUrl,'_blank');return}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){window.open(currentContentData.parts[0].videoUrl,'_blank')}}
-function playVideo(url){var isMP4=url.toLowerCase().endsWith('.mp4')||url.includes('pixeldrain.com')||url.includes('archive.org/download/');if(isMP4){var streamUrl=url;if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];streamUrl='https://pixeldrain.com/api/file/'+fid+'?download'}document.getElementById('videoPlayer').src=streamUrl;document.getElementById('videoPlayer').style.display='block';document.getElementById('videoPlayer').play().catch(function(){})}else{window.open(url,'_blank')}}
-function shareMovie(p){var u=window.location.origin+'/?movie='+currentContentId;if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}else if(p==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent('Watch on niroMovie! '+u),'_blank')}}
-async function loadComments(id){var cl=document.getElementById('commentsList');try{var comments=await fetch(API+'/comments/'+id).then(function(r){return r.json()});if(!comments||!comments.length){cl.innerHTML='<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';return}cl.innerHTML=comments.map(function(x){return'<div class="comment-item"><div><span class="comment-user">'+escHtml(x.userName||'Anon')+'</span><span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div><div class="comment-text">'+escHtml(x.text)+'</div><span class="comment-like" onclick="likeComment(\''+id+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span></div>'}).join('')}catch(e){cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'}}
-async function addComment(){var n=document.getElementById('commentName').value.trim();var t=document.getElementById('newComment').value.trim();if(!n||!t){toast('Name and comment required');return}var r=await fetch(API+'/comments/'+currentContentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t})});var d=await r.json();if(d.success){document.getElementById('commentName').value='';document.getElementById('newComment').value='';loadComments(currentContentId)}}
+
+function watchCurrentContent(){
+    if(currentPartsItems.length>0){
+        var item=currentPartsItems[selectedPartIndex];
+        if(item&&item.videoUrl){playVideo(item.videoUrl);return}
+    }
+    if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){
+        playVideo(currentContentData.parts[0].videoUrl);
+    }
+}
+
+function downloadCurrentContent(){
+    if(currentPartsItems.length>0){
+        var item=currentPartsItems[selectedPartIndex];
+        if(item&&item.videoUrl){
+            incrementDownload(currentContentId);
+            window.open(item.videoUrl,'_blank');
+            return;
+        }
+    }
+    if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){
+        incrementDownload(currentContentId);
+        window.open(currentContentData.parts[0].videoUrl,'_blank');
+    }
+}
+
+function playVideo(url){
+    var isMP4=url.toLowerCase().endsWith('.mp4')||url.includes('pixeldrain.com')||url.includes('archive.org/download/');
+    if(isMP4){
+        var streamUrl=url;
+        if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];streamUrl='https://pixeldrain.com/api/file/'+fid+'?download'}
+        document.getElementById('videoPlayer').src=streamUrl;
+        document.getElementById('videoPlayer').style.display='block';
+        document.getElementById('videoPlayer').play().catch(function(){});
+    }else{window.open(url,'_blank')}
+}
+
+function shareMovie(p){
+    var u=window.location.origin+'/?movie='+currentContentId;
+    if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}
+    else if(p==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent('Watch on niroMovie! '+u),'_blank')}
+}
+
+async function loadComments(id){
+    var cl=document.getElementById('commentsList');
+    try{
+        var comments=await fetch(API+'/comments/'+id).then(function(r){return r.json()});
+        if(!comments||!comments.length){cl.innerHTML='<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';return}
+        cl.innerHTML=comments.map(function(x){return'<div class="comment-item"><div><span class="comment-user">'+escHtml(x.userName||'Anon')+'</span><span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div><div class="comment-text">'+escHtml(x.text)+'</div><span class="comment-like" onclick="likeComment(\''+id+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span></div>'}).join('');
+    }catch(e){cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'}
+}
+
+async function addComment(){
+    var n=document.getElementById('commentName').value.trim();
+    var t=document.getElementById('newComment').value.trim();
+    if(!n||!t){toast('Name and comment required');return}
+    var r=await fetch(API+'/comments/'+currentContentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t})});
+    var d=await r.json();
+    if(d.success){document.getElementById('commentName').value='';document.getElementById('newComment').value='';loadComments(currentContentId)}
+}
+
 async function likeComment(cid,cmid){await fetch(API+'/comments/'+cid+'/'+cmid+'/like',{method:'POST'});loadComments(cid)}
+
 function loadRelated(id,c){relatedAll=allContents.filter(function(x){return x._id!==id}).slice(0,48);relatedOffset=8;renderRelated()}
-function renderRelated(){var rightItems=relatedAll.slice(0,relatedOffset);document.getElementById('movieDetailRight').innerHTML=rightItems.map(function(m){return relatedCardHTML(m)}).join('');var bottomItems=relatedAll.slice(relatedOffset,relatedOffset+16);document.getElementById('relatedGridBottom').innerHTML=bottomItems.map(function(m){return relatedCardHTMLBottom(m)}).join('');var btn=document.getElementById('relatedLoadMore');if(relatedOffset+16>=relatedAll.length){btn.style.display='none'}else{btn.style.display='block';btn.textContent='See More ▼';btn.disabled=false;btn.style.opacity='1'}}
+
+function renderRelated(){
+    var rightItems=relatedAll.slice(0,relatedOffset);
+    document.getElementById('movieDetailRight').innerHTML=rightItems.map(function(m){return relatedCardHTML(m)}).join('');
+    var bottomItems=relatedAll.slice(relatedOffset,relatedOffset+16);
+    document.getElementById('relatedGridBottom').innerHTML=bottomItems.map(function(m){return relatedCardHTMLBottom(m)}).join('');
+    var btn=document.getElementById('relatedLoadMore');
+    if(relatedOffset+16>=relatedAll.length){btn.style.display='none'}
+    else{btn.style.display='block';btn.textContent='See More ▼';btn.disabled=false;btn.style.opacity='1'}
+}
+
 function loadMoreRelated(){relatedOffset+=16;renderRelated();document.getElementById('modalBodyContent').scrollTop+=400}
-async function showPlans(){var r=await fetch(API+'/plans');var plans=await r.json();selectedDuration='monthly';document.getElementById('durationTabs').innerHTML=['weekly','monthly','quarterly','yearly'].map(function(d){return'<button class="cat-pill '+(d===selectedDuration?'active':'')+'" onclick="selectDuration(\''+d+'\')">'+(d==='weekly'?'Weekly':d==='monthly'?'Monthly':d==='quarterly'?'Quarterly':'Yearly')+'</button>'}).join('');document.getElementById('plansGrid').innerHTML=Object.keys(plans).map(function(k){var v=plans[k];return'<div class="plan-card '+(k==='ultimate'?'featured':'')+'" onclick="selectPlan(\''+k+'\')"><div class="plan-name">'+v.name+'</div><div class="plan-price">'+(v[selectedDuration]||0).toLocaleString()+' <span>RWF</span></div></div>'}).join('');document.getElementById('paymentForm').style.display='none';openModal('plansModal')}
+
+async function showPlans(){
+    var r=await fetch(API+'/plans');var plans=await r.json();selectedDuration='monthly';
+    document.getElementById('durationTabs').innerHTML=['weekly','monthly','quarterly','yearly'].map(function(d){return'<button class="cat-pill '+(d===selectedDuration?'active':'')+'" onclick="selectDuration(\''+d+'\')">'+(d==='weekly'?'Weekly':d==='monthly'?'Monthly':d==='quarterly'?'Quarterly':'Yearly')+'</button>'}).join('');
+    document.getElementById('plansGrid').innerHTML=Object.keys(plans).map(function(k){var v=plans[k];return'<div class="plan-card '+(k==='ultimate'?'featured':'')+'" onclick="selectPlan(\''+k+'\')"><div class="plan-name">'+v.name+'</div><div class="plan-price">'+(v[selectedDuration]||0).toLocaleString()+' <span>RWF</span></div></div>'}).join('');
+    document.getElementById('paymentForm').style.display='none';openModal('plansModal');
+}
+
 function selectDuration(d){selectedDuration=d;showPlans()}
-function selectPlan(plan){if(plan==='free'){toast('Enjoy free movies!');closeModal('plansModal');return}if(!currentUser){closeModal('plansModal');showLoginDiv();openModal('authModal');return}selectedPlan=plan;document.getElementById('paymentForm').style.display='block'}
-async function submitPayment(){var fd=new FormData();fd.append('plan',selectedPlan);fd.append('duration',selectedDuration);fd.append('phone',document.getElementById('payPhone').value);fd.append('senderName',document.getElementById('paySenderName').value);fd.append('paymentScreenshot',document.getElementById('payScreenshot').files[0]);var r=await fetch(API+'/subscribe',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});var d=await r.json();if(d.success){closeModal('plansModal');toast('Payment submitted!')}else{toast(d.error||'Failed')}}
-async function loadAds(){try{var r=await fetch(API+'/ads');var ads=await r.json();if(ads&&ads.length){var a=ads[0];var h='';if(a.type==='image')h='<img src="'+a.mediaUrl+'" style="max-height:36px;border-radius:6px"> ';if(a.type==='video')h='<video src="'+a.mediaUrl+'" autoplay muted loop style="max-height:36px;border-radius:6px"></video> ';h+=a.title||'';if(a.contactPhone)h+=' · '+a.contactPhone;if(a.link)h=' <a href="'+a.link+'" target="_blank">More</a>';document.getElementById('adBannerInner').innerHTML=h;document.getElementById('adBanner').style.display='block'}}catch(e){}}
-function installApp(){if(window.deferredPrompt){window.deferredPrompt.prompt();window.deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted')toast('App installed!')});window.deferredPrompt=null}else{toast('Open in Chrome, tap "Add to Home Screen"')}}
+
+function selectPlan(plan){
+    if(plan==='free'){toast('Enjoy free movies!');closeModal('plansModal');return}
+    if(!currentUser){closeModal('plansModal');showLoginDiv();openModal('authModal');return}
+    selectedPlan=plan;document.getElementById('paymentForm').style.display='block';
+}
+
+async function submitPayment(){
+    var fd=new FormData();fd.append('plan',selectedPlan);fd.append('duration',selectedDuration);
+    fd.append('phone',document.getElementById('payPhone').value);fd.append('senderName',document.getElementById('paySenderName').value);
+    fd.append('paymentScreenshot',document.getElementById('payScreenshot').files[0]);
+    var r=await fetch(API+'/subscribe',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});
+    var d=await r.json();
+    if(d.success){closeModal('plansModal');toast('Payment submitted!')}else{toast(d.error||'Failed')}
+}
+
+async function loadAds(){
+    try{
+        var r=await fetch(API+'/ads');var ads=await r.json();
+        if(ads&&ads.length){var a=ads[0];var h='';
+        if(a.type==='image')h='<img src="'+a.mediaUrl+'" style="max-height:36px;border-radius:6px"> ';
+        if(a.type==='video')h='<video src="'+a.mediaUrl+'" autoplay muted loop style="max-height:36px;border-radius:6px"></video> ';
+        h+=a.title||'';if(a.contactPhone)h+=' · '+a.contactPhone;
+        if(a.link)h=' <a href="'+a.link+'" target="_blank">More</a>';
+        document.getElementById('adBannerInner').innerHTML=h;document.getElementById('adBanner').style.display='block'}
+    }catch(e){}
+}
+
+function installApp(){
+    if(window.deferredPrompt){window.deferredPrompt.prompt();window.deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted')toast('App installed!')});window.deferredPrompt=null}
+    else{toast('Open in Chrome, tap "Add to Home Screen"')}
+}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.deferredPrompt=e});
-(function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
+
+(function(){
+    var p=new URLSearchParams(window.location.search);var mid=p.get('movie');
+    loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}});
+    updateProfileIcon();
+    if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}
+})();
 </script>
 </body>
 </html>
