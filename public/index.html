@@ -95,6 +95,39 @@
 <script>
 var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],relatedOffset=0;
 
+// ============ HELPER: Check if URL is playable ============
+function isPlayableUrl(url){
+    if(!url)return false;
+    var lower=url.toLowerCase();
+    return (
+        lower.endsWith('.mp4')||
+        lower.endsWith('.webm')||
+        lower.endsWith('.ogg')||
+        lower.endsWith('.mov')||
+        lower.endsWith('.mkv')||
+        lower.endsWith('.m3u8')||
+        lower.includes('pixeldrain.com')||
+        lower.includes('archive.org/download/')||
+        lower.includes('isatafilez.my')||
+        lower.includes('/files/')||
+        lower.includes('cdn.')||
+        lower.includes('stream.')||
+        lower.includes('video.')||
+        lower.includes('media.')
+    );
+}
+
+// ============ HELPER: Get stream URL ============
+function getStreamUrl(url){
+    if(!url)return'';
+    if(url.includes('pixeldrain.com/u/')){
+        var fid=url.split('/u/')[1].split('/')[0].split('?')[0];
+        return'https://pixeldrain.com/api/file/'+fid+'?download';
+    }
+    if(url.includes('pixeldrain.com/api/file/')){return url+'?download';}
+    return url;
+}
+
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
 function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
 function closeMovieModal(){closeModal('movieModal');history.pushState(null,'','/')}
@@ -115,24 +148,10 @@ function toast(msg){var d=document.createElement('div');d.className='toast';d.te
 function toggleDescription(){var desc=document.getElementById('modalDesc');var link=document.getElementById('viewMoreLink');if(desc.classList.contains('desc-truncated')){desc.classList.remove('desc-truncated');desc.classList.add('desc-expanded');link.textContent='Show less'}else{desc.classList.add('desc-truncated');desc.classList.remove('desc-expanded');link.textContent='... View more'}}
 
 // ============ INCREMENT VIEWS ============
-async function incrementView(id){
-    try{
-        await fetch(API+'/contents/'+id+'/view',{method:'POST'});
-        // Update local data
-        var c=allContents.find(function(x){return x._id===id});
-        if(c){c.views=(c.views||0)+1}
-    }catch(e){}
-}
+async function incrementView(id){try{await fetch(API+'/contents/'+id+'/view',{method:'POST'});var c=allContents.find(function(x){return x._id===id});if(c){c.views=(c.views||0)+1}}catch(e){}}
 
 // ============ INCREMENT DOWNLOADS ============
-async function incrementDownload(id){
-    try{
-        await fetch(API+'/contents/'+id+'/download',{method:'POST'});
-        // Update local data
-        var c=allContents.find(function(x){return x._id===id});
-        if(c){c.downloads=(c.downloads||0)+1}
-    }catch(e){}
-}
+async function incrementDownload(id){try{await fetch(API+'/contents/'+id+'/download',{method:'POST'});var c=allContents.find(function(x){return x._id===id});if(c){c.downloads=(c.downloads||0)+1}}catch(e){}}
 
 async function loadAllContent(){try{var res=await fetch(API+'/contents');var data=await res.json();if(Array.isArray(data)){var seen={};allContents=data.filter(function(c){if(seen[c._id])return false;seen[c._id]=true;return true});renderAll();loadAds()}}catch(e){console.error(e)}}
 
@@ -220,10 +239,7 @@ async function openContent(id){
     var c=allContents.find(function(x){return x._id===id});
     if(!c)return;
     currentContentData=c;
-    
-    // INCREMENT VIEW COUNT
     incrementView(id);
-    
     history.pushState(null,'','/?movie='+id);
     document.getElementById('modalTitle').innerText=c.title;
     var desc=c.description||'No description available';
@@ -238,21 +254,16 @@ async function openContent(id){
     updateMyListButton();
     try{var partsRes=await fetch(API+'/contents/'+id+'/parts');var partsData=await partsRes.json();currentPartsItems=partsData.items||[]}catch(e){currentPartsItems=[]}
     
-    // IMPROVED canPlay detection
     var canPlay=false;
     var videoUrlToPlay=null;
-    
-    // Check parts first
     if(currentPartsItems.length>0&&currentPartsItems[0]&&currentPartsItems[0].videoUrl){
         videoUrlToPlay=currentPartsItems[0].videoUrl;
         canPlay=isPlayableUrl(videoUrlToPlay);
     }
-    // Fall back to direct parts array
     if(!canPlay&&c.parts&&c.parts[0]&&c.parts[0].videoUrl){
         videoUrlToPlay=c.parts[0].videoUrl;
         canPlay=isPlayableUrl(videoUrlToPlay);
     }
-    // Check if content itself has a videoUrl
     if(!canPlay&&c.videoUrl){
         videoUrlToPlay=c.videoUrl;
         canPlay=isPlayableUrl(videoUrlToPlay);
@@ -267,7 +278,6 @@ async function openContent(id){
         playerWrapper.style.display='block';
         watchBtn.style.display='flex';
         downloadBtn.style.flex='1';
-        // Pre-load the video so it's ready
         videoPlayer.src=getStreamUrl(videoUrlToPlay);
         videoPlayer.style.display='block';
         videoPlayer.load();
@@ -275,7 +285,6 @@ async function openContent(id){
         playerWrapper.style.display='none';
         watchBtn.style.display='none';
         downloadBtn.style.flex='1';
-        // Clear any previous video
         videoPlayer.src='';
         videoPlayer.style.display='none';
     }
@@ -287,39 +296,13 @@ async function openContent(id){
     loadRelated(id,c);
 }
 
-// NEW: Check if URL is playable
-function isPlayableUrl(url){
-    if(!url)return false;
-    var lower=url.toLowerCase();
-    return (
-        lower.endsWith('.mp4')||
-        lower.endsWith('.webm')||
-        lower.endsWith('.ogg')||
-        lower.endsWith('.mov')||
-        lower.endsWith('.mkv')||
-        lower.includes('pixeldrain.com')||
-        lower.includes('archive.org/download/')||
-        lower.includes('isatafilez.my')||
-        lower.includes('/files/')||
-        lower.includes('cdn.')||
-        lower.includes('stream.')||
-        lower.includes('video.')||
-        lower.includes('media.')
-    );
-}
-
-// NEW: Get proper stream URL
-function getStreamUrl(url){
-    if(!url)return'';
-    if(url.includes('pixeldrain.com/u/')){
-        var fid=url.split('/u/')[1].split('/')[0].split('?')[0];
-        return'https://pixeldrain.com/api/file/'+fid+'?download';
-    }
-    if(url.includes('pixeldrain.com/api/file/')){
-        return url+'?download';
-    }
-    // For direct mp4 and other video URLs, return as-is
-    return url;
+function renderPartsList(){
+    var pl=document.getElementById('partsList');
+    if(currentPartsItems.length>0){
+        pl.innerHTML=currentPartsItems.map(function(ep,i){
+            return'<div class="part-row'+(i===selectedPartIndex?' active':'')+'" onclick="selectPart('+i+')"><span class="part-name">'+escHtml(ep.number)+' - '+escHtml(ep.title)+(ep.seasonTitle?' ('+escHtml(ep.seasonTitle)+')':'')+'</span><span class="part-badge">'+(ep.accessLevel||'free').toUpperCase()+'</span>'+(ep.videoUrl?'<button class="cta-btn cta-outline cta-sm" onclick="event.stopPropagation();downloadPartItem(\''+i+'\')"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>':'')+'</div>';
+        }).join('');
+    }else{pl.innerHTML='<p style="color:var(--text3);font-size:0.82rem">No parts available</p>'}
 }
 
 function selectPart(i){
@@ -328,7 +311,6 @@ function selectPart(i){
     var playerWrapper=document.getElementById('playerWrapper');
     var watchBtn=document.getElementById('watchBtn');
     var videoPlayer=document.getElementById('videoPlayer');
-    
     if(item&&item.videoUrl){
         var canPlay=isPlayableUrl(item.videoUrl);
         if(canPlay){
@@ -352,20 +334,24 @@ function selectPart(i){
     }
 }
 
+function downloadPartItem(i){
+    var item=currentPartsItems[i];
+    if(item&&item.videoUrl){
+        incrementDownload(currentContentId);
+        window.open(item.videoUrl,'_blank');
+    }
+}
+
 function watchCurrentContent(){
     var videoPlayer=document.getElementById('videoPlayer');
     if(videoPlayer.src&&videoPlayer.style.display!=='none'){
-        videoPlayer.play().catch(function(e){
-            console.log('Play failed:',e);
-            // If autoplay fails, the user can still click the video to play
-        });
+        videoPlayer.play().catch(function(e){console.log('Play failed:',e)});
         return;
     }
     if(currentPartsItems.length>0){
         var item=currentPartsItems[selectedPartIndex];
         if(item&&item.videoUrl){
-            var url=getStreamUrl(item.videoUrl);
-            videoPlayer.src=url;
+            videoPlayer.src=getStreamUrl(item.videoUrl);
             videoPlayer.style.display='block';
             videoPlayer.load();
             videoPlayer.play().catch(function(){});
@@ -381,6 +367,21 @@ function watchCurrentContent(){
     }
 }
 
+function downloadCurrentContent(){
+    if(currentPartsItems.length>0){
+        var item=currentPartsItems[selectedPartIndex];
+        if(item&&item.videoUrl){
+            incrementDownload(currentContentId);
+            window.open(item.videoUrl,'_blank');
+            return;
+        }
+    }
+    if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){
+        incrementDownload(currentContentId);
+        window.open(currentContentData.parts[0].videoUrl,'_blank');
+    }
+}
+
 function playVideo(url){
     var videoPlayer=document.getElementById('videoPlayer');
     var streamUrl=getStreamUrl(url);
@@ -388,13 +389,10 @@ function playVideo(url){
         videoPlayer.src=streamUrl;
         videoPlayer.style.display='block';
         videoPlayer.load();
-        videoPlayer.play().catch(function(e){
-            console.log('Autoplay prevented, user can click play');
-        });
-    }else{
-        window.open(url,'_blank');
-    }
+        videoPlayer.play().catch(function(e){console.log('Autoplay prevented, user can click play')});
+    }else{window.open(url,'_blank')}
 }
+
 function shareMovie(p){
     var u=window.location.origin+'/?movie='+currentContentId;
     if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}
@@ -484,5 +482,6 @@ window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();win
     if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}
 })();
 </script>
+
 </body>
 </html>
