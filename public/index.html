@@ -274,7 +274,9 @@ async function openContent(id){
     var downloadBtn=document.getElementById('downloadMainBtn');
     var videoPlayer=document.getElementById('videoPlayer');
     
-    if(canPlay){
+        if(canPlay){
+        console.log('✅ Video URL to play:', videoUrlToPlay);
+        console.log('✅ Stream URL:', getStreamUrl(videoUrlToPlay));
         playerWrapper.style.display='block';
         watchBtn.style.display='flex';
         downloadBtn.style.flex='1';
@@ -282,6 +284,7 @@ async function openContent(id){
         videoPlayer.style.display='block';
         videoPlayer.load();
     }else{
+        console.log('❌ NOT playable. Parts:', currentPartsItems, 'Direct parts:', c.parts, 'videoUrl:', c.videoUrl);
         playerWrapper.style.display='none';
         watchBtn.style.display='none';
         downloadBtn.style.flex='1';
