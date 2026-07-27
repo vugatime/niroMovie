@@ -24,7 +24,6 @@
         .success{color:#4CAF50;font-size:0.8rem;margin-top:1rem;display:none;background:rgba(76,175,80,0.1);padding:0.6rem;border-radius:10px}
         .back-link{color:#E53935;text-decoration:none;font-size:0.8rem;margin-top:1.5rem;display:inline-block;cursor:pointer;transition:all 0.3s}
         .back-link:hover{text-decoration:underline;color:#ff6f60}
-        .info-text{color:#777;font-size:0.7rem;margin-top:1.5rem;line-height:1.5}
         @media(max-width:480px){.login-box{padding:1.8rem}.login-box h2{font-size:1.5rem}}
     </style>
 </head>
@@ -35,7 +34,7 @@
         <p class="subtitle">niroMovie Control Panel</p>
         <div class="form-group">
             <label>Email Address</label>
-            <input type="email" id="loginEmail" placeholder="admin@email.com" autocomplete="email">
+            <input type="email" id="loginEmail" placeholder="Enter admin email" autocomplete="email">
         </div>
         <div class="form-group">
             <label>Password</label>
@@ -45,12 +44,10 @@
         <p class="error" id="errorMsg"></p>
         <p class="success" id="successMsg"></p>
         <a class="back-link" href="/">← Back to niroMovie</a>
-        <p class="info-text">👑 Head Admin: agasobanuyenews@gmail.com<br>👤 Content Admin: vugatime@gmail.com</p>
     </div>
 
     <script>
         var API = 'https://niromovie-api.onrender.com/api';
-        // When deploying to Vercel: var API = 'https://niromovie-api.onrender.com/api';
         
         async function adminLogin() {
             var email = document.getElementById('loginEmail').value.trim();
@@ -59,11 +56,9 @@
             var successEl = document.getElementById('successMsg');
             var btn = document.getElementById('loginBtn');
             
-            // Reset messages
             errorEl.style.display = 'none';
             successEl.style.display = 'none';
             
-            // Validate
             if (!email) {
                 errorEl.textContent = '⚠️ Please enter your email address';
                 errorEl.style.display = 'block';
@@ -75,7 +70,6 @@
                 return;
             }
             
-            // Show loading
             btn.textContent = '⏳ Authenticating...';
             btn.disabled = true;
             
@@ -93,12 +87,10 @@
                 var data = await res.json();
                 
                 if (res.ok && data.user && data.user.role === 'admin') {
-                    // Success!
                     successEl.textContent = '✅ Login successful! Redirecting...';
                     successEl.style.display = 'block';
                     localStorage.setItem('token', data.token);
                     
-                    // Redirect after short delay
                     setTimeout(function() {
                         window.location.href = '/admin?token=' + data.token;
                     }, 500);
@@ -124,7 +116,6 @@
             }
         }
         
-        // Allow Enter key to submit
         document.getElementById('loginPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 adminLogin();
@@ -136,7 +127,6 @@
             }
         });
         
-        // Auto-focus email field
         document.getElementById('loginEmail').focus();
     </script>
 </body>
