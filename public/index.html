@@ -182,7 +182,7 @@ async function openContent(id){
     if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';downloadBtn.style.flex='1';videoPlayer.src=getStreamUrl(videoUrlToPlay);videoPlayer.style.display='block';videoPlayer.load();}
     else{playerWrapper.style.display='none';watchBtn.style.display='none';downloadBtn.style.flex='1';videoPlayer.src='';videoPlayer.style.display='none';}
     renderPartsList();openModal('movieModal');document.getElementById('modalBodyContent').scrollTop=0;
-    loadComments(id);loadRelated(id,c);
+    loadComments(id); await loadAds(); // ensure ads are loaded loadRelated(id,c);
 }
 function renderPartsList(){var pl=document.getElementById('partsList');if(currentPartsItems.length>0){pl.innerHTML=currentPartsItems.map(function(ep,i){return'<div class="part-row'+(i===selectedPartIndex?' active':'')+'" onclick="selectPart('+i+')"><span class="part-name">'+escHtml(ep.number)+' - '+escHtml(ep.title)+(ep.seasonTitle?' ('+escHtml(ep.seasonTitle)+')':'')+'</span><span class="part-badge">'+(ep.accessLevel||'free').toUpperCase()+'</span>'+(ep.videoUrl?'<button class="cta-btn cta-outline cta-sm" onclick="event.stopPropagation();downloadPartItem(\''+i+'\')"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>':'')+'</div>'}).join('');}else{pl.innerHTML='<p style="color:var(--text3);font-size:0.82rem">No parts available</p>'}}
 function selectPart(i){selectedPartIndex=i;renderPartsList();var item=currentPartsItems[i],playerWrapper=document.getElementById('playerWrapper'),watchBtn=document.getElementById('watchBtn'),videoPlayer=document.getElementById('videoPlayer');if(item&&item.videoUrl){var canPlay=isPlayableUrl(item.videoUrl);if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';}}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';}}
@@ -268,7 +268,6 @@ function renderRelatedGrids(){
     var btn=document.getElementById('relatedLoadMore');
     if(totalShown>=relatedAll.length){btn.style.display='none'}else{btn.style.display='block';btn.textContent='See More ▼';btn.disabled=false;btn.style.opacity='1'}
 }
-    
 function buildAdCard(ad){
     var media='';
     var type=(ad.type||'').toLowerCase();
@@ -281,6 +280,7 @@ function buildAdCard(ad){
     if(ad.businessName){contact+='<span>'+escHtml(ad.businessName)+'</span>'}
     return'<div class="ad-card">'+media+'<div class="ad-contact">'+contact+'</div></div>';
 }
+    
 function loadMoreRelated(){bottomCount+=12;renderRelatedGrids();document.getElementById('modalBodyContent').scrollTop+=400}
 window.addEventListener('resize',function(){if(document.getElementById('movieModal').classList.contains('active'))adjustRelatedRightCount()});
 async function showPlans(){
