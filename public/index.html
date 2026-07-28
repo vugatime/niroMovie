@@ -242,20 +242,23 @@ async function loadRelated(id,c){
     renderRelatedGrids();
     requestAnimationFrame(function(){adjustRelatedRightCount()});
 }
-function adjustRelatedRightCount(){
+ function adjustRelatedRightCount(){
     if(window.innerWidth<=900)return;
     var leftEl=document.getElementById('detailLeft');
     var rightEl=document.getElementById('detailRight');
     if(!leftEl||!rightEl)return;
-    var firstCard=rightEl.querySelector('.movie-card');
-    if(!firstCard)return;
+    // Try to find a movie card; if not, use the ad card or first child
+    var sampleCard = rightEl.querySelector('.movie-card');
+    if(!sampleCard) sampleCard = rightEl.querySelector('#adCardWrapper .movie-card');
+    if(!sampleCard) sampleCard = rightEl.firstElementChild;
+    if(!sampleCard) return;
     var leftH=leftEl.offsetHeight;
-    var cardH=firstCard.offsetHeight;
-    if(!cardH)return;
+    var cardH=sampleCard.offsetHeight;
+    if(!cardH) return;
     var gapPx=0.7*16;
     var cols=3;
     var maxRows=Math.ceil(18/cols);
-    var rows=Math.max(1,Math.min(maxRows,Math.round((leftH+gapPx)/(cardH+gapPx))));
+    var rows=Math.max(1, Math.min(maxRows, Math.round((leftH+gapPx)/(cardH+gapPx))));
     var newRightCount=rows*cols;
     if(newRightCount!==rightCount){
         var diff=rightCount-newRightCount;
@@ -263,7 +266,7 @@ function adjustRelatedRightCount(){
         bottomCount=Math.max(0,bottomCount+diff);
         renderRelatedGrids();
     }
-}
+}   
 function getMediaAdsForUser(){
     return allAds.filter(function(a){return (a.type||'').toLowerCase()!=='text'&&a.isActive!==false&&adMatchesPlan(a)});
 }
