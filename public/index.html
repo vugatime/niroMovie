@@ -128,7 +128,7 @@ function isPlayableUrl(url){if(!url)return false;var lower=url.toLowerCase();if(
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url+'?download';}return url;}
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
 function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
-function closeMovieModal(){closeModal('movieModal');if(modalAdTimer)clearInterval(modalAdTimer);history.pushState(null,'','/')}
+function closeMovieModal(){closeModal('movieModal');if(window.modalAdTimer)clearInterval(window.modalAdTimer);history.pushState(null,'','/')}
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
 function toggleSideMenu(){document.getElementById('sideMenu').classList.toggle('open');document.getElementById('sideMenuOverlay').classList.toggle('show')}
 function closeSideMenu(){document.getElementById('sideMenu').classList.remove('open');document.getElementById('sideMenuOverlay').classList.remove('show')}
@@ -211,7 +211,6 @@ function renderPartsList(){
             html+='<div class="part-row'+(i===selectedPartIndex?' active':'')+'" onclick="selectPart('+i+')"><span class="part-name">'+escHtml(ep.number)+' - '+escHtml(ep.title)+(ep.seasonTitle?' ('+escHtml(ep.seasonTitle)+')':'')+'</span><span class="part-badge">'+(ep.accessLevel||'free').toUpperCase()+'</span>'+(ep.videoUrl?'<button class="cta-btn cta-outline cta-sm" onclick="event.stopPropagation();downloadPartItem(\''+i+'\')"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>':'')+'</div>';
         }
         pl.innerHTML=html;
-        // Show More button
         if(revealedPartsCount<currentPartsItems.length){
             var remaining=currentPartsItems.length-revealedPartsCount;
             container.innerHTML='<button class="show-more-parts-btn" onclick="revealMoreParts()">Show More Episodes (+'+Math.min(2,remaining)+' more)</button>';
@@ -223,27 +222,14 @@ function renderPartsList(){
         container.innerHTML='';
     }
 }
-function revealMoreParts(){
-    revealedPartsCount=Math.min(revealedPartsCount+2,currentPartsItems.length);
-    renderPartsList();
-}
-function selectPart(i){selectedPartIndex=i;renderPartsList();var item=currentPartsItems[i],playerWrapper=document.getElementById('playerWrapper'),watchBtn=document.getElementById('watchBtn'),videoPlayer=document.getElementById('videoPlayer');if(item&&item.videoUrl){var canPlay=isPlayableUrl(item.videoUrl);if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';none';}}else{playerWrapper.style.display='none';watchBtn.style.display='none';video}}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='nonePlayer.src='';videoPlayer.style.display';}}
-function downloadPartItem(i='none';}}
-function downloadPartItem){var item=currentPartsItems[i];(i){var item=currentPartsItems[i];ifif(item&&item.v(item&&item.videoUrl){incrementDownloadideoUrl){incrementDownload(currentContentId);window.open(currentContentId);window.open(item.videoUrl,'(item.videoUrl,'_blank');}}
-function watch_blank');}}
-function watchCurrentContentCurrentContent(){var videoPlayer=document.getElementById('videoPlayer');if(){var videoPlayer=document.getElementById('videoPlayer');if(videoPlayer.src&&videoPlayer.style.display!=='(videoPlayer.src&&videonone'){videoPlayer.play().Player.style.display!=='none'){videoPlayer.play().catch(function(e){});return;}ifcatch(function(e){});return;}if(currentPartsItems(currentPartsItems.length>0){var item=currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&[selectedPartIndex];if(item&&item.videoUrl){videoitem.videoUrl){videoPlayer.src=getStreamPlayer.src=getStreamUrl(item.videoUrl);Url(item.videoUrl);videoPlayer.style.display='blockvideoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch';videoPlayer.load();videoPlayer.play().catch(function(){});return;(function(){});return;}}if(currentContentData}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0&&currentContentData.parts&&currentContentData.parts[]&&currentContentData.parts[0].0]&&currentContentData.parts[0videoUrl){var url=get].videoUrl){var url=getStreamUrl(currentContentData.pStreamUrl(currentContentData.parts[0].videoUrlarts[0].videoUrl);videoPlayer.src=);videoPlayer.src=url;url;videoPlayer.style.display='block';videoPlayervideoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch.load();videoPlayer.play().catch(function(){});}}
-(function(){});}}
-functionfunction downloadCurrentContent(){if(current downloadCurrentContent(){if(currentPartsItems.length>0){var item=currentPartsPartsItems.length>0){var item=currentPartsItems[selectedItems[selectedPartIndex];ifPartIndex];if(item&&item.videoUrl(item&&item.videoUrl){incrementDownload(current){incrementDownload(currentContentId);window.open(itemContentId);window.open(item.videoUrl,'_blank');return;}}if(currentContentData.videoUrl,'_blank');return;}}if(currentContentData&&currentContent&&currentContentData.parts&&currentContentData.parts&&currentContentData.parts[0]Data.parts[0]&&currentContentData.parts&&currentContentData.parts[0].videoUrl){[0].videoUrl){incrementDownload(currentContentincrementDownload(currentContentId);Id);window.open(currentContentDatawindow.open(currentContentData.parts[0].video.parts[0].videoUrl,'_blank');}}
-Url,'_blank');}}
-function playVideo(url){var videoPlayer=function playVideo(url){var videoPlayer=document.getElementById('videoPlayer');var streamUrl=getdocument.getElementById('videoPlayer');var streamUrl=getStreamUrl(url);if(isStreamUrl(url);if(isPlayableUrl(url)){PlayableUrl(url)){videoPlayer.src=streamUrlvideoPlayer.src=streamUrl;videoPlayer;videoPlayer.style.display='.style.display='block';videoblock';videoPlayer.load();videoPlayerPlayer.load();videoPlayer.play().catch(function(){});}else{window.open(url,'_blank')}}
-function shareMovie(p){var u=window.location.origin+'/?movie='+currentContentId;if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}else if(p==='whatsapp'){window.open('https://.play().catch(function(){});}else{window.open(url,'_blank')}}
-function shareMovie(p){var u=window.location.origin+'/?movie='+currentContentId;if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}else if(p==='whatsapp'){window.open('https://wawa.me/?text='+encodeURIComponent('Watch on niroMovie! '+u),'_blank')}}
-async function loadComments(id){var cl=document.getElementById('commentsList');try{var comments=await fetch(API+'/comments/'+id).then(function(r){return r.json()});if(!comments.me/?text='+encodeURIComponent('Watch on niroMovie! '+u),'_blank')}}
-async function loadComments(id){var cl=document.getElementById('commentsList');try{var comments=await fetch(API+'/comments/'+id).then(function(r){return r.json()});if(!comments||!comments.length){cl.innerHTML||!comments.length){cl.innerHTML='<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';return}cl.innerHTML=comments.map(function(x){var replies='<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';return}cl.innerHTML=comments.map(function(x){var repliesHtml='';if(x.replies&&x.replies.length>0){repliesHtml='<div class="replies">'+x.replies.map(function(r){return'<div class="reply-item"><span class="comment-user">'+escHtml(r.userName||'Anon')+'</span><span class="comment-date">'+new Date(r.createdAt).toLocaleString()+'Html='';if(x.replies&&x.replies.length>0){repliesHtml='<div class="replies">'+x.replies.map(function(r){return'<div class="reply-item"><span class="comment-user">'+escHtml(r.userName||'Anon')+'</span><span class="comment-date">'+new Date(r.createdAt).toLocaleString()+'</span><div class="</span><div class="comment-text">'+escHtml(r.text)+'</div></div>'}).join('')+'</div>'}return'<div class="comment-item" id="comment-'+x._id+'"><div><span class="comment-user">'+escHtml(x.usercomment-text">'+escHtml(r.text)+'</div></div>'}).join('')+'</div>'}return'<div class="comment-item" id="comment-'+x._id+'"><div><span class="comment-user">'+escHtml(x.userName||'Anon')Name||'Anon')+'</span><span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div><div class="comment-text">'+escHtml(x.text)+'</div><span class="comment-like" onclick="likeComment(\''+id+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span><span class="comment-reply-btn" onclick="showReplyForm(\''+x._id+'\')">↩ Reply</span><div class="reply-form" id="replyForm-'+x._id+'" style="display:none"><input type="text" id="replyName-'+x._id+'" placeholder="Name" style="flex:1;min-width:60px"><input type="text" id="replyText-'+x._id+'" placeholder="Reply..." style="flex:2;min-width:80px"><button class="cta-btn cta-download cta-sm" onclick="addReply(\''+id+'\',\''+x._id+'\')">Reply</button></div>'+repliesHtml+'</div>'}).join('')}catch(e){cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'}}
-function showReplyForm(cid){var f=document.getElementById('replyForm-'+cid);f.style.display=f.style.display==='none'?'flex':'none'}
-async function addReply(contentId,commentId){var n=document.getElementById('replyName-'+commentId).value.trim();var t=document.getElementById('replyText-'+commentId).value.trim();if(!n||!t){toast('Name and reply required');return}var r=await fetch(API+'/comments/'+contentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t,parentId:commentId})});var d=await r.json();if(d.success){document.getElementById('replyName-'+commentId).value='';document.getElementById('replyText-'+commentId).value='';loadComments(contentId)}}
-async function addComment(){var n=document.getElementById('commentName').value.trim();var t=document.getElementById('newComment').value.trim();if(!n||!t){toast('Name and comment required');return}var r=await fetch(API+'/comments/'+currentContentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t})});var d=await r.json();if(d.success){document.getElementById('commentName').value='';document.getElementById('newComment').value='';loadComments(currentContentId)}}
-async function likeComment(cid,cmid){await fetch(API+'/comments/'+cid+'/'+cmid+'/like',+'</span><span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div><div class="comment-text">'+escHtml(x.text)+'</div><span class="comment-like" onclick="likeComment(\''+id+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span><span class="comment-reply-btn" onclick="showReplyForm(\''+x._id+'\')">↩ Reply</span><div class="reply-form" id="replyForm-'+x._id+'" style="display:none"><input type="text" id="replyName-'+x._id+'" placeholder="Name" style="flex:1;min-width:60px"><input type="text" id="replyText-'+x._id+'" placeholder="Reply..." style="flex:2;min-width:80px"><button class="cta-btn cta-download cta-sm" onclick="addReply(\''+id+'\',\''+x._id+'\')">Reply</button></div>'+repliesHtml+'</div>'}).join('')}catch(e){cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'}}
+function revealMoreParts(){revealedPartsCount=Math.min(revealedPartsCount+2,currentPartsItems.length);renderPartsList();}
+function selectPart(i){selectedPartIndex=i;renderPartsList();var item=currentPartsItems[i],playerWrapper=document.getElementById('playerWrapper'),watchBtn=document.getElementById('watchBtn'),videoPlayer=document.getElementById('videoPlayer');if(item&&item.videoUrl){var canPlay=isPlayableUrl(item.videoUrl);if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';}}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';}}
+function downloadPartItem(i){var item=currentPartsItems[i];if(item&&item.videoUrl){incrementDownload(currentContentId);window.open(item.videoUrl,'_blank');}}
+function watchCurrentContent(){var videoPlayer=document.getElementById('videoPlayer');if(videoPlayer.src&&videoPlayer.style.display!=='none'){videoPlayer.play().catch(function(e){});return;}if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){var url=getStreamUrl(currentContentData.parts[0].videoUrl);videoPlayer.src=url;videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}}
+function downloadCurrentContent(){if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){incrementDownload(currentContentId);window.open(item.videoUrl,'_blank');return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){incrementDownload(currentContentId);window.open(currentContentData.parts[0].videoUrl,'_blank');}}
+function playVideo(url){var videoPlayer=document.getElementById('videoPlayer');var streamUrl=getStreamUrl(url);if(isPlayableUrl(url)){videoPlayer.src=streamUrl;videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}else{window.open(url,'_blank')}}
+function shareMovie(p){var u=window.location.origin+'/?movie='+currentContentId;if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}else if(p==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent('Watch on niroMovie! '+u),'_blank')}}
+async function loadComments(id){var cl=document.getElementById('commentsList');try{var comments=await fetch(API+'/comments/'+id).then(function(r){return r.json()});if(!comments||!comments.length){cl.innerHTML='<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';return}cl.innerHTML=comments.map(function(x){var repliesHtml='';if(x.replies&&x.replies.length>0){repliesHtml='<div class="replies">'+x.replies.map(function(r){return'<div class="reply-item"><span class="comment-user">'+escHtml(r.userName||'Anon')+'</span><span class="comment-date">'+new Date(r.createdAt).toLocaleString()+'</span><div class="comment-text">'+escHtml(r.text)+'</div></div>'}).join('')+'</div>'}return'<div class="comment-item" id="comment-'+x._id+'"><div><span class="comment-user">'+escHtml(x.userName||'Anon')+'</span><span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div><div class="comment-text">'+escHtml(x.text)+'</div><span class="comment-like" onclick="likeComment(\''+id+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span><span class="comment-reply-btn" onclick="showReplyForm(\''+x._id+'\')">↩ Reply</span><div class="reply-form" id="replyForm-'+x._id+'" style="display:none"><input type="text" id="replyName-'+x._id+'" placeholder="Name" style="flex:1;min-width:60px"><input type="text" id="replyText-'+x._id+'" placeholder="Reply..." style="flex:2;min-width:80px"><button class="cta-btn cta-download cta-sm" onclick="addReply(\''+id+'\',\''+x._id+'\')">Reply</button></div>'+repliesHtml+'</div>'}).join('')}catch(e){cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'}}
 function showReplyForm(cid){var f=document.getElementById('replyForm-'+cid);f.style.display=f.style.display==='none'?'flex':'none'}
 async function addReply(contentId,commentId){var n=document.getElementById('replyName-'+commentId).value.trim();var t=document.getElementById('replyText-'+commentId).value.trim();if(!n||!t){toast('Name and reply required');return}var r=await fetch(API+'/comments/'+contentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t,parentId:commentId})});var d=await r.json();if(d.success){document.getElementById('replyName-'+commentId).value='';document.getElementById('replyText-'+commentId).value='';loadComments(contentId)}}
 async function addComment(){var n=document.getElementById('commentName').value.trim();var t=document.getElementById('newComment').value.trim();if(!n||!t){toast('Name and comment required');return}var r=await fetch(API+'/comments/'+currentContentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t})});var d=await r.json();if(d.success){document.getElementById('commentName').value='';document.getElementById('newComment').value='';loadComments(currentContentId)}}
@@ -252,36 +238,19 @@ async function likeComment(cid,cmid){await fetch(API+'/comments/'+cid+'/'+cmid+'
 async function loadRelated(id,c){
     relatedAll=allContents.filter(function(x){return x._id!==id});
     rightCount=18;bottomCount=12;
-    if(allAds.length===0){await load{method:'POST'});loadComments(cid)}
-
-async function loadRelated(id,c){
-    relatedAll=allContents.filter(function(x){return x._id!==id});
-    rightCount=18;bottomCount=12;
-    if(allAds.length===0){await loadAdsAds();}
+    if(allAds.length===0){await loadAds();}
     renderRelatedGrids();
     requestAnimationFrame(function(){adjustRelatedRightCount()});
 }
 function adjustRelatedRightCount(){
     if(window.innerWidth<=900)return;
     var leftEl=document.getElementById('detailLeft');
-    var rightEl=document.getElementById('detailRight();}
-    renderRelatedGrids();
-    requestAnimationFrame(function(){adjustRelatedRightCount()});
-}
-function adjustRelatedRightCount(){
-    if(window.innerWidth<=900)return;
-    var leftEl=document.getElementById('detailLeft');
-    var rightEl');
+    var rightEl=document.getElementById('detailRight');
     if(!leftEl||!rightEl)return;
     var firstCard=rightEl.querySelector('.movie-card');
     if(!firstCard)return;
     var leftH=leftEl.offsetHeight;
-    var cardH=firstCard=document.getElementById('detailRight');
-    if(!leftEl||!rightEl)return;
-    var firstCard=rightEl.querySelector('.movie-card');
-    if(!firstCard)return;
-    var leftH=leftEl.offsetHeight;
-    var card.offsetHeight;
+    var cardH=firstCard.offsetHeight;
     if(!cardH)return;
     var gapPx=0.7*16;
     var cols=3;
@@ -296,22 +265,7 @@ function adjustRelatedRightCount(){
     }
 }
 function getMediaAdsForUser(){
-    return allAds.filter(function(a){return (a.type||'').toLowerCase()!=='text'&&a.isActiveH=firstCard.offsetHeight;
-    if(!cardH)return;
-    var gapPx=0.7*16;
-    var cols=3;
-    var maxRows=Math.ceil(18/cols);
-    var rows=Math.max(1,Math.min(maxRows,Math.round((leftH+gapPx)/(cardH+gapPx))));
-    var newRightCount=rows*cols;
-    if(newRightCount!==rightCount){
-        var diff=rightCount-newRightCount;
-        rightCount=newRightCount;
-        bottomCount=Math.max(0,bottomCount+diff);
-        renderRelatedGrids();
-    }
-}
-function getMediaAdsForUser(){
-    return allAds.filter(function(a){return (a.type||'').toLowerCase()!=='text'&&a.isActive!==false&&adMatches!==false&&adMatchesPlan(a)});
+    return allAds.filter(function(a){return (a.type||'').toLowerCase()!=='text'&&a.isActive!==false&&adMatchesPlan(a)});
 }
 var modalAdList=[],modalAdIndex=0,modalAdTimer=null;
 function startModalAdRotation(){
@@ -324,116 +278,28 @@ function startModalAdRotation(){
     }
 }
 function refreshAdCardContent(){
-    var mount=document.getElementByIdPlan(a)});
-}
-var modalAdList=[],modalAdIndex=0,modalAdTimer=null;
-function startModalAdRotation(){
-    if(modalAdTimer)clearInterval(modalAdTimer);
-    if(modalAdList.length>1){
-        modalAdTimer=setInterval(function(){
-            modalAdIndex=(modalAdIndex+1)%modalAdList.length;
-            refreshAdCardContent();
-        },15000);
-    }
-}
-function refreshAdCardContent(){
-    var mount=document.getElementById('adCardMount('adCardMount');
+    var mount=document.getElementById('adCardMount');
     if(!mount||!modalAdList[modalAdIndex])return;
     mount.innerHTML=buildAdCardInner(modalAdList[modalAdIndex]);
 }
-function modalAdGoTo(i){
-    modalAdIndex=i;
-    refreshAdCardContent();
-    startModalAdRotation();
-}
+function modalAdGoTo(i){modalAdIndex=i;refreshAdCardContent();startModalAdRotation();}
 function renderRelatedGrids(){
     var rightEl=document.getElementById('detailRight');
     modalAdList=getMediaAdsForUser();
     modalAdIndex=0;
-    var hasAd=modalAd');
-    if(!mount||!modalAdList[modalAdIndex])return;
-    mount.innerHTML=buildAdCardInner(modalAdList[modalAdIndex]);
-}
-function modalAdGoTo(i){
-    modalAdIndex=i;
-    refreshAdCardContent();
-    startModalAdRotation();
-}
-function renderRelatedGrids(){
-    var rightEl=document.getElementById('detailRight');
-    modalAdList=getMediaAdsForUser();
-    modalAdIndex=0;
-    var hasAd=modalAdList.lengthList.length>0;
-   > var rightItems=[];
-    if(hasAd){
-        rightEl.style.gridTemplateColumns='repeat(3,1fr)';
-        var html='';
-        var col1Items=relatedAll.slice(0,3);
-        for(var j=0;j<3;j++){
-            if(col1Items[j])html+=relatedCardHTML(col1Items[j],'grid-column:1;grid-row:'+(j+1));
-        }
-        html+='<div class="ad-card" style="grid-column:2 / span 2;grid-row:1 / span 3" id="adCardWrapper"><div class="ad-card-inner" id="adCardMount">'+buildAdCardInner(modalAdList[0])+'</div></div>';
-        var restCards=relatedAll.slice(3,12);
-        for(var k=0;k<9;k++){
-            if(restCards[k]){
-                var row=4+Math.floor(k/3);
-                var col=1+(k%3);
-                html+=relatedCardHTML(restCards[k],'grid-column:'+col+';grid-row:'+row);
-            }
-        }
-        rightEl.innerHTML=html;
-        var wrapper=document.getElementById('adCardWrapper');
-        if(wrapper){
-            wrapper.onmouseenter=function(){if(modalAdTimer)clearInterval(modalAdTimer)};
-            wrapper.onmouseleave=function(){startModalAdRotation()};
-        }
-        startModalAdRotation();
-    }else{
-        if(modalAdTimer)clearInterval(modalAdTimer);
-        rightItems=relatedAll.slice(0,rightCount);
-        rightEl.style.gridTemplateColumns='repeat(3,1fr)';
-        rightEl.innerHTML=rightItems.map(function(m){return relatedCardHTML(m)}).join('');
-    }
-    var bottomStart=hasAd?12:rightCount;
-    var bottomItems=relatedAll.slice(bottomStart,bottomStart+bottomCount);
-    document.getElementById('detailBottomGrid').innerHTML=bottomItems.map(function(m){return relatedCardHTML(m)}).join('');
-    var totalShown=bottomStart+bottomCount;
-    var btn=document.getElementById('relatedLoadMore');
-    if(totalShown>=relatedAll.length){btn.style.display='none'}else{btn.style.display='block';btn.textContent='See More ▼';btn.disabled=false;btn.style.opacity='1'}
-}
-function buildAdCardInner(ad){
-    var media='';
-    var type=(ad.type||'').toLowerCase().trim();
-    if(type==='image'&&ad.mediaUrl){media='<img src="'+ad.mediaUrl+'" onerror="this.style.display=\'none\'">'}
-    else if(type==='video'&&ad.mediaUrl){media='<video src="'+ad.mediaUrl+'" autoplay muted loop playsinline onerror="this.style.display=\'none\'"></video>'}
-    else if(type==='text'&&ad.description){media='<p style="font-size:0.9rem;color:var(--text);padding:0.5rem">'+escHtml(ad.description)+'</p>'}
-    var contact='';
-    if(ad.contactPhone){contact+='<a href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">💬 Can we talk on this?</a>'}
-    if(ad.link){contact+='<a href="'+ad.link+'" target="_blank">🌐 Visit</a>'}
-    if(ad.businessName){contact+='0;
+    var hasAd=modalAdList.length>0;
     var rightItems=[];
     if(hasAd){
         rightEl.style.gridTemplateColumns='repeat(3,1fr)';
         var html='';
         var col1Items=relatedAll.slice(0,3);
-        for(var j=0;j<3;j++){
-            if(col1Items[j])html+=relatedCardHTML(col1Items[j],'grid-column:1;grid-row:'+(j+1));
-        }
+        for(var j=0;j<3;j++){if(col1Items[j])html+=relatedCardHTML(col1Items[j],'grid-column:1;grid-row:'+(j+1));}
         html+='<div class="ad-card" style="grid-column:2 / span 2;grid-row:1 / span 3" id="adCardWrapper"><div class="ad-card-inner" id="adCardMount">'+buildAdCardInner(modalAdList[0])+'</div></div>';
         var restCards=relatedAll.slice(3,12);
-        for(var k=0;k<9;k++){
-            if(restCards[k]){
-                var row=4+Math.floor(k/3);
-                var col=1+(k%3);
-                html+=relatedCardHTML(restCards[k],'grid-column:'+col+';grid-row:'+row);
-            }
-        }
+        for(var k=0;k<9;k++){if(restCards[k]){var row=4+Math.floor(k/3);var col=1+(k%3);html+=relatedCardHTML(restCards[k],'grid-column:'+col+';grid-row:'+row);}}
         rightEl.innerHTML=html;
         var wrapper=document.getElementById('adCardWrapper');
-        if(wrapper){
-            wrapper.onmouseenter=function(){if(modalAdTimer)clearInterval(modalAdTimer)};
-            wrapper.onmouseleave=function(){startModalAdRotation()};
-        }
+        if(wrapper){wrapper.onmouseenter=function(){if(modalAdTimer)clearInterval(modalAdTimer)};wrapper.onmouseleave=function(){startModalAdRotation()};}
         startModalAdRotation();
     }else{
         if(modalAdTimer)clearInterval(modalAdTimer);
@@ -459,28 +325,9 @@ function buildAdCardInner(ad){
     if(ad.link){contact+='<a href="'+ad.link+'" target="_blank">🌐 Visit</a>'}
     if(ad.businessName){contact+='<span>'+escHtml(ad.businessName)+'</span>'}
     var dots='';
-    if(modalAdList.length>1){
-        dots='<div class="ad-dots-inline">';
-        for(var i=0;i<modalAdList.length;i++){dots+='<div class="ad-dot-sm'+(i===modalAdIndex?' active':'')+'" onclick="event.stopPropagation();modalAdGoTo('+i+')"></div>'}
-        dots+='</div>';
-    }
+    if(modalAdList.length>1){dots='<div class="ad-dots-inline">';for(var i=0;i<modalAdList.length;i++){dots+='<div class="ad-dot-sm'+(i===modalAdIndex?' active':'')+'" onclick="event.stopPropagation();modalAdGoTo('+i+')"></div>'}dots+='</div>';}
     return media+'<div class="ad-contact">'+contact+'</div>'+dots;
 }
-
-function loadMoreRelated(){bottomCount+=12;renderRelatedGrids();document.getElementById('modalBodyContent').scrollTop+=400}
-window.addEventListener('resize',function(){if(document.getElementById('movieModal').classList.contains('active'))adjustRelatedRightCount()});
-async function showPlans(){
-    var r=await fetch(API+'/plans');var plans=await r.json();
-    document.getElementById('durationTabs').innerHTML=['weekly<span>'+escHtml(ad.businessName)+'</span>'}
-    var dots='';
-    if(modalAdList.length>1){
-        dots='<div class="ad-dots-inline">';
-        for(var i=0;i<modalAdList.length;i++){dots+='<div class="ad-dot-sm'+(i===modalAdIndex?' active':'')+'" onclick="event.stopPropagation();modalAdGoTo('+i+')"></div>'}
-        dots+='</div>';
-    }
-    return media+'<div class="ad-contact">'+contact+'</div>'+dots;
-}
-
 function loadMoreRelated(){bottomCount+=12;renderRelatedGrids();document.getElementById('modalBodyContent').scrollTop+=400}
 window.addEventListener('resize',function(){if(document.getElementById('movieModal').classList.contains('active'))adjustRelatedRightCount()});
 async function showPlans(){
@@ -489,121 +336,38 @@ async function showPlans(){
     document.getElementById('plansGrid').innerHTML=Object.keys(plans).map(function(k){var v=plans[k];return'<div class="plan-card '+(k==='ultimate'?'featured':'')+'" onclick="selectPlan(\''+k+'\')"><div class="plan-name">'+v.name+'</div><div class="plan-price">'+(v[selectedDuration]||0).toLocaleString()+' <span>RWF</span></div></div>'}).join('');
     document.getElementById('paymentForm').style.display='none';openModal('plansModal')
 }
-','monthly','quarterly','yearly'].map(function(d){return'<button class="cat-pill '+(d===selectedDuration?'active':'')+'" onclick="selectDuration(\''+d+'\')">'+(d==='weekly'?'Weekly':d==='monthly'?'Monthly':d==='quarterly'?'Quarterly':'Yearly')+'</button>'}).join('');
-    document.getElementById('plansGrid').innerHTML=Object.keys(plans).map(function(k){var v=plans[k];return'<div class="plan-card '+(k==='ultimate'?'featured':'')+'" onclick="selectPlan(\''+k+'\')"><div class="plan-name">'+v.name+'</div><div class="plan-price">'+(v[selectedDuration]||0).toLocaleString()+' <span>RWF</span></div></div>'}).join('');
-    document.getElementById('paymentForm').style.display='none';openModal('plansModal')
-}
 function selectDuration(d){selectedDuration=d;showPlans()}
-function selectPlan(plan){if(plan==='free'){toast('Enjoyfunction selectDuration(d){selectedDuration=d;showPlans()}
-function selectPlan(plan){if(plan==='free'){toast('Enjoy free movies!');closeModal('plansModal');return}if(!currentUser){closeModal('plansModal');showLogin free movies!');closeModal('plansModal');return}if(!currentUser){closeModal('plansModal');showLoginDiv();openDiv();openModal('authModal');returnModal('authModal');return}selectedPlan=plan;document.getElementById}selectedPlan=plan;document.getElementById('paymentForm').style.display('paymentForm').style.display='block'}
-async function submit='block'}
-async function submitPayment(){var fd=new FormData();fd.append('planPayment(){var fd=new FormData();fd.append('plan',selectedPlan);fd.append('duration',selectedPlan);fd.append('duration',selectedDuration);fd.append('phone',selectedDuration);fd.append('phone',document.getElementById('pay',document.getElementById('payPhone').value);fd.append('senderName',document.getElementByIdPhone').value);fd.append('senderName',document.getElementById('paySenderName').value);fd.append('paymentScreenshot',document.getElementById('('paySenderName').value);fd.append('paymentScreenshot',document.getElementById('payScreenshot').filespayScreenshot').files[0]);var r=await fetch(API+'[0]);var r=await fetch(API+'/subscribe',{method:'POST',headers:{'Authorization':'Bearer '+token},/subscribe',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});var dbody:fd});var d=await r.json();if(d.success){close=await r.json();if(d.success){closeModal('plansModal('plansModalModal');toast('Payment submitted!');toast('Payment submitted!')}else')}else{toast(d.error||'{toast(d.error||'Failed')}}
-async function loadFailed')}}
+function selectPlan(plan){if(plan==='free'){toast('Enjoy free movies!');closeModal('plansModal');return}if(!currentUser){closeModal('plansModal');showLoginDiv();openModal('authModal');return}selectedPlan=plan;document.getElementById('paymentForm').style.display='block'}
+async function submitPayment(){var fd=new FormData();fd.append('plan',selectedPlan);fd.append('duration',selectedDuration);fd.append('phone',document.getElementById('payPhone').value);fd.append('senderName',document.getElementById('paySenderName').value);fd.append('paymentScreenshot',document.getElementById('payScreenshot').files[0]);var r=await fetch(API+'/subscribe',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});var d=await r.json();if(d.success){closeModal('plansModal');toast('Payment submitted!')}else{toast(d.error||'Failed')}}
 async function loadAds(){
-    tryAds(){
     try{
-        var r=await{
-        var r=await fetch(API+'/ads');var ads=await r fetch(API+'/ads');var ads=await r.json();
-        if(ads&&ads.length){allAds=ads.filter(function(a){.json();
-        if(ads&&ads.length){allAdsreturn a.isActive!===ads.filter(function(a){return a.isActive!==false})}else{allAds=[]}
-        var textAds=allAds.filter(function(a){return (false})}else{allAds=[]}
-        var textAds=allAds.filter(function(a){return (a.type||'').toa.type||'').toLowerCase()==='text'&&adMatchesPlanLowerCase()==='text'&&adMatchesPlan(a)});
-        var bar(a)});
-        var bar=document.getElementById('welcomeBar');
-        var inner==document.getElementById('welcomeBar');
-        var inner=document.getElementById('welcomedocument.getElementById('welcomeBarInner');
-BarInner');
-        if(textAds        if(textAds.length>0){
-.length>0){
-            bar            bar.style.display='block';
-           .style.display='block';
-            renderTextAdCarousel renderTextAdCarousel(textAds,inner);
-        }else(textAds,inner);
-        }else{bar.style.display{bar.style.display='none';if(adCarouselTimer)clearInterval(adCarouselTimer)}
-='none';if(adCarouselTimer)clearInterval(adCarouselTimer)}
-    }catch(e){}
+        var r=await fetch(API+'/ads');var ads=await r.json();
+        if(ads&&ads.length){allAds=ads.filter(function(a){return a.isActive!==false})}else{allAds=[]}
+        var textAds=allAds.filter(function(a){return (a.type||'').toLowerCase()==='text'&&adMatchesPlan(a)});
+        var bar=document.getElementById('welcomeBar');var inner=document.getElementById('welcomeBarInner');
+        if(textAds.length>0){bar.style.display='block';renderTextAdCarousel(textAds,inner);}
+        else{bar.style.display='none';if(adCarouselTimer)clearInterval(adCarouselTimer)}
     }catch(e){}
 }
-var currentTextAds}
 var currentTextAds=[];
-function renderTextAdCarousel(ads,container=[];
-function renderTextAdCarousel(){
-    currentTextAds=ads,container){
-    currentTextAds=ads;
-    if(adads;
-    if(adCarouselTimer)clearIntervalCarouselTimer)clearInterval(adCarouselTimer);
-(adCarouselTimer);
-    adCarouselIndex=    adCarouselIndex=0;
-    function show0;
+function renderTextAdCarousel(ads,container){
+    currentTextAds=ads;if(adCarouselTimer)clearInterval(adCarouselTimer);adCarouselIndex=0;
     function showSlide(idx){
-        adSlide(idx){
-        adCarCarouselIndex=idx;
-       ouselIndex=idx;
-        var ad=ads[idx];
-        var html='<div class="wb-slide"><span var ad=ads[idx];
-        var html='<div class="wb-slide"><span class="wb-title"> class="wb-title">'+escHtml(ad.title'+escHtml(ad.title||'')+'</span>'||'')+'</span>'+(ad.description?'+(ad.description?'<span class="wb-desc">'+escHtml(<span class="wb-desc">'+escHtml(ad.description)+'</span>':'');
-        ifad.description)+'</span>':'');
-        if(ad.contactPhone){(ad.contactPhone){html+='<a class="wb-cta"html+='<a class="wb-cta" href="https://wa.me/'+ad.contactPhone href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">.replace(/[^0-9]/g,'')+💬 Talk to Us</a'" target="_blank">💬 Talk to Us>'}
-        html+='</a>'}
+        adCarouselIndex=idx;var ad=ads[idx];
+        var html='<div class="wb-slide"><span class="wb-title">'+escHtml(ad.title||'')+'</span>'+(ad.description?'<span class="wb-desc">'+escHtml(ad.description)+'</span>':'');
+        if(ad.contactPhone){html+='<a class="wb-cta" href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">💬 Talk to Us</a>'}
         html+='</div>';
-        if(</div>';
-        if(ads.length>1){
-            html+='<div classads.length>1){
-            html+='="wb-dots">';
-           <div class="wb-dots">';
-            for(var i=0 for(var i=0;i<ads.length;i;i<ads.length;i++){html+='<div++){html+='<div class="wb-dot' class="wb-dot'+(i===idx?' active':'')+(i===idx?' active':'')+'" onclick="+'" onclick="adCarouselGoTo('+i+')"></div>'}
-            html+='adCarouselGoTo('+i+')"></div>'}
-            html+</div>';
-        }
-       ='</div>';
-        }
+        if(ads.length>1){html+='<div class="wb-dots">';for(var i=0;i<ads.length;i++){html+='<div class="wb-dot'+(i===idx?' active':'')+'" onclick="adCarouselGoTo('+i+')"></div>'}html+='</div>';}
         container.innerHTML=html;
     }
-    container._showSlide=show container.innerHTML=html;
-    }
-    container._showSlide=showSlide;
-    showSlide;
-    showSlide(0);
-    function startTimer(){
-       Slide(0);
-    function if(adCarouselTimer)clear startTimer(){
-        if(adCarouselTimer)clearInterval(adCarouselTimerInterval(adCarouselTimer);
-        if(ads.length>1){
-            adCarousel);
-        if(ads.length>1){
-            adCarouselTimer=setIntervalTimer=setInterval(function(){
-                showSlide((adCarouselIndex+1(function(){
-                showSlide((ad)%ads.length);
-            },CarouselIndex+1)%ads.length);
-            },15000);
-        }
-   15000);
-        }
-    }
-    startTimer();
-    container }
-    startTimer();
-    container.onmouseenter=function.onmouseenter=function(){if(adCarouselTimer)clearInterval(ad(){if(adCarouselCarouselTimer)};
-   Timer)clearInterval(adCarouselTimer)};
-    container.onmouseleave=function(){startTimer()};
+    container._showSlide=showSlide;showSlide(0);
+    function startTimer(){if(adCarouselTimer)clearInterval(adCarouselTimer);if(ads.length>1){adCarouselTimer=setInterval(function(){showSlide((adCarouselIndex+1)%ads.length)},15000)}}
+    startTimer();container.onmouseenter=function(){if(adCarouselTimer)clearInterval(adCarouselTimer)};container.onmouseleave=function(){startTimer()};
 }
-function adCarouselGo container.onmouseleave=function(){startTimer()};
-}
-function adCarouselGoTo(i){
-    var container=document.getElementById('welcomeTo(i){
-    var container=document.getElementById('BarInner');
-    if(container&&containerwelcomeBarInner');
-    if(container&&container._showSlide)container._showSlide(i._showSlide)container._showSlide(i);
-}
-function installApp(){);
-}
-function installApp(){if(window.deferredPrompt){window.deferredPromptif(window.deferredPrompt){window.deferredPrompt.prompt.prompt();window.deferredPrompt.userChoice.then(function();window.deferredPrompt.userChoice.then(function(r){if(r.out(r){if(r.outcome==='come==='accepted')accepted')toast('App installed!')});window.deferredPrompttoast('App installed!=null}else{')});window.deferredPrompt=null}else{toasttoast('Open in('Open in Chrome, tap "Add Chrome, tap "Add to to Home Screen"')}}
- Home Screen"')}}
-window.addEventListenerwindow.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.deferredPrompt=e});
-(function('beforeinstallprompt',function(e){e.preventDefault();window.deferred(){var p=new URLSearchParams(window.location.search);var mid=pPrompt=e});
-(function(){var p=new URLSearchParams(window.location.get('movie');loadAllContent().then(function(){if.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(m(mid){setTimeout(function(){openContent(midid)},800)}});updateProfileIcon();if('serviceWorker' in navigator)},800)}});updateProfileIcon();if('serviceWorker' in navigator){navig){navigator.serviceWorker.register('/swator.serviceWorker.register('/sw.js').catch(function(){}).js').catch(function(){})}})();
-</script>
-</}})();
+function adCarouselGoTo(i){var container=document.getElementById('welcomeBarInner');if(container&&container._showSlide)container._showSlide(i);}
+function installApp(){if(window.deferredPrompt){window.deferredPrompt.prompt();window.deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted')toast('App installed!')});window.deferredPrompt=null}else{toast('Open in Chrome, tap "Add to Home Screen"')}}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.deferredPrompt=e});
+(function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
 </script>
 </body>
 </html>
