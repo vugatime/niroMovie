@@ -136,8 +136,8 @@ async function incrementView(id){try{var r=await fetch(API+'/contents/'+id+'/vie
 async function incrementDownload(id){try{var r=await fetch(API+'/contents/'+id+'/download',{method:'POST'});var d=await r.json();if(d&&d.downloads!==undefined){var c=allContents.find(function(x){return x._id===id});if(c){c.downloads=d.downloads;}}else{var c=allContents.find(function(x){return x._id===id});if(c){c.downloads=(c.downloads||0)+1;}}}catch(e){var c=allContents.find(function(x){return x._id===id});if(c){c.downloads=(c.downloads||0)+1;}}}
 async function loadAllContent(){try{var res=await fetch(API+'/contents');var data=await res.json();if(Array.isArray(data)){var seen={};allContents=data.filter(function(c){if(seen[c._id])return false;seen[c._id]=true;return true});renderAll();loadAds()}}catch(e){console.error(e)}}
 function movieCardRowHTML(m){var bc={'free':'badge-free','basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};var ep=getEpCount(m);var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';return'<div class="movie-card-row" onclick="openContent(\''+m._id+'\')"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta">'+(m.views>0?'<span>👁 '+((m.views||0)).toLocaleString()+'</span>':'')+(m.downloads>0?'<span>⬇ '+((m.downloads||0)).toLocaleString()+'</span>':'')+'</div></div></div>';}
-function movieCardHTML(m,thumbH,clickHandler){var h=thumbH||'225px';var bc={'free':'badge-free','basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};var ep=getEpCount(m);var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';var onclick=clickHandler||("openContent('"+m._id+"')");return'<div class="movie-card" onclick="'+onclick+'"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'" style="height:'+h+'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta">'+(m.views>0?'<span>👁 '+((m.views||0)).toLocaleString()+'</span>':'')+(m.downloads>0?'<span>⬇ '+((m.downloads||0)).toLocaleString()+'</span>':'')+'</div></div></div>';}
-function relatedCardHTML(m){return movieCardHTML(m,'180px',"closeMovieModal();setTimeout(function(){openContent('"+m._id+"')},350)");}
+function movieCardHTML(m,thumbH,clickHandler,extraAttr){var h=thumbH||'225px';var bc={'free':'badge-free','basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};var ep=getEpCount(m);var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';var onclick=clickHandler||("openContent('"+m._id+"')");return'<div class="movie-card"'+(extraAttr||'')+' onclick="'+onclick+'"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'" style="height:'+h+'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta">'+(m.views>0?'<span>👁 '+((m.views||0)).toLocaleString()+'</span>':'')+(m.downloads>0?'<span>⬇ '+((m.downloads||0)).toLocaleString()+'</span>':'')+'</div></div></div>';}
+function relatedCardHTML(m,gridStyle){var attr=gridStyle?(' style="'+gridStyle+'"'):'';return movieCardHTML(m,'180px',"closeMovieModal();setTimeout(function(){openContent('"+m._id+"')},350)",attr);}
 function getEpCount(c){if(c.type==='movie')return c.parts?c.parts.length:0;var count=0;if(c.seasons){c.seasons.forEach(function(s){count+=(s.episodes?s.episodes.length:0)})}return count}
 function renderAll(){if(!allContents.length)return;var latest=allContents.slice().sort(function(a,b){return new Date(b.uploadedAt)-new Date(a.uploadedAt)}).slice(0,12);document.getElementById('rowLatest').innerHTML=latest.map(function(m){return movieCardRowHTML(m)}).join('');var cats=[...new Set(allContents.map(function(c){return c.category}).filter(Boolean))];document.getElementById('catRow').innerHTML=cats.map(function(cat){return'<button class="cat-pill" onclick="filterByCategory(\''+escHtml(cat)+'\')">'+escHtml(cat)+'</button>'}).join('');var translators=[...new Set(allContents.map(function(c){return c.translator}).filter(function(t){return t&&t!=='Not translated'}))];document.getElementById('footerCats').innerHTML=cats.slice(0,6).map(function(cat){return'<a onclick="filterByCategory(\''+escHtml(cat)+'\')">'+escHtml(cat)+'</a>'}).join('');document.getElementById('footerTranslators').innerHTML=translators.slice(0,5).map(function(t){return'<a onclick="filterByTranslator(\''+escHtml(t)+'\')">'+escHtml(t)+'</a>'}).join('')||'<span style="color:var(--text3);font-size:0.78rem">Coming soon</span>';visibleRows=2;renderGrid();setupHero();}
 function renderGrid(){var total=visibleRows*moviesPerRow;var shown=allContents.slice(0,total);var grid=document.getElementById('movieGrid');grid.innerHTML=shown.map(function(m){return movieCardHTML(m,'240px')}).join('');var btn=document.getElementById('loadMoreBtn');if(total>=allContents.length){btn.textContent='All loaded ✓';btn.disabled=true;btn.style.opacity='0.5'}else{btn.textContent='Show More ▼';btn.disabled=false;btn.style.opacity='1'}}
@@ -182,7 +182,9 @@ async function openContent(id){
     if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';downloadBtn.style.flex='1';videoPlayer.src=getStreamUrl(videoUrlToPlay);videoPlayer.style.display='block';videoPlayer.load();}
     else{playerWrapper.style.display='none';watchBtn.style.display='none';downloadBtn.style.flex='1';videoPlayer.src='';videoPlayer.style.display='none';}
     renderPartsList();openModal('movieModal');document.getElementById('modalBodyContent').scrollTop=0;
-    loadComments(id); await loadAds(); // ensure ads are loaded loadRelated(id,c);
+    loadComments(id);
+    await loadAds();
+    loadRelated(id,c);
 }
 function renderPartsList(){var pl=document.getElementById('partsList');if(currentPartsItems.length>0){pl.innerHTML=currentPartsItems.map(function(ep,i){return'<div class="part-row'+(i===selectedPartIndex?' active':'')+'" onclick="selectPart('+i+')"><span class="part-name">'+escHtml(ep.number)+' - '+escHtml(ep.title)+(ep.seasonTitle?' ('+escHtml(ep.seasonTitle)+')':'')+'</span><span class="part-badge">'+(ep.accessLevel||'free').toUpperCase()+'</span>'+(ep.videoUrl?'<button class="cta-btn cta-outline cta-sm" onclick="event.stopPropagation();downloadPartItem(\''+i+'\')"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>':'')+'</div>'}).join('');}else{pl.innerHTML='<p style="color:var(--text3);font-size:0.82rem">No parts available</p>'}}
 function selectPart(i){selectedPartIndex=i;renderPartsList();var item=currentPartsItems[i],playerWrapper=document.getElementById('playerWrapper'),watchBtn=document.getElementById('watchBtn'),videoPlayer=document.getElementById('videoPlayer');if(item&&item.videoUrl){var canPlay=isPlayableUrl(item.videoUrl);if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';}}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';}}
@@ -227,7 +229,7 @@ function adjustRelatedRightCount(){
     }
 }
 function getMediaAdForUser(){
-    var mediaAds=allAds.filter(function(a){return a.type!=='text'&&a.isActive!==false&&adMatchesPlan(a)});
+    var mediaAds=allAds.filter(function(a){return (a.type||'').toLowerCase()!=='text'&&a.isActive!==false&&adMatchesPlan(a)});
     return mediaAds.length>0?mediaAds[0]:null;
 }
 function renderRelatedGrids(){
@@ -236,41 +238,39 @@ function renderRelatedGrids(){
     var rightItems=[];
     if(mediaAd){
         // Ad replaces M2,M3,M5,M6,M8,M9 in the 3x6 grid
-        var keepIndices=[0,3,6]; // M1, M4, M7 positions in 0-based flat list
-        var remaining=[];
-        for(var i=0;i<18;i++){if(keepIndices.indexOf(i)!==-1)continue;remaining.push(i)}
-        // Take first 3 for M1,M4,M7, then remaining 9 cards
-        rightItems=relatedAll.slice(0,3); // M1, M4, M7
-        var restCards=relatedAll.slice(3,12); // 9 cards for positions M10-M18
-        // Build grid: first col = rightItems, then ad spans 2 cols x 3 rows, then remaining cards in cols 2-3 rows 4-6
         rightEl.style.gridTemplateColumns='repeat(3,1fr)';
-        rightEl.innerHTML='';
-        // Column 1: M1, M4, M7
+        var html='';
+        var col1Items=relatedAll.slice(0,3); // M1, M4, M7 -> column 1, rows 1-3
         for(var j=0;j<3;j++){
-            if(rightItems[j])rightEl.innerHTML+=relatedCardHTML(rightItems[j]);
+            if(col1Items[j])html+=relatedCardHTML(col1Items[j],'grid-column:1;grid-row:'+(j+1));
         }
-        // Ad card spans column 2-3, row 1-3
-        var adHtml=buildAdCard(mediaAd);
-        rightEl.innerHTML+=adHtml;
-        // Rows 4-6: remaining 9 cards in 3 columns
+        // Ad card spans columns 2-3, rows 1-3
+        html+=buildAdCard(mediaAd,'grid-column:2 / span 2;grid-row:1 / span 3');
+        // Rows 4-6: remaining 9 cards (M10-M18) across 3 columns
+        var restCards=relatedAll.slice(3,12);
         for(var k=0;k<9;k++){
-            if(restCards[k])rightEl.innerHTML+=relatedCardHTML(restCards[k]);
+            if(restCards[k]){
+                var row=4+Math.floor(k/3);
+                var col=1+(k%3);
+                html+=relatedCardHTML(restCards[k],'grid-column:'+col+';grid-row:'+row);
+            }
         }
+        rightEl.innerHTML=html;
     }else{
-        rightItems=relatedAll.slice(0,18);
+        rightItems=relatedAll.slice(0,rightCount);
         rightEl.style.gridTemplateColumns='repeat(3,1fr)';
         rightEl.innerHTML=rightItems.map(function(m){return relatedCardHTML(m)}).join('');
     }
-    var bottomStart=mediaAd?12:18;
+    var bottomStart=mediaAd?12:rightCount;
     var bottomItems=relatedAll.slice(bottomStart,bottomStart+bottomCount);
     document.getElementById('detailBottomGrid').innerHTML=bottomItems.map(function(m){return relatedCardHTML(m)}).join('');
     var totalShown=bottomStart+bottomCount;
     var btn=document.getElementById('relatedLoadMore');
     if(totalShown>=relatedAll.length){btn.style.display='none'}else{btn.style.display='block';btn.textContent='See More ▼';btn.disabled=false;btn.style.opacity='1'}
 }
-function buildAdCard(ad){
+function buildAdCard(ad,gridStyle){
     var media='';
-    var type=(ad.type||'').toLowerCase();
+    var type=(ad.type||'').toLowerCase().trim();
     if(type==='image'&&ad.mediaUrl){media='<img src="'+ad.mediaUrl+'" onerror="this.style.display=\'none\'">'}
     else if(type==='video'&&ad.mediaUrl){media='<video src="'+ad.mediaUrl+'" autoplay muted loop playsinline onerror="this.style.display=\'none\'"></video>'}
     else if(type==='text'&&ad.description){media='<p style="font-size:0.9rem;color:var(--text);padding:0.5rem">'+escHtml(ad.description)+'</p>'}
@@ -278,9 +278,10 @@ function buildAdCard(ad){
     if(ad.contactPhone){contact+='<a href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">💬 Can we talk on this?</a>'}
     if(ad.link){contact+='<a href="'+ad.link+'" target="_blank">🌐 Visit</a>'}
     if(ad.businessName){contact+='<span>'+escHtml(ad.businessName)+'</span>'}
-    return'<div class="ad-card">'+media+'<div class="ad-contact">'+contact+'</div></div>';
+    var styleAttr=gridStyle?(' style="'+gridStyle+'"'):'';
+    return'<div class="ad-card"'+styleAttr+'>'+media+'<div class="ad-contact">'+contact+'</div></div>';
 }
-    
+
 function loadMoreRelated(){bottomCount+=12;renderRelatedGrids();document.getElementById('modalBodyContent').scrollTop+=400}
 window.addEventListener('resize',function(){if(document.getElementById('movieModal').classList.contains('active'))adjustRelatedRightCount()});
 async function showPlans(){
@@ -297,7 +298,7 @@ async function loadAds(){
         var r=await fetch(API+'/ads');var ads=await r.json();
         if(ads&&ads.length){allAds=ads.filter(function(a){return a.isActive!==false})}else{allAds=[]}
         // Landing page: text-only carousel
-        var textAds=allAds.filter(function(a){return a.type==='text'&&adMatchesPlan(a)});
+        var textAds=allAds.filter(function(a){return (a.type||'').toLowerCase()==='text'&&adMatchesPlan(a)});
         var banner=document.getElementById('adBanner');
         var inner=document.getElementById('adBannerInner');
         if(textAds.length>0){
@@ -306,13 +307,16 @@ async function loadAds(){
         }else{banner.style.display='none';if(adCarouselTimer)clearInterval(adCarouselTimer)}
     }catch(e){}
 }
+var currentTextAds=[];
 function renderTextAdCarousel(ads,container){
+    currentTextAds=ads;
     if(adCarouselTimer)clearInterval(adCarouselTimer);
     adCarouselIndex=0;
     function showSlide(idx){
+        adCarouselIndex=idx;
         var ad=ads[idx];
         var html='<div class="ad-slide active">'+escHtml(ad.title||'')+(ad.description?' - '+escHtml(ad.description):'');
-        if(ad.contactPhone){html+=' · 📞 '+escHtml(ad.contactPhone)}
+        if(ad.contactPhone){html+=' · <a href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">💬 Can we talk on this?</a>'}
         if(ad.link){html+=' <a href="'+ad.link+'" target="_blank">More</a>'}
         html+='</div>';
         if(ads.length>1){
@@ -322,15 +326,24 @@ function renderTextAdCarousel(ads,container){
         }
         container.innerHTML=html;
     }
+    container._showSlide=showSlide;
     showSlide(0);
-    if(ads.length>1){
-        adCarouselTimer=setInterval(function(){
-            adCarouselIndex=(adCarouselIndex+1)%ads.length;
-            showSlide(adCarouselIndex);
-        },15000);
+    function startTimer(){
+        if(adCarouselTimer)clearInterval(adCarouselTimer);
+        if(ads.length>1){
+            adCarouselTimer=setInterval(function(){
+                showSlide((adCarouselIndex+1)%ads.length);
+            },15000);
+        }
     }
+    startTimer();
+    container.onmouseenter=function(){if(adCarouselTimer)clearInterval(adCarouselTimer)};
+    container.onmouseleave=function(){startTimer()};
 }
-function adCarouselGoTo(i){adCarouselIndex=i;loadAds()}
+function adCarouselGoTo(i){
+    var container=document.getElementById('adBannerInner');
+    if(container&&container._showSlide)container._showSlide(i);
+}
 function installApp(){if(window.deferredPrompt){window.deferredPrompt.prompt();window.deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted')toast('App installed!')});window.deferredPrompt=null}else{toast('Open in Chrome, tap "Add to Home Screen"')}}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.deferredPrompt=e});
 (function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
