@@ -196,9 +196,11 @@ function showReplyForm(cid){var f=document.getElementById('replyForm-'+cid);f.st
 async function addReply(contentId,commentId){var n=document.getElementById('replyName-'+commentId).value.trim();var t=document.getElementById('replyText-'+commentId).value.trim();if(!n||!t){toast('Name and reply required');return}var r=await fetch(API+'/comments/'+contentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t,parentId:commentId})});var d=await r.json();if(d.success){document.getElementById('replyName-'+commentId).value='';document.getElementById('replyText-'+commentId).value='';loadComments(contentId)}}
 async function addComment(){var n=document.getElementById('commentName').value.trim();var t=document.getElementById('newComment').value.trim();if(!n||!t){toast('Name and comment required');return}var r=await fetch(API+'/comments/'+currentContentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t})});var d=await r.json();if(d.success){document.getElementById('commentName').value='';document.getElementById('newComment').value='';loadComments(currentContentId)}}
 async function likeComment(cid,cmid){await fetch(API+'/comments/'+cid+'/'+cmid+'/like',{method:'POST'});loadComments(cid)}
-function loadRelated(id,c){
+
+async function loadRelated(id,c){
     relatedAll=allContents.filter(function(x){return x._id!==id});
     rightCount=18;bottomCount=12;
+    if(allAds.length===0){await loadAds();}
     renderRelatedGrids();
     requestAnimationFrame(function(){adjustRelatedRightCount()});
 }
@@ -266,13 +268,15 @@ function renderRelatedGrids(){
     var btn=document.getElementById('relatedLoadMore');
     if(totalShown>=relatedAll.length){btn.style.display='none'}else{btn.style.display='block';btn.textContent='See More ▼';btn.disabled=false;btn.style.opacity='1'}
 }
+    
 function buildAdCard(ad){
     var media='';
-    if(ad.type==='image'&&ad.mediaUrl){media='<img src="'+ad.mediaUrl+'" onerror="this.style.display=\'none\'">'}
-    else if(ad.type==='video'&&ad.mediaUrl){media='<video src="'+ad.mediaUrl+'" autoplay muted loop playsinline onerror="this.style.display=\'none\'"></video>'}
-    else if(ad.type==='text'&&ad.description){media='<p style="font-size:0.9rem;color:var(--text);padding:0.5rem">'+escHtml(ad.description)+'</p>'}
+    var type=(ad.type||'').toLowerCase();
+    if(type==='image'&&ad.mediaUrl){media='<img src="'+ad.mediaUrl+'" onerror="this.style.display=\'none\'">'}
+    else if(type==='video'&&ad.mediaUrl){media='<video src="'+ad.mediaUrl+'" autoplay muted loop playsinline onerror="this.style.display=\'none\'"></video>'}
+    else if(type==='text'&&ad.description){media='<p style="font-size:0.9rem;color:var(--text);padding:0.5rem">'+escHtml(ad.description)+'</p>'}
     var contact='';
-    if(ad.contactPhone){contact+='<a href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">📞 '+escHtml(ad.contactPhone)+'</a>'}
+    if(ad.contactPhone){contact+='<a href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">💬 Can we talk on this?</a>'}
     if(ad.link){contact+='<a href="'+ad.link+'" target="_blank">🌐 Visit</a>'}
     if(ad.businessName){contact+='<span>'+escHtml(ad.businessName)+'</span>'}
     return'<div class="ad-card">'+media+'<div class="ad-contact">'+contact+'</div></div>';
