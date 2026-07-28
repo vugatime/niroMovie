@@ -52,7 +52,7 @@
 /* DETAIL MODAL */
 .detail-top-row{display:flex;gap:0.7rem;align-items:flex-start}
 .detail-left{flex:0 0 50%;min-width:0}
-.detail-right{flex:0 0 50%;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0.7rem;align-content:start}
+.detail-right{flex:0 0 50%;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:180px;gap:0.7rem;align-content:start}
 .detail-right .movie-card{width:100%;min-width:0}.detail-right .movie-thumb{height:180px}
 .detail-bottom-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:0.7rem;margin-top:0}
 .detail-bottom-grid .movie-card{width:100%;min-width:0}.detail-bottom-grid .movie-thumb{height:180px}
@@ -128,7 +128,7 @@ function isPlayableUrl(url){if(!url)return false;var lower=url.toLowerCase();if(
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url+'?download';}return url;}
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
 function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
-function closeMovieModal(){closeModal('movieModal');if(window.modalAdTimer)clearInterval(window.modalAdTimer);if(modalAdTimer)clearInterval(modalAdTimer);history.pushState(null,'','/')}
+function closeMovieModal(){closeModal('movieModal');if(modalAdTimer)clearInterval(modalAdTimer);history.pushState(null,'','/')}
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
 function toggleSideMenu(){document.getElementById('sideMenu').classList.toggle('open');document.getElementById('sideMenuOverlay').classList.toggle('show')}
 function closeSideMenu(){document.getElementById('sideMenu').classList.remove('open');document.getElementById('sideMenuOverlay').classList.remove('show')}
@@ -237,34 +237,9 @@ async function likeComment(cid,cmid){await fetch(API+'/comments/'+cid+'/'+cmid+'
 
 async function loadRelated(id,c){
     relatedAll=allContents.filter(function(x){return x._id!==id});
-    rightCount=18;bottomCount=12;
+    bottomCount=12;
     if(allAds.length===0){await loadAds();}
     renderRelatedGrids();
-    requestAnimationFrame(function(){adjustRelatedRightCount()});
-}
-function adjustRelatedRightCount(){
-    if(window.innerWidth<=900)return;
-    var leftEl=document.getElementById('detailLeft');
-    var rightEl=document.getElementById('detailRight');
-    if(!leftEl||!rightEl)return;
-    var sampleCard = rightEl.querySelector('.movie-card');
-    if(!sampleCard) sampleCard = rightEl.querySelector('#adCardWrapper');
-    if(!sampleCard) sampleCard = rightEl.firstElementChild;
-    if(!sampleCard) return;
-    var leftH=leftEl.offsetHeight;
-    var cardH=sampleCard.offsetHeight;
-    if(!cardH) return;
-    var gapPx=0.7*16;
-    var cols=3;
-    var maxRows=Math.ceil(18/cols);
-    var rows=Math.max(1, Math.min(maxRows, Math.round((leftH+gapPx)/(cardH+gapPx))));
-    var newRightCount=rows*cols;
-    if(newRightCount!==rightCount){
-        var diff=rightCount-newRightCount;
-        rightCount=newRightCount;
-        bottomCount=Math.max(0,bottomCount+diff);
-        renderRelatedGrids();
-    }
 }
 function getAdMediaUrl(ad){return ad.mediaUrl||ad.imageUrl||ad.videoUrl||ad.image||ad.video||ad.media||ad.fileUrl||'';}
 function getMediaAdsForUser(){
@@ -292,6 +267,12 @@ function refreshAdCardContent(){
     mount.innerHTML=buildAdCardInner(modalAdList[modalAdIndex]);
 }
 function modalAdGoTo(i){modalAdIndex=i;refreshAdCardContent();startModalAdRotation();}
+/* Fixed layout to match the reference design exactly:
+   Right block (3 cols x 5 rows when an ad exists):
+     col1 rows1-3 -> 3 movie cards (M1-M3)
+     col2-3 rows1-3 -> single ad slot (2 cols x 3 rows)
+     rows4-5, cols1-3 -> 6 movie cards (M4-M9)
+   No dynamic recompute, no leftover empty cells. */
 function renderRelatedGrids(){
     var rightEl=document.getElementById('detailRight');
     modalAdList=getMediaAdsForUser();
@@ -304,19 +285,21 @@ function renderRelatedGrids(){
         var col1Items=relatedAll.slice(0,3);
         for(var j=0;j<3;j++){if(col1Items[j])html+=relatedCardHTML(col1Items[j],'grid-column:1;grid-row:'+(j+1));}
         html+='<div class="ad-card" style="grid-column:2 / span 2;grid-row:1 / span 3" id="adCardWrapper"><div class="ad-card-inner" id="adCardMount">'+buildAdCardInner(modalAdList[0])+'</div></div>';
-        var restCards=relatedAll.slice(3,12);
-        for(var k=0;k<9;k++){if(restCards[k]){var row=4+Math.floor(k/3);var col=1+(k%3);html+=relatedCardHTML(restCards[k],'grid-column:'+col+';grid-row:'+row);}}
+        var restCards=relatedAll.slice(3,9);
+        for(var k=0;k<6;k++){if(restCards[k]){var row=4+Math.floor(k/3);var col=1+(k%3);html+=relatedCardHTML(restCards[k],'grid-column:'+col+';grid-row:'+row);}}
         rightEl.innerHTML=html;
+        rightCount=9;
         var wrapper=document.getElementById('adCardWrapper');
         if(wrapper){wrapper.onmouseenter=function(){if(modalAdTimer)clearInterval(modalAdTimer)};wrapper.onmouseleave=function(){startModalAdRotation()};}
         startModalAdRotation();
     }else{
         if(modalAdTimer)clearInterval(modalAdTimer);
+        rightCount=9;
         rightItems=relatedAll.slice(0,rightCount);
         rightEl.style.gridTemplateColumns='repeat(3,1fr)';
         rightEl.innerHTML=rightItems.map(function(m){return relatedCardHTML(m)}).join('');
     }
-    var bottomStart=hasAd?12:rightCount;
+    var bottomStart=rightCount;
     var bottomItems=relatedAll.slice(bottomStart,bottomStart+bottomCount);
     document.getElementById('detailBottomGrid').innerHTML=bottomItems.map(function(m){return relatedCardHTML(m)}).join('');
     var totalShown=bottomStart+bottomCount;
@@ -339,7 +322,6 @@ function buildAdCardInner(ad){
     return media+'<div class="ad-contact">'+contact+'</div>'+dots;
 }
 function loadMoreRelated(){bottomCount+=12;renderRelatedGrids();document.getElementById('modalBodyContent').scrollTop+=400}
-window.addEventListener('resize',function(){if(document.getElementById('movieModal').classList.contains('active'))adjustRelatedRightCount()});
 async function showPlans(){
     var r=await fetch(API+'/plans');var plans=await r.json();
     document.getElementById('durationTabs').innerHTML=['weekly','monthly','quarterly','yearly'].map(function(d){return'<button class="cat-pill '+(d===selectedDuration?'active':'')+'" onclick="selectDuration(\''+d+'\')">'+(d==='weekly'?'Weekly':d==='monthly'?'Monthly':d==='quarterly'?'Quarterly':'Yearly')+'</button>'}).join('');
