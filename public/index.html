@@ -30,7 +30,7 @@
 .welcome-bar{background:linear-gradient(135deg,#1a1a0a,#0d1a0d);color:var(--accent);text-align:center;padding:0.5rem 1rem;font-weight:500;font-size:0.82rem;overflow:hidden;white-space:nowrap}@media(max-width:768px){.welcome-bar{white-space:normal;overflow:hidden;height:28px}.welcome-bar .welcome-msg{display:block;animation:welcomeSlide 15s infinite;position:absolute;width:100%;left:0;text-align:center}}@keyframes welcomeSlide{0%,25%{opacity:1;transform:translateX(0)}28%,50%{opacity:0;transform:translateX(-100%)}53%,78%{opacity:1;transform:translateX(0)}82%,100%{opacity:0;transform:translateX(-100%)}}
 .hero-section{padding:1rem 1.5rem;max-width:1400px;margin:0 auto}.hero-row{display:flex;gap:1.2rem;align-items:stretch}.hero-slider{flex:1;min-width:0;position:relative;overflow:hidden;border-radius:var(--radiusLg);aspect-ratio:16/7;background:var(--bg3);cursor:pointer}.hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;display:flex;align-items:flex-end;padding:1.5rem;background-size:cover;background-position:center}.hero-slide.active{opacity:1;z-index:1}.hero-slide-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.05) 55%)}.hero-slide-info{position:relative;z-index:2;max-width:55%}.hero-slide-info h2{color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:0.2rem;text-shadow:0 2px 10px rgba(0,0,0,0.6)}.hero-slide-info p{color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.hero-dots{display:flex;gap:0.4rem;justify-content:center;margin-top:0.6rem}.hero-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer}.hero-dot.active{background:var(--accent);width:20px;border-radius:4px}.hero-cta{display:flex;flex-direction:column;gap:0.6rem;min-width:175px;justify-content:center}
 .cta-btn{display:flex;align-items:center;gap:0.4rem;padding:0.7rem 1.1rem;border-radius:var(--radiusLg);font-weight:600;font-size:0.84rem;cursor:pointer;border:none;font-family:inherit;justify-content:center}.cta-download{background:var(--accent);color:#000;box-shadow:0 4px 15px rgba(245,197,24,0.2)}.cta-download:hover{background:var(--accentD);transform:translateY(-2px)}.cta-stream{background:transparent;color:var(--accent);border:2px solid var(--accent)!important}.cta-stream:hover{background:rgba(245,197,24,0.06);transform:translateY(-2px)}.cta-outline{background:transparent;color:var(--text);border:2px solid var(--border)!important}.cta-outline:hover{border-color:var(--accent)!important;color:var(--accent)}.cta-sm{padding:0.35rem 0.7rem;font-size:0.7rem;border-radius:20px}
-.ad-banner{max-width:1400px;margin:0.6rem auto;padding:0 1.5rem}.ad-banner-inner{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:0.6rem 1rem;text-align:center;font-size:0.78rem;color:var(--text2);display:flex;align-items:center;justify-content:center;gap:0.4rem;min-height:42px}.ad-banner-inner img{max-height:36px;border-radius:6px}.ad-banner-inner a{color:var(--accent);text-decoration:underline}
+.ad-banner{max-width:1400px;margin:0.6rem auto;padding:0 1.5rem}.ad-banner-inner{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:0.6rem 1rem;text-align:center;font-size:0.78rem;color:var(--text2);display:flex;align-items:center;justify-content:center;gap:0.4rem;min-height:42px;position:relative;overflow:hidden}.ad-banner-inner .ad-slide{display:none;width:100%;text-align:center;animation:fadeIn 0.5s ease}.ad-banner-inner .ad-slide.active{display:block}.ad-banner-inner .ad-dots{display:flex;gap:0.3rem;justify-content:center;margin-top:0.3rem}.ad-banner-inner .ad-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);cursor:pointer}.ad-banner-inner .ad-dot.active{background:var(--accent)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .section{margin:0.4rem 0;padding:0 1.5rem;max-width:1400px;margin-left:auto;margin-right:auto;position:relative;z-index:1}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7rem}.section-head h2{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:0.4rem}
 .movies-row{display:flex;gap:0.7rem;overflow-x:auto;scroll-behavior:smooth;padding-bottom:0.4rem;-ms-overflow-style:none;scrollbar-width:none}.movies-row::-webkit-scrollbar{display:none}
 .movie-card-row{min-width:175px;width:175px;background:var(--bg2);border-radius:var(--radiusLg);overflow:hidden;cursor:pointer;position:relative;flex-shrink:0;border:1px solid var(--border);transition:var(--trans)}.movie-card-row:hover{transform:translateY(-4px);box-shadow:var(--shadowLg);border-color:var(--accent)}.movie-card-row .movie-thumb{width:100%;height:225px;object-fit:cover;background:var(--bg3);display:block}.movie-card-row .movie-info{padding:0.6rem}.movie-card-row .movie-title{font-weight:600;margin-bottom:0.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:0.82rem;color:var(--text)}.movie-card-row .movie-meta{font-size:0.66rem;color:var(--text2);display:flex;gap:0.6rem;margin-top:0.2rem}
@@ -51,11 +51,17 @@
 .desc-text{font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:0.6rem}.desc-truncated{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.desc-expanded{display:block}.view-more-link{color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.4rem}.view-more-link:hover{text-decoration:underline}
 .parts-list{margin-top:0.8rem}.part-row{display:flex;justify-content:space-between;align-items:center;padding:0.45rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;gap:0.5rem;cursor:pointer;transition:var(--trans)}.part-row:hover{color:var(--accent)}.part-row:last-child{border-bottom:none}.part-row.active{color:var(--accent);font-weight:600}.part-name{flex:1}.part-badge{font-size:0.65rem;font-weight:600;white-space:nowrap}
 .comment-item{background:var(--bg3);padding:0.6rem;border-radius:var(--radius);margin:0.25rem 0;border-left:3px solid var(--accent);font-size:0.8rem}.comment-user{font-weight:600;color:var(--accent)}.comment-date{font-size:0.65rem;color:var(--text3);margin-left:0.3rem}.comment-text{margin-top:0.15rem;color:var(--text2)}.comment-like{cursor:pointer;color:var(--text3);font-size:0.68rem;margin-top:0.2rem;display:inline-flex;align-items:center;gap:0.15rem;transition:var(--trans)}.comment-like:hover{color:var(--accent)}
+.comment-reply-btn{cursor:pointer;color:var(--text3);font-size:0.68rem;margin-left:0.5rem;transition:var(--trans)}.comment-reply-btn:hover{color:var(--accent)}
+.reply-form{margin-top:0.4rem;display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center}.reply-form input{padding:0.3rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.7rem;background:var(--bg);color:var(--text);flex:1;min-width:80px}.reply-form button{padding:0.3rem 0.6rem;border-radius:20px;font-size:0.65rem}
+.reply-item{margin-left:1rem;border-left:2px solid var(--border);padding-left:0.5rem;margin-top:0.2rem;font-size:0.75rem}
+.trailer-btn{margin-bottom:0.4rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;color:var(--accent);font-weight:600;font-size:0.78rem;background:transparent;border:1.5px solid var(--accent);padding:0.3rem 0.8rem;border-radius:20px;transition:var(--trans)}.trailer-btn:hover{background:rgba(245,197,24,0.08)}
+.trailer-container{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.6rem;display:none}.trailer-container video{width:100%;height:100%}
+.ad-card{grid-column:span 2;grid-row:span 3;background:var(--bg3);border-radius:var(--radiusLg);overflow:hidden;border:1px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0.6rem;text-align:center;gap:0.3rem;min-height:0}.ad-card img,.ad-card video{max-width:100%;max-height:70%;object-fit:contain;border-radius:var(--radius)}.ad-card .ad-contact{font-size:0.7rem;color:var(--text2);display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center}.ad-card .ad-contact a{color:var(--accent);text-decoration:underline}
 .whatsapp-btn{position:fixed;bottom:22px;right:22px;width:46px;height:46px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 18px rgba(37,211,102,0.3);transition:var(--trans)}.whatsapp-btn:hover{transform:scale(1.1)}
 .plan-card{background:var(--bg);padding:1rem;border-radius:var(--radiusLg);text-align:center;cursor:pointer;border:2px solid transparent;transition:var(--trans)}.plan-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}.plan-card.featured{border-color:var(--orange)}.plan-name{font-weight:700;font-size:0.85rem}.plan-price{font-size:1.2rem;font-weight:800;color:var(--accent);margin:0.2rem 0}.plan-price span{font-size:0.65rem;color:var(--text2)}
 .payment-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1rem;text-align:center;margin:0.7rem 0}.momo-code{font-size:1rem;font-weight:700;color:var(--accent);margin:0.3rem 0;font-family:monospace}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:0.6rem 1.5rem;border-radius:30px;z-index:9999;font-weight:600;font-size:0.85rem;animation:toastIn 0.3s ease;pointer-events:none}@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-@media(max-width:900px){.detail-top-row{flex-direction:column}.detail-left,.detail-right{flex:1 1 100%}.detail-right{grid-template-columns:repeat(3,1fr)}.detail-bottom-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:900px){.detail-top-row{flex-direction:column}.detail-left,.detail-right{flex:1 1 100%}.detail-right{grid-template-columns:repeat(3,1fr)}.detail-bottom-grid{grid-template-columns:repeat(4,1fr)}.ad-card{grid-column:span 1;grid-row:span 2}}
 @media(max-width:768px){.navbar{padding:0.5rem 1rem}.search-box{width:100%;order:3;margin-top:0.4rem}.hero-row{flex-direction:column}.hero-slider{aspect-ratio:16/9}.hero-cta{flex-direction:row;flex-wrap:wrap}.hero-cta .cta-btn{flex:1;min-width:120px;padding:0.6rem 0.8rem;font-size:0.78rem}.movie-card-row{min-width:145px;width:145px}.movie-card-row .movie-thumb{height:190px}.movie-grid .movie-card{min-width:0}.movie-grid .movie-thumb{height:190px}.footer-grid{grid-template-columns:repeat(2,1fr)}.hero-slide-info h2{font-size:1.05rem}.nav-links{display:none}.hero-slide-info{max-width:100%}.modal-body{padding:0.8rem}.cta-btn{padding:0.5rem 0.8rem;font-size:0.76rem}.detail-right{grid-template-columns:repeat(2,1fr)}.detail-right .movie-thumb{height:140px}.detail-bottom-grid{grid-template-columns:repeat(2,1fr)}.detail-bottom-grid .movie-thumb{height:140px}}
 </style>
 </head>
@@ -77,6 +83,8 @@
 <div class="desc-text desc-truncated" id="modalDesc"></div><span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:none">... View more</span>
 <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin:0.5rem 0;font-size:0.75rem;color:var(--text2)" id="modalMeta"></div>
 <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.5rem" id="modalTags"></div>
+<button class="trailer-btn" id="trailerBtn" style="display:none" onclick="toggleTrailer()"><span class="material-symbols-outlined">play_circle</span> Watch Trailer</button>
+<div class="trailer-container" id="trailerContainer"><video id="trailerVideo" controls playsinline></video></div>
 <div id="playerWrapper" style="display:none;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.6rem"><video id="videoPlayer" controls style="display:none;width:100%;height:100%" playsinline></video></div>
 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.6rem"><button class="cta-btn cta-download" id="watchBtn" onclick="watchCurrentContent()" style="flex:1;display:none"><span class="material-symbols-outlined">play_circle</span> Watch</button><button class="cta-btn cta-outline" id="downloadMainBtn" onclick="downloadCurrentContent()" style="flex:1"><span class="material-symbols-outlined">download</span> Download</button></div>
 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.8rem"><button class="cta-btn cta-outline cta-sm" id="addToListBtn" onclick="addToMyList()"><span class="material-symbols-outlined">bookmark_add</span> My List</button><button class="cta-btn cta-outline cta-sm" onclick="shareMovie('copy')"><span class="material-symbols-outlined">share</span> Share</button></div>
@@ -94,13 +102,13 @@
 
 <div class="modal-overlay" id="plansModal"><div class="modal-box-sm" style="max-width:600px"><div class="modal-header"><h2>Choose Your Plan</h2><span class="close-btn" onclick="closeModal('plansModal')">&times;</span></div><div style="padding:1.2rem"><div style="display:flex;gap:0.4rem;margin-bottom:0.8rem" id="durationTabs"></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.6rem" id="plansGrid"></div><div id="paymentForm" style="display:none"><div class="payment-box"><h4 style="color:var(--accent)">Pay via MOMO / Mobile Money</h4><p style="font-size:0.82rem;color:var(--text2)">Dial USSD and send payment</p><div class="momo-code">*182*8*1*1294634#</div><p style="font-size:0.78rem;color:var(--text2)">Pay to: ROBERT NIYONKURU</p></div><div class="form-group-sm"><label>Your Phone Number *</label><input type="text" id="payPhone" placeholder="+250 7XX XXX XXX"></div><div class="form-group-sm"><label>Your Name *</label><input type="text" id="paySenderName"></div><div class="form-group-sm"><label>Upload Payment Screenshot *</label><input type="file" id="payScreenshot" accept="image/*" required></div><button class="cta-btn cta-download" onclick="submitPayment()" style="width:100%;background:var(--green)">Submit Payment Proof</button></div></div></div></div>
 
-<div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">niroMovie is your gateway to unlimited entertainment. Byose ukeneye ni ibyishimo.</p><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">Founded in 2026, we bring the best movies and series from across Africa and beyond.</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502<br><strong>Location:</strong> Kigali, Rwanda</p></div></div></div>
-<div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Contact Us</h2><span class="close-btn" onclick="closeModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p style="font-size:0.88rem;margin-bottom:1rem">We'd love to hear from you!</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502</p><button class="cta-btn cta-download" onclick="window.open('https://wa.me/250795064502','_blank')" style="width:100%;margin-top:0.8rem"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</button></div></div></div>
-<div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Privacy Policy</h2><span class="close-btn" onclick="closeModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">At niroMovie, we take your privacy seriously. We do not sell, trade, or share your personal information.</p></div></div></div>
-<div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Terms</h2><span class="close-btn" onclick="closeModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">By using niroMovie, you agree to these terms. All content is for personal, non-commercial use only.</p></div></div></div>
+<div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">niroMovie is your gateway to unlimited entertainment. Byose ukeneye ni ibyishimo. We bring you the best movies and series from across Africa and beyond, carefully curated and accessible anytime, anywhere.</p><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">Founded in 2026, our mission is to make premium entertainment available to everyone. Whether you're streaming or downloading, niroMovie ensures a seamless experience with high-quality content, professional subtitles, and a growing library of films and series.</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502<br><strong>Location:</strong> Kigali, Rwanda</p></div></div></div>
+<div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Contact Us</h2><span class="close-btn" onclick="closeModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p style="font-size:0.88rem;margin-bottom:1rem">We'd love to hear from you! Reach out for any inquiries, feedback, or support. Our team is here to help.</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502</p><button class="cta-btn cta-download" onclick="window.open('https://wa.me/250795064502','_blank')" style="width:100%;margin-top:0.8rem"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</button></div></div></div>
+<div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Privacy Policy</h2><span class="close-btn" onclick="closeModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">At niroMovie, we take your privacy seriously. We only collect minimal information necessary to provide our services, such as your email address for account creation and comments. We do not sell, trade, or share your personal information with third parties. All data is stored securely and used solely to improve your experience on our platform. By using niroMovie, you agree to this privacy policy and our commitment to keeping your information safe.</p></div></div></div>
+<div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Terms</h2><span class="close-btn" onclick="closeModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">By using niroMovie, you agree to these terms of service. All content provided on this platform is for personal, non-commercial use only. You may stream or download content for your own viewing but redistribution, resale, or public broadcast of any content is strictly prohibited. niroMovie reserves the right to modify or remove content at any time without notice. Users are responsible for maintaining the confidentiality of their account credentials. Any misuse of the platform, including attempts to bypass security measures or access restricted content without authorization, may result in account termination. By continuing to use niroMovie, you acknowledge and accept these terms.</p></div></div></div>
 <div class="whatsapp-btn" onclick="window.open('https://wa.me/250795064502','_blank')"><i class="fab fa-whatsapp" style="font-size:22px;color:#fff"></i></div>
 <script>
-var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],rightCount=18,bottomCount=12;
+var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],rightCount=18,bottomCount=12,allAds=[],adCarouselTimer=null,adCarouselIndex=0;
 function isPlayableUrl(url){if(!url)return false;var lower=url.toLowerCase();if(lower.includes('isatafilez.my'))return false;if(lower.includes('drive.google.com'))return false;if(lower.includes('dropbox.com'))return false;if(lower.includes('mega.nz'))return false;if(lower.includes('mediafire.com'))return false;return(lower.endsWith('.mp4')||lower.endsWith('.webm')||lower.endsWith('.ogg')||lower.endsWith('.mov')||lower.endsWith('.mkv')||lower.endsWith('.m3u8')||lower.includes('pixeldrain.com')||lower.includes('archive.org/download/')||lower.includes('cdn.')||lower.includes('stream.')||lower.includes('video.')||lower.includes('media.'));}
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url+'?download';}return url;}
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
@@ -121,6 +129,9 @@ async function register(){var n=document.getElementById('regName').value;var e=d
 function logout(){localStorage.removeItem('token');token=null;currentUser=null;updateProfileIcon();loadAllContent()}
 function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
 function toggleDescription(){var desc=document.getElementById('modalDesc');var link=document.getElementById('viewMoreLink');if(desc.classList.contains('desc-truncated')){desc.classList.remove('desc-truncated');desc.classList.add('desc-expanded');link.textContent='Show less'}else{desc.classList.add('desc-truncated');desc.classList.remove('desc-expanded');link.textContent='... View more'}}
+function toggleTrailer(){var tc=document.getElementById('trailerContainer');var tv=document.getElementById('trailerVideo');if(tc.style.display==='block'){tc.style.display='none';tv.pause()}else{tc.style.display='block';tv.play().catch(function(){})}}
+function getUserPlan(){return currentUser&&currentUser.subscription&&currentUser.subscription.plan?currentUser.subscription.plan:'free'}
+function adMatchesPlan(ad){var plan=getUserPlan();if(!ad.targetPlans||ad.targetPlans.length===0)return true;var targets=Array.isArray(ad.targetPlans)?ad.targetPlans:ad.targetPlans.split(',').map(function(s){return s.trim().toLowerCase()});return targets.indexOf(plan.toLowerCase())!==-1}
 async function incrementView(id){try{var r=await fetch(API+'/contents/'+id+'/view',{method:'POST'});var d=await r.json();if(d&&d.views!==undefined){var c=allContents.find(function(x){return x._id===id});if(c){c.views=d.views;}}else{var c=allContents.find(function(x){return x._id===id});if(c){c.views=(c.views||0)+1;}}}catch(e){var c=allContents.find(function(x){return x._id===id});if(c){c.views=(c.views||0)+1;}}}
 async function incrementDownload(id){try{var r=await fetch(API+'/contents/'+id+'/download',{method:'POST'});var d=await r.json();if(d&&d.downloads!==undefined){var c=allContents.find(function(x){return x._id===id});if(c){c.downloads=d.downloads;}}else{var c=allContents.find(function(x){return x._id===id});if(c){c.downloads=(c.downloads||0)+1;}}}catch(e){var c=allContents.find(function(x){return x._id===id});if(c){c.downloads=(c.downloads||0)+1;}}}
 async function loadAllContent(){try{var res=await fetch(API+'/contents');var data=await res.json();if(Array.isArray(data)){var seen={};allContents=data.filter(function(c){if(seen[c._id])return false;seen[c._id]=true;return true});renderAll();loadAds()}}catch(e){console.error(e)}}
@@ -157,6 +168,11 @@ async function openContent(id){
     document.getElementById('modalMeta').innerHTML='<span>'+(c.year||'N/A')+'</span> · <span>'+(c.quality||'HD')+'</span> · <span>'+(c.accessLevel||'free').toUpperCase()+'</span> · <span>'+(c.country||'')+'</span>';
     document.getElementById('modalTags').innerHTML=[c.category,c.country,c.translator,c.director].filter(Boolean).map(function(t){return'<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">'+escHtml(t)+'</span>'}).join('');
     updateMyListButton();
+    // Trailer button
+    var trailerBtn=document.getElementById('trailerBtn');
+    var trailerContainer=document.getElementById('trailerContainer');
+    var trailerVideo=document.getElementById('trailerVideo');
+    if(c.trailerUrl){trailerBtn.style.display='inline-flex';trailerContainer.style.display='none';trailerVideo.src=c.trailerUrl;trailerVideo.load()}else{trailerBtn.style.display='none';trailerContainer.style.display='none';trailerVideo.src=''}
     try{var partsRes=await fetch(API+'/contents/'+id+'/parts');var partsData=await partsRes.json();currentPartsItems=partsData.items||[]}catch(e){currentPartsItems=[]}
     var canPlay=false;var videoUrlToPlay=null;
     if(currentPartsItems.length>0&&currentPartsItems[0]&&currentPartsItems[0].videoUrl){videoUrlToPlay=currentPartsItems[0].videoUrl;canPlay=isPlayableUrl(videoUrlToPlay);}
@@ -175,23 +191,18 @@ function watchCurrentContent(){var videoPlayer=document.getElementById('videoPla
 function downloadCurrentContent(){if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){incrementDownload(currentContentId);window.open(item.videoUrl,'_blank');return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){incrementDownload(currentContentId);window.open(currentContentData.parts[0].videoUrl,'_blank');}}
 function playVideo(url){var videoPlayer=document.getElementById('videoPlayer');var streamUrl=getStreamUrl(url);if(isPlayableUrl(url)){videoPlayer.src=streamUrl;videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}else{window.open(url,'_blank')}}
 function shareMovie(p){var u=window.location.origin+'/?movie='+currentContentId;if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}else if(p==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent('Watch on niroMovie! '+u),'_blank')}}
-async function loadComments(id){var cl=document.getElementById('commentsList');try{var comments=await fetch(API+'/comments/'+id).then(function(r){return r.json()});if(!comments||!comments.length){cl.innerHTML='<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';return}cl.innerHTML=comments.map(function(x){return'<div class="comment-item"><div><span class="comment-user">'+escHtml(x.userName||'Anon')+'</span><span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div><div class="comment-text">'+escHtml(x.text)+'</div><span class="comment-like" onclick="likeComment(\''+id+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span></div>'}).join('');}catch(e){cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'}}
+async function loadComments(id){var cl=document.getElementById('commentsList');try{var comments=await fetch(API+'/comments/'+id).then(function(r){return r.json()});if(!comments||!comments.length){cl.innerHTML='<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';return}cl.innerHTML=comments.map(function(x){var repliesHtml='';if(x.replies&&x.replies.length>0){repliesHtml='<div class="replies">'+x.replies.map(function(r){return'<div class="reply-item"><span class="comment-user">'+escHtml(r.userName||'Anon')+'</span><span class="comment-date">'+new Date(r.createdAt).toLocaleString()+'</span><div class="comment-text">'+escHtml(r.text)+'</div></div>'}).join('')+'</div>'}return'<div class="comment-item" id="comment-'+x._id+'"><div><span class="comment-user">'+escHtml(x.userName||'Anon')+'</span><span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div><div class="comment-text">'+escHtml(x.text)+'</div><span class="comment-like" onclick="likeComment(\''+id+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span><span class="comment-reply-btn" onclick="showReplyForm(\''+x._id+'\')">↩ Reply</span><div class="reply-form" id="replyForm-'+x._id+'" style="display:none"><input type="text" id="replyName-'+x._id+'" placeholder="Name" style="flex:1;min-width:60px"><input type="text" id="replyText-'+x._id+'" placeholder="Reply..." style="flex:2;min-width:80px"><button class="cta-btn cta-download cta-sm" onclick="addReply(\''+id+'\',\''+x._id+'\')">Reply</button></div>'+repliesHtml+'</div>'}).join('')}catch(e){cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'}}
+function showReplyForm(cid){var f=document.getElementById('replyForm-'+cid);f.style.display=f.style.display==='none'?'flex':'none'}
+async function addReply(contentId,commentId){var n=document.getElementById('replyName-'+commentId).value.trim();var t=document.getElementById('replyText-'+commentId).value.trim();if(!n||!t){toast('Name and reply required');return}var r=await fetch(API+'/comments/'+contentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t,parentId:commentId})});var d=await r.json();if(d.success){document.getElementById('replyName-'+commentId).value='';document.getElementById('replyText-'+commentId).value='';loadComments(contentId)}}
 async function addComment(){var n=document.getElementById('commentName').value.trim();var t=document.getElementById('newComment').value.trim();if(!n||!t){toast('Name and comment required');return}var r=await fetch(API+'/comments/'+currentContentId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:n,text:t})});var d=await r.json();if(d.success){document.getElementById('commentName').value='';document.getElementById('newComment').value='';loadComments(currentContentId)}}
 async function likeComment(cid,cmid){await fetch(API+'/comments/'+cid+'/'+cmid+'/like',{method:'POST'});loadComments(cid)}
 function loadRelated(id,c){
     relatedAll=allContents.filter(function(x){return x._id!==id});
     rightCount=18;bottomCount=12;
     renderRelatedGrids();
-    // After the initial render, measure the real height of the left column
-    // (description/player/parts/comments) and trim the right-side grid so it
-    // never runs taller than the left column. Anything trimmed off the right
-    // simply shifts into the bottom grid instead of disappearing.
     requestAnimationFrame(function(){adjustRelatedRightCount()});
 }
 function adjustRelatedRightCount(){
-    var topRow=document.getElementById('detailTopRow');
-    // Only relevant for the side-by-side desktop layout. On the stacked mobile
-    // layout (<=900px) both columns are full-width anyway, so skip.
     if(window.innerWidth<=900)return;
     var leftEl=document.getElementById('detailLeft');
     var rightEl=document.getElementById('detailRight');
@@ -213,20 +224,109 @@ function adjustRelatedRightCount(){
         renderRelatedGrids();
     }
 }
+function getMediaAdForUser(){
+    var mediaAds=allAds.filter(function(a){return a.type!=='text'&&a.isActive!==false&&adMatchesPlan(a)});
+    return mediaAds.length>0?mediaAds[0]:null;
+}
 function renderRelatedGrids(){
-    document.getElementById('detailRight').innerHTML=relatedAll.slice(0,rightCount).map(function(m){return relatedCardHTML(m);}).join('');
-    document.getElementById('detailBottomGrid').innerHTML=relatedAll.slice(rightCount,rightCount+bottomCount).map(function(m){return relatedCardHTML(m);}).join('');
-    var totalShown=rightCount+bottomCount;
+    var rightEl=document.getElementById('detailRight');
+    var mediaAd=getMediaAdForUser();
+    var rightItems=[];
+    if(mediaAd){
+        // Ad replaces M2,M3,M5,M6,M8,M9 in the 3x6 grid
+        var keepIndices=[0,3,6]; // M1, M4, M7 positions in 0-based flat list
+        var remaining=[];
+        for(var i=0;i<18;i++){if(keepIndices.indexOf(i)!==-1)continue;remaining.push(i)}
+        // Take first 3 for M1,M4,M7, then remaining 9 cards
+        rightItems=relatedAll.slice(0,3); // M1, M4, M7
+        var restCards=relatedAll.slice(3,12); // 9 cards for positions M10-M18
+        // Build grid: first col = rightItems, then ad spans 2 cols x 3 rows, then remaining cards in cols 2-3 rows 4-6
+        rightEl.style.gridTemplateColumns='repeat(3,1fr)';
+        rightEl.innerHTML='';
+        // Column 1: M1, M4, M7
+        for(var j=0;j<3;j++){
+            if(rightItems[j])rightEl.innerHTML+=relatedCardHTML(rightItems[j]);
+        }
+        // Ad card spans column 2-3, row 1-3
+        var adHtml=buildAdCard(mediaAd);
+        rightEl.innerHTML+=adHtml;
+        // Rows 4-6: remaining 9 cards in 3 columns
+        for(var k=0;k<9;k++){
+            if(restCards[k])rightEl.innerHTML+=relatedCardHTML(restCards[k]);
+        }
+    }else{
+        rightItems=relatedAll.slice(0,18);
+        rightEl.style.gridTemplateColumns='repeat(3,1fr)';
+        rightEl.innerHTML=rightItems.map(function(m){return relatedCardHTML(m)}).join('');
+    }
+    var bottomStart=mediaAd?12:18;
+    var bottomItems=relatedAll.slice(bottomStart,bottomStart+bottomCount);
+    document.getElementById('detailBottomGrid').innerHTML=bottomItems.map(function(m){return relatedCardHTML(m)}).join('');
+    var totalShown=bottomStart+bottomCount;
     var btn=document.getElementById('relatedLoadMore');
     if(totalShown>=relatedAll.length){btn.style.display='none'}else{btn.style.display='block';btn.textContent='See More ▼';btn.disabled=false;btn.style.opacity='1'}
 }
+function buildAdCard(ad){
+    var media='';
+    if(ad.type==='image'&&ad.mediaUrl){media='<img src="'+ad.mediaUrl+'" onerror="this.style.display=\'none\'">'}
+    else if(ad.type==='video'&&ad.mediaUrl){media='<video src="'+ad.mediaUrl+'" autoplay muted loop playsinline onerror="this.style.display=\'none\'"></video>'}
+    else if(ad.type==='text'&&ad.description){media='<p style="font-size:0.9rem;color:var(--text);padding:0.5rem">'+escHtml(ad.description)+'</p>'}
+    var contact='';
+    if(ad.contactPhone){contact+='<a href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">📞 '+escHtml(ad.contactPhone)+'</a>'}
+    if(ad.link){contact+='<a href="'+ad.link+'" target="_blank">🌐 Visit</a>'}
+    if(ad.businessName){contact+='<span>'+escHtml(ad.businessName)+'</span>'}
+    return'<div class="ad-card">'+media+'<div class="ad-contact">'+contact+'</div></div>';
+}
 function loadMoreRelated(){bottomCount+=12;renderRelatedGrids();document.getElementById('modalBodyContent').scrollTop+=400}
 window.addEventListener('resize',function(){if(document.getElementById('movieModal').classList.contains('active'))adjustRelatedRightCount()});
-async function showPlans(){var r=await fetch(API+'/plans');var plans=await r.json();selectedDuration='monthly';document.getElementById('durationTabs').innerHTML=['weekly','monthly','quarterly','yearly'].map(function(d){return'<button class="cat-pill '+(d===selectedDuration?'active':'')+'" onclick="selectDuration(\''+d+'\')">'+(d==='weekly'?'Weekly':d==='monthly'?'Monthly':d==='quarterly'?'Quarterly':'Yearly')+'</button>'}).join('');document.getElementById('plansGrid').innerHTML=Object.keys(plans).map(function(k){var v=plans[k];return'<div class="plan-card '+(k==='ultimate'?'featured':'')+'" onclick="selectPlan(\''+k+'\')"><div class="plan-name">'+v.name+'</div><div class="plan-price">'+(v[selectedDuration]||0).toLocaleString()+' <span>RWF</span></div></div>'}).join('');document.getElementById('paymentForm').style.display='none';openModal('plansModal')}
+async function showPlans(){
+    var r=await fetch(API+'/plans');var plans=await r.json();
+    document.getElementById('durationTabs').innerHTML=['weekly','monthly','quarterly','yearly'].map(function(d){return'<button class="cat-pill '+(d===selectedDuration?'active':'')+'" onclick="selectDuration(\''+d+'\')">'+(d==='weekly'?'Weekly':d==='monthly'?'Monthly':d==='quarterly'?'Quarterly':'Yearly')+'</button>'}).join('');
+    document.getElementById('plansGrid').innerHTML=Object.keys(plans).map(function(k){var v=plans[k];return'<div class="plan-card '+(k==='ultimate'?'featured':'')+'" onclick="selectPlan(\''+k+'\')"><div class="plan-name">'+v.name+'</div><div class="plan-price">'+(v[selectedDuration]||0).toLocaleString()+' <span>RWF</span></div></div>'}).join('');
+    document.getElementById('paymentForm').style.display='none';openModal('plansModal')
+}
 function selectDuration(d){selectedDuration=d;showPlans()}
 function selectPlan(plan){if(plan==='free'){toast('Enjoy free movies!');closeModal('plansModal');return}if(!currentUser){closeModal('plansModal');showLoginDiv();openModal('authModal');return}selectedPlan=plan;document.getElementById('paymentForm').style.display='block'}
 async function submitPayment(){var fd=new FormData();fd.append('plan',selectedPlan);fd.append('duration',selectedDuration);fd.append('phone',document.getElementById('payPhone').value);fd.append('senderName',document.getElementById('paySenderName').value);fd.append('paymentScreenshot',document.getElementById('payScreenshot').files[0]);var r=await fetch(API+'/subscribe',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});var d=await r.json();if(d.success){closeModal('plansModal');toast('Payment submitted!')}else{toast(d.error||'Failed')}}
-async function loadAds(){try{var r=await fetch(API+'/ads');var ads=await r.json();if(ads&&ads.length){var a=ads[0];var h='';if(a.type==='image')h='<img src="'+a.mediaUrl+'" style="max-height:36px;border-radius:6px"> ';if(a.type==='video')h='<video src="'+a.mediaUrl+'" autoplay muted loop style="max-height:36px;border-radius:6px"></video> ';h+=a.title||'';if(a.contactPhone)h+=' · '+a.contactPhone;if(a.link)h=' <a href="'+a.link+'" target="_blank">More</a>';document.getElementById('adBannerInner').innerHTML=h;document.getElementById('adBanner').style.display='block'}}catch(e){}}
+async function loadAds(){
+    try{
+        var r=await fetch(API+'/ads');var ads=await r.json();
+        if(ads&&ads.length){allAds=ads.filter(function(a){return a.isActive!==false})}else{allAds=[]}
+        // Landing page: text-only carousel
+        var textAds=allAds.filter(function(a){return a.type==='text'&&adMatchesPlan(a)});
+        var banner=document.getElementById('adBanner');
+        var inner=document.getElementById('adBannerInner');
+        if(textAds.length>0){
+            banner.style.display='block';
+            renderTextAdCarousel(textAds,inner);
+        }else{banner.style.display='none';if(adCarouselTimer)clearInterval(adCarouselTimer)}
+    }catch(e){}
+}
+function renderTextAdCarousel(ads,container){
+    if(adCarouselTimer)clearInterval(adCarouselTimer);
+    adCarouselIndex=0;
+    function showSlide(idx){
+        var ad=ads[idx];
+        var html='<div class="ad-slide active">'+escHtml(ad.title||'')+(ad.description?' - '+escHtml(ad.description):'');
+        if(ad.contactPhone){html+=' · 📞 '+escHtml(ad.contactPhone)}
+        if(ad.link){html+=' <a href="'+ad.link+'" target="_blank">More</a>'}
+        html+='</div>';
+        if(ads.length>1){
+            html+='<div class="ad-dots">';
+            for(var i=0;i<ads.length;i++){html+='<div class="ad-dot'+(i===idx?' active':'')+'" onclick="adCarouselGoTo('+i+')"></div>'}
+            html+='</div>';
+        }
+        container.innerHTML=html;
+    }
+    showSlide(0);
+    if(ads.length>1){
+        adCarouselTimer=setInterval(function(){
+            adCarouselIndex=(adCarouselIndex+1)%ads.length;
+            showSlide(adCarouselIndex);
+        },15000);
+    }
+}
+function adCarouselGoTo(i){adCarouselIndex=i;loadAds()}
 function installApp(){if(window.deferredPrompt){window.deferredPrompt.prompt();window.deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted')toast('App installed!')});window.deferredPrompt=null}else{toast('Open in Chrome, tap "Add to Home Screen"')}}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.deferredPrompt=e});
 (function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
