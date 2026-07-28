@@ -54,7 +54,7 @@
 .detail-left{flex:0 0 50%;min-width:0}
 .detail-right{flex:0 0 50%;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0.7rem;align-content:start}
 .detail-right .movie-card{width:100%;min-width:0}.detail-right .movie-thumb{height:180px}
-.detail-bottom-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:0.7rem;margin-top:0.7rem}
+.detail-bottom-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:0.7rem;margin-top:0}
 .detail-bottom-grid .movie-card{width:100%;min-width:0}.detail-bottom-grid .movie-thumb{height:180px}
 .desc-text{font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:0.6rem}.desc-truncated{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.desc-expanded{display:block}.view-more-link{color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.4rem}.view-more-link:hover{text-decoration:underline}
 .parts-list{margin-top:0.8rem}.part-row{display:flex;justify-content:space-between;align-items:center;padding:0.45rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;gap:0.5rem;cursor:pointer;transition:var(--trans)}.part-row:hover{color:var(--accent)}.part-row:last-child{border-bottom:none}.part-row.active{color:var(--accent);font-weight:600}.part-name{flex:1}.part-badge{font-size:0.65rem;font-weight:600;white-space:nowrap}
@@ -65,7 +65,7 @@
 .trailer-btn{margin-bottom:0.4rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;color:var(--accent);font-weight:600;font-size:0.78rem;background:transparent;border:1.5px solid var(--accent);padding:0.3rem 0.8rem;border-radius:20px;transition:var(--trans)}.trailer-btn:hover{background:rgba(245,197,24,0.08)}
 .trailer-container{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.6rem;display:none}.trailer-container video{width:100%;height:100%}
 .ad-card{grid-column:span 2;grid-row:span 3;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0;min-width:0;max-width:100%;padding:0.2rem}
-.ad-card-inner{background:var(--bg3);border-radius:var(--radiusLg);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0.5rem;text-align:center;gap:0.3rem;max-width:100%;max-height:100%;box-sizing:border-box}
+.ad-card-inner{background:var(--bg3);border-radius:var(--radiusLg);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0.5rem;text-align:center;gap:0.3rem;max-width:100%;max-height:100%;width:100%;height:100%;box-sizing:border-box}
 .ad-card-inner img,.ad-card-inner video{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:var(--radius);margin:0 auto}
 .ad-card .ad-contact{font-size:0.7rem;color:var(--text2);display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;max-width:100%}.ad-card .ad-contact a{color:var(--accent);text-decoration:underline}
 .ad-dots-inline{display:flex;gap:0.3rem;justify-content:center;margin-top:0.1rem}.ad-dots-inline .ad-dot-sm{width:6px;height:6px;border-radius:50%;background:rgba(245,197,24,0.3);cursor:pointer}.ad-dots-inline .ad-dot-sm.active{background:var(--accent)}
@@ -128,7 +128,7 @@ function isPlayableUrl(url){if(!url)return false;var lower=url.toLowerCase();if(
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url+'?download';}return url;}
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
 function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
-function closeMovieModal(){closeModal('movieModal');if(window.modalAdTimer)clearInterval(window.modalAdTimer);history.pushState(null,'','/')}
+function closeMovieModal(){closeModal('movieModal');if(window.modalAdTimer)clearInterval(window.modalAdTimer);if(modalAdTimer)clearInterval(modalAdTimer);history.pushState(null,'','/')}
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
 function toggleSideMenu(){document.getElementById('sideMenu').classList.toggle('open');document.getElementById('sideMenuOverlay').classList.toggle('show')}
 function closeSideMenu(){document.getElementById('sideMenu').classList.remove('open');document.getElementById('sideMenuOverlay').classList.remove('show')}
@@ -242,14 +242,13 @@ async function loadRelated(id,c){
     renderRelatedGrids();
     requestAnimationFrame(function(){adjustRelatedRightCount()});
 }
- function adjustRelatedRightCount(){
+function adjustRelatedRightCount(){
     if(window.innerWidth<=900)return;
     var leftEl=document.getElementById('detailLeft');
     var rightEl=document.getElementById('detailRight');
     if(!leftEl||!rightEl)return;
-    // Try to find a movie card; if not, use the ad card or first child
     var sampleCard = rightEl.querySelector('.movie-card');
-    if(!sampleCard) sampleCard = rightEl.querySelector('#adCardWrapper .movie-card');
+    if(!sampleCard) sampleCard = rightEl.querySelector('#adCardWrapper');
     if(!sampleCard) sampleCard = rightEl.firstElementChild;
     if(!sampleCard) return;
     var leftH=leftEl.offsetHeight;
@@ -266,9 +265,16 @@ async function loadRelated(id,c){
         bottomCount=Math.max(0,bottomCount+diff);
         renderRelatedGrids();
     }
-}   
+}
+function getAdMediaUrl(ad){return ad.mediaUrl||ad.imageUrl||ad.videoUrl||ad.image||ad.video||ad.media||ad.fileUrl||'';}
 function getMediaAdsForUser(){
-    return allAds.filter(function(a){return (a.type||'').toLowerCase()!=='text'&&a.isActive!==false&&adMatchesPlan(a)});
+    return allAds.filter(function(a){
+        var type=(a.type||'').toLowerCase().trim();
+        if(type!=='image'&&type!=='video')return false;
+        if(a.isActive===false)return false;
+        if(!adMatchesPlan(a))return false;
+        return !!getAdMediaUrl(a);
+    });
 }
 var modalAdList=[],modalAdIndex=0,modalAdTimer=null;
 function startModalAdRotation(){
@@ -320,9 +326,10 @@ function renderRelatedGrids(){
 function buildAdCardInner(ad){
     var media='';
     var type=(ad.type||'').toLowerCase().trim();
-    if(type==='image'&&ad.mediaUrl){media='<img src="'+ad.mediaUrl+'" onerror="this.style.display=\'none\'">'}
-    else if(type==='video'&&ad.mediaUrl){media='<video src="'+ad.mediaUrl+'" autoplay muted loop playsinline onerror="this.style.display=\'none\'"></video>'}
-    else if(type==='text'&&ad.description){media='<p style="font-size:0.9rem;color:var(--text);padding:0.5rem">'+escHtml(ad.description)+'</p>'}
+    var src=getAdMediaUrl(ad);
+    if(type==='image'&&src){media='<img src="'+src+'" onerror="this.remove()">'}
+    else if(type==='video'&&src){media='<video src="'+src+'" autoplay muted loop playsinline onerror="this.remove()"></video>'}
+    else if(ad.description){media='<p style="font-size:0.9rem;color:var(--text);padding:0.5rem">'+escHtml(ad.description)+'</p>'}
     var contact='';
     if(ad.contactPhone){contact+='<a href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">💬 Can we talk on this?</a>'}
     if(ad.link){contact+='<a href="'+ad.link+'" target="_blank">🌐 Visit</a>'}
@@ -350,7 +357,7 @@ async function loadAds(){
         var bar=document.getElementById('welcomeBar');var inner=document.getElementById('welcomeBarInner');
         if(textAds.length>0){bar.style.display='block';renderTextAdCarousel(textAds,inner);}
         else{bar.style.display='none';if(adCarouselTimer)clearInterval(adCarouselTimer)}
-    }catch(e){}
+    }catch(e){allAds=[];}
 }
 var currentTextAds=[];
 function renderTextAdCarousel(ads,container){
