@@ -130,8 +130,17 @@
 <div class="whatsapp-btn" onclick="window.open('https://wa.me/250795064502','_blank')"><i class="fab fa-whatsapp" style="font-size:22px;color:#fff"></i></div>
 <script>
 var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],rightCount=18,bottomCount=12,allAds=[],adCarouselTimer=null,adCarouselIndex=0,revealedPartsCount=1;
-
-function isPlayableUrl(url){if(!url)return false;var lower=url.toLowerCase();if(lower.includes('isatafilez.my'))return false;if(lower.includes('drive.google.com'))return false;if(lower.includes('dropbox.com'))return false;if(lower.includes('mega.nz'))return false;if(lower.includes('mediafire.com'))return false;return(lower.endsWith('.mp4')||lower.endsWith('.webm')||lower.endsWith('.ogg')||lower.endsWith('.mov')||lower.endsWith('.mkv')||lower.endsWith('.m3u8')||lower.includes('pixeldrain.com')||lower.includes('archive.org/download/')||lower.includes('cdn.')||lower.includes('stream.')||lower.includes('video.')||lower.includes('media.'));}
+function isPlayableUrl(url){
+    if(!url) return false;
+    var lower = url.toLowerCase();
+    if(lower.includes('drive.google.com') || lower.includes('dropbox.com') ||
+       lower.includes('mega.nz') || lower.includes('mediafire.com')) return false;
+    return (lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.ogg') ||
+            lower.endsWith('.mov') || lower.endsWith('.mkv') || lower.endsWith('.m3u8') ||
+            lower.includes('archive.org') || lower.includes('cloudinary.com') ||
+            lower.includes('pixeldrain.com') || lower.includes('/uploads/') ||
+            lower.includes('cdn.') || lower.includes('stream.') || lower.includes('video.') || lower.includes('media.'));
+}
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url+'?download';}return url;}
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
 function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
