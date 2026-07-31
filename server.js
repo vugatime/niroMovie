@@ -1,4 +1,4 @@
-// niroMovie API server — deploy v1 (Render)
+// deploy v11 – video files now go to Cloudinary
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -13,31 +13,29 @@ const cloudinary = require('cloudinary').v2;
 
 const app = express();
 
-// Allow requests from your Vercel frontend (and local dev)
-app.use(cors({
-  origin: ['https://niro-movie.vercel.app', 'https://niromovie.site', 'https://www.niromovie.site', 'http://localhost:3000']
-}));
+app.use(cors());
 app.use(express.json({ limit: '200mb' }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Create temp folders (still needed for multer before Cloudinary upload)
+// Create folders (still useful for thumbnail/trailer local copies if upload fails)
 ['uploads', 'uploads/videos', 'uploads/thumbnails', 'uploads/trailers', 'uploads/ads', 'uploads/payments'].forEach(folder => {
     const dir = path.join(__dirname, folder);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('MongoDB Connected - niroMovie API v1 - ' + new Date().toISOString()))
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/agnews')
+    .then(() => console.log('MongoDB Connected - Deploy v11 - ' + new Date().toISOString()))
     .catch(err => console.log('MongoDB Error:', err));
 
 // Cloudinary Configuration
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dlxiuwv30',
+    api_key: process.env.CLOUDINARY_API_KEY || '378977492756877',
+    api_secret: process.env.CLOUDINARY_API_SECRET || '0SXFdEcf5NtbQg9LKhphZcxPh5E'
 });
 
-// ========== MODELS ==========
+// ========== MODELS (unchanged) ==========
 const DeviceSchema = new mongoose.Schema({
     deviceId: String, deviceName: String, ipAddress: String,
     lastLogin: { type: Date, default: Date.now }, loginCount: { type: Number, default: 1 }
@@ -186,23 +184,24 @@ const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 * 1024 } })
 async function uploadToCloudinary(file, folder, resourceType = 'image') {
     try {
         const result = await cloudinary.uploader.upload(file.path, {
-            folder: 'niromovie/' + folder,
+            folder: 'agnews/' + folder,
             resource_type: resourceType
         });
         fs.unlink(file.path, () => {});
         return result.secure_url;
     } catch (err) {
         console.log('Cloudinary upload error:', err.message);
+        // Fallback to local path if Cloudinary fails
         return '/' + file.path.replace(__dirname, '').replace(/\\/g, '/');
     }
 }
 
-// ========== MIDDLEWARE ==========
+// ========== MIDDLEWARE (unchanged) ==========
 const authMiddleware = async (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     if (!token) return res.status(401).json({ error: 'Access denied. Please login to continue.' });
     try {
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        const verified = jwt.verify(token, process.env.JWT_SECRET || 'agnews_final_secret_2026');
         const user = await User.findById(verified.id);
         if (!user) return res.status(401).json({ error: 'User not found. Please login again.' });
         if (user.subscription.status === 'active' && user.subscription.expiresAt && new Date() > new Date(user.subscription.expiresAt)) {
@@ -269,7 +268,7 @@ function canStream(url) {
     return false;
 }
 
-// ========== CREATE ADMINS ==========
+// ========== CREATE ADMINS (unchanged) ==========
 async function createAdmins() {
     const admins = [
         { email: 'agasobanuyenews@gmail.com', password: 'Joselove@250', fullName: 'Nirobwimba - Head Admin & CEO', adminLevel: 'head' },
@@ -294,7 +293,7 @@ async function createAdmins() {
     }
 }
 
-// ========== AUTH ROUTES ==========
+// ========== AUTH ROUTES (unchanged) ==========
 app.post('/api/register', async (req, res) => {
     try {
         const { email, password, fullName, phone } = req.body;
@@ -305,9 +304,9 @@ app.post('/api/register', async (req, res) => {
             email, password: await bcrypt.hash(password, 10), fullName: fullName || 'Movie Lover', phone: phone || '',
             isEmailVerified: true,
             subscription: { plan: 'free', duration: 'none', startDate: new Date(), status: 'active', maxDevices: 6 },
-            notifications: [{ message: 'Welcome to NIROMOVIE!', type: 'system' }]
+            notifications: [{ message: 'Welcome to AGASOBANUYE MOVIES!', type: 'system' }]
         });
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'agnews_final_secret_2026');
         res.status(201).json({ token, user: { id: user._id, email, role: user.role, fullName: user.fullName, subscription: user.subscription, isEmailVerified: true }, message: 'Account created! Welcome!' });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -339,7 +338,7 @@ app.post('/api/login', async (req, res) => {
             user.deviceCount = user.devices.length;
         }
         await user.save();
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'agnews_final_secret_2026');
         let expiringSoon = false;
         if (user.subscription.status === 'active' && user.subscription.expiresAt) {
             const daysLeft = Math.ceil((new Date(user.subscription.expiresAt) - new Date()) / (1000 * 60 * 60 * 24));
@@ -364,7 +363,7 @@ app.get('/api/me', authMiddleware, async (req, res) => {
 app.get('/api/notifications', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); res.json(user.notifications || []); });
 app.put('/api/notifications/read', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); user.notifications.forEach(n => n.read = true); await user.save(); res.json({ success: true }); });
 
-// ========== ANNOUNCEMENTS ==========
+// ========== ANNOUNCEMENTS (unchanged) ==========
 app.get('/api/announcements', async (req, res) => { res.json(await Announcement.find({ isActive: true }).sort({ createdAt: -1 }).limit(1)); });
 app.get('/api/admin/announcements', authMiddleware, adminMiddleware, async (req, res) => { res.json(await Announcement.find().sort({ createdAt: -1 })); });
 app.post('/api/admin/announcements', authMiddleware, subAdminOrAbove, upload.single('announcementMedia'), async (req, res) => {
@@ -379,7 +378,7 @@ app.post('/api/admin/announcements', authMiddleware, subAdminOrAbove, upload.sin
 app.put('/api/admin/announcements/:id', authMiddleware, subAdminOrAbove, async (req, res) => { await Announcement.findByIdAndUpdate(req.params.id, req.body); res.json({ success: true }); });
 app.delete('/api/admin/announcements/:id', authMiddleware, headAdminMiddleware, async (req, res) => { await Announcement.findByIdAndDelete(req.params.id); res.json({ success: true }); });
 
-// ========== CONTENT ROUTES ==========
+// ========== CONTENT ROUTES (unchanged) ==========
 app.get('/api/contents', async (req, res) => {
     try {
         const { category, type, search } = req.query;
@@ -397,11 +396,15 @@ app.get('/api/contents/:id', async (req, res) => {
         const content = await Content.findById(req.params.id);
         if (!content) return res.status(404).json({ error: 'Content not found!' });
         const userId = req.user?.id || null; const deviceId = req.headers['x-device-id'] || req.ip || 'unknown';
-        // Always count the view
-        content.views = (content.views || 0) + 1;
-        if (!content.viewedBy) content.viewedBy = [];
-        content.viewedBy.push({ userId: userId, deviceId: deviceId, viewedAt: new Date() });
-        await content.save();
+        let alreadyViewed = false;
+        if (userId) { alreadyViewed = content.viewedBy && content.viewedBy.some(v => v.userId && v.userId.toString() === userId.toString()); }
+        else { alreadyViewed = content.viewedBy && content.viewedBy.some(v => v.deviceId === deviceId); }
+        if (!alreadyViewed) {
+            content.views = (content.views || 0) + 1;
+            if (!content.viewedBy) content.viewedBy = [];
+            content.viewedBy.push({ userId: userId, deviceId: deviceId, viewedAt: new Date() });
+            await content.save();
+        }
         const related = await Content.find({ _id: { $ne: content._id }, category: content.category }).limit(12).select('-parts.videoUrl');
         res.json({ content, related });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -418,11 +421,8 @@ app.get('/api/contents/:id/stream', async (req, res) => {
         if (!videoUrl) return res.status(404).json({ error: 'No video URL found' });
         const streamUrl = getStreamUrl(videoUrl);
         const userId = req.user?.id || null; const deviceId = req.headers['x-device-id'] || req.ip || 'unknown';
-        // Always count the view
-        content.views = (content.views || 0) + 1;
-        if (!content.viewedBy) content.viewedBy = [];
-        content.viewedBy.push({ userId, deviceId, viewedAt: new Date() });
-        await content.save();
+        let alreadyViewed = content.viewedBy && content.viewedBy.some(v => (userId && v.userId && v.userId.toString() === userId.toString()) || (!userId && v.deviceId === deviceId));
+        if (!alreadyViewed) { content.views = (content.views || 0) + 1; if (!content.viewedBy) content.viewedBy = []; content.viewedBy.push({ userId, deviceId, viewedAt: new Date() }); await content.save(); }
         res.json({ streamUrl, canStream: canStream(videoUrl), title: content.title, quality: content.quality });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -442,7 +442,7 @@ app.post('/api/contents/:id/download', async (req, res) => {
             const token = req.header('Authorization')?.replace('Bearer ', '');
             if (!token) return res.status(401).json({ error: 'Login required for premium content.' });
             try {
-                const verified = jwt.verify(token, process.env.JWT_SECRET);
+                const verified = jwt.verify(token, process.env.JWT_SECRET || 'agnews_final_secret_2026');
                 const user = await User.findById(verified.id);
                 if (!user) return res.status(401).json({ error: 'User not found.' });
                 const userPlan = user.subscription.plan || 'free'; const userStatus = user.subscription.status || 'none';
@@ -452,11 +452,8 @@ app.post('/api/contents/:id/download', async (req, res) => {
         }
         const downloadUrl = getDownloadUrl(videoUrl);
         const userId = req.user?.id || null; const deviceId = req.headers['x-device-id'] || req.ip || 'unknown';
-        // Always count the download
-        content.downloads = (content.downloads || 0) + 1;
-        if (!content.downloadedBy) content.downloadedBy = [];
-        content.downloadedBy.push({ userId, deviceId, partIndex, seasonIndex, episodeIndex, downloadedAt: new Date() });
-        await content.save();
+        let alreadyDownloaded = content.downloadedBy && content.downloadedBy.some(d => (userId && d.userId && d.userId.toString() === userId.toString()) || (!userId && d.deviceId === deviceId));
+        if (!alreadyDownloaded) { content.downloads = (content.downloads || 0) + 1; if (!content.downloadedBy) content.downloadedBy = []; content.downloadedBy.push({ userId, deviceId, partIndex, seasonIndex, episodeIndex, downloadedAt: new Date() }); await content.save(); }
         res.json({ downloadUrl, quality: content.quality, title: content.title, canStream: canStream(videoUrl) });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -481,7 +478,7 @@ app.get('/api/contents/:id/parts', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ========== COMMENTS ==========
+// ========== COMMENTS (unchanged) ==========
 app.get('/api/comments/:contentId', async (req, res) => { const content = await Content.findById(req.params.contentId); if (!content) return res.status(404).json({ error: 'Not found' }); res.json((content.comments || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); });
 app.post('/api/comments/:contentId', async (req, res) => { const { userName, text } = req.body; if (!userName || !text) return res.status(400).json({ error: 'Name and comment required' }); const content = await Content.findById(req.params.contentId); if (!content) return res.status(404).json({ error: 'Not found' }); content.comments.push({ userName: userName.trim(), text: text.trim() }); await content.save(); res.json({ success: true }); });
 app.post('/api/comments/:contentId/:commentId/like', async (req, res) => {
@@ -504,10 +501,10 @@ app.post('/api/comments/:contentId/:commentId/like', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ========== PLANS ==========
+// ========== PLANS (unchanged) ==========
 app.get('/api/plans', (req, res) => { res.json({ free: { name: 'Free', weekly: 0, monthly: 0, quarterly: 0, yearly: 0, features: ['Free movies', 'Ads', '480p'] }, basic: { name: 'Basic', weekly: 300, monthly: 500, quarterly: 1200, yearly: 3000, features: ['Free+Basic', 'Fewer ads', '720p', 'Download'] }, standard: { name: 'Standard', weekly: 500, monthly: 1000, quarterly: 2500, yearly: 7000, features: ['Most movies', 'Very few ads', '1080p', 'HD Download'] }, premium: { name: 'Premium', weekly: 1000, monthly: 2000, quarterly: 5000, yearly: 15000, features: ['Almost all', 'Almost no ads', '2K'] }, ultimate: { name: 'Ultimate', weekly: 2000, monthly: 5000, quarterly: 12000, yearly: 30000, features: ['ALL movies', 'NO ADS', '4K', 'VIP'] } }); });
 
-// ========== SUBSCRIBE ==========
+// ========== SUBSCRIBE (unchanged) ==========
 app.post('/api/subscribe', authMiddleware, upload.single('paymentScreenshot'), async (req, res) => {
     try {
         const { plan, duration, phone, senderName, paymentMethod } = req.body;
@@ -528,6 +525,7 @@ app.post('/api/subscribe', authMiddleware, upload.single('paymentScreenshot'), a
 // ========== ADMIN ROUTES ==========
 app.get('/api/admin/me', authMiddleware, adminMiddleware, async (req, res) => { const user = await User.findById(req.user.id).select('-password'); res.json({ ...user.toObject(), isHeadAdmin: user.adminLevel === 'head' }); });
 
+// ---- FIXED ADMIN UPLOAD: video now goes to Cloudinary ----
 app.post('/api/admin/upload', authMiddleware, adminMiddleware, upload.fields([{ name: 'thumbnail', maxCount: 1 }, { name: 'trailer', maxCount: 1 }, { name: 'video', maxCount: 1 }]), async (req, res) => {
     try {
         const { type, title, description, category, year, director, cast, translator, language, country, accessLevel, quality, ageRating, tags, isFeatured, isTrending, videoSource, externalLink, seasonNumber, episodeNumber, episodeTitle, partAccessLevel } = req.body;
@@ -537,9 +535,15 @@ app.post('/api/admin/upload', authMiddleware, adminMiddleware, upload.fields([{ 
         const trailerUrl = req.files.trailer?.[0] ? await uploadToCloudinary(req.files.trailer[0], 'trailers', 'video') : '';
         const data = { type: type || 'movie', title, description, category, year, director: director || '', cast: cast || '', translator: translator || 'Not translated', language: language || 'English', country: country || 'Rwanda', thumbnailUrl, trailerUrl, accessLevel: accessLevel || 'free', quality: quality || '720p', ageRating: ageRating || '13+', tags: tags ? tags.split(',').map(t => t.trim()) : [], isFeatured: isFeatured === 'true', isTrending: isTrending === 'true', isLatest: true, uploadedBy: req.user._id, uploadedByEmail: req.user.email };
         let videoUrl = '', videoSrc = videoSource || 'external';
-        if (videoSrc === 'external' && externalLink?.trim()) videoUrl = externalLink.trim();
-        else if (req.files?.video?.[0]) { videoUrl = '/uploads/videos/' + req.files.video[0].filename; videoSrc = 'upload'; }
-        else return res.status(400).json({ error: 'Video file or link required!' });
+        if (videoSrc === 'external' && externalLink?.trim()) {
+            videoUrl = externalLink.trim();
+        } else if (req.files?.video?.[0]) {
+            // Upload video file to Cloudinary
+            videoUrl = await uploadToCloudinary(req.files.video[0], 'videos', 'video');
+            videoSrc = 'upload';
+        } else {
+            return res.status(400).json({ error: 'Video file or link required!' });
+        }
         const pAccessLevel = partAccessLevel || accessLevel || 'free';
         if (data.type === 'movie') data.parts = [{ partNumber: '1', title: 'Full Movie', videoUrl, videoSource: videoSrc, accessLevel: pAccessLevel }];
         else data.seasons = [{ seasonNumber: parseInt(seasonNumber) || 1, title: 'Season ' + (seasonNumber || 1), episodes: [{ episodeNumber: parseInt(episodeNumber) || 1, title: episodeTitle || 'Episode 1', videoUrl, videoSource: videoSrc, accessLevel: pAccessLevel }] }];
@@ -562,15 +566,20 @@ app.put('/api/admin/contents/:id', authMiddleware, subAdminOrAbove, upload.field
 
 app.delete('/api/admin/contents/:id', authMiddleware, subAdminOrAbove, async (req, res) => { await Content.findByIdAndDelete(req.params.id); res.json({ success: true }); });
 
+// ---- FIXED ADD PART / EPISODE: video to Cloudinary ----
 app.post('/api/admin/movies/:id/part', authMiddleware, adminMiddleware, upload.single('video'), async (req, res) => {
     try {
         const c = await Content.findById(req.params.id);
         if (!c || c.type !== 'movie') return res.status(400).json({ error: 'Movie not found' });
         const { partNumber, partTitle, videoSource, externalLink, accessLevel } = req.body;
         let videoUrl = '';
-        if ((videoSource === 'external' || videoSource === 'pixeldrain') && externalLink && externalLink.trim()) videoUrl = externalLink.trim();
-        else if (req.file) videoUrl = '/uploads/videos/' + req.file.filename;
-        else return res.status(400).json({ error: 'Video file or link required!' });
+        if ((videoSource === 'external' || videoSource === 'pixeldrain') && externalLink && externalLink.trim()) {
+            videoUrl = externalLink.trim();
+        } else if (req.file) {
+            videoUrl = await uploadToCloudinary(req.file, 'videos', 'video');
+        } else {
+            return res.status(400).json({ error: 'Video file or link required!' });
+        }
         c.parts.push({ partNumber: partNumber || String(c.parts.length + 1), title: partTitle || 'Part ' + (c.parts.length + 1), videoUrl, videoSource: videoSource || 'external', accessLevel: accessLevel || 'free' });
         c.updatedAt = new Date(); await c.save();
         res.json({ success: true, content: c, message: 'Part added!' });
@@ -583,9 +592,13 @@ app.post('/api/admin/series/:id/episode', authMiddleware, adminMiddleware, uploa
         if (!c || c.type !== 'series') return res.status(400).json({ error: 'Series not found' });
         const { seasonNumber, episodeNumber, episodeTitle, videoSource, externalLink, accessLevel } = req.body;
         let videoUrl = '';
-        if ((videoSource === 'external' || videoSource === 'pixeldrain') && externalLink && externalLink.trim()) videoUrl = externalLink.trim();
-        else if (req.file) videoUrl = '/uploads/videos/' + req.file.filename;
-        else return res.status(400).json({ error: 'Video file or link required!' });
+        if ((videoSource === 'external' || videoSource === 'pixeldrain') && externalLink && externalLink.trim()) {
+            videoUrl = externalLink.trim();
+        } else if (req.file) {
+            videoUrl = await uploadToCloudinary(req.file, 'videos', 'video');
+        } else {
+            return res.status(400).json({ error: 'Video file or link required!' });
+        }
         let season = c.seasons.find(s => s.seasonNumber === parseInt(seasonNumber));
         if (!season) { season = { seasonNumber: parseInt(seasonNumber), title: 'Season ' + seasonNumber, episodes: [] }; c.seasons.push(season); }
         season.episodes.push({ episodeNumber: parseInt(episodeNumber) || season.episodes.length + 1, title: episodeTitle || 'Episode ' + (season.episodes.length + 1), videoUrl, videoSource: videoSource || 'external', accessLevel: accessLevel || 'free' });
@@ -594,7 +607,7 @@ app.post('/api/admin/series/:id/episode', authMiddleware, adminMiddleware, uploa
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ========== SUBSCRIPTIONS (HEAD ADMIN ONLY) ==========
+// ========== SUBSCRIPTIONS (HEAD ADMIN ONLY) (unchanged) ==========
 app.get('/api/admin/subscriptions', authMiddleware, headAdminMiddleware, async (req, res) => {
     const { status } = req.query; let query = {}; if (status) query.status = status;
     const transactions = await Transaction.find(query).sort({ createdAt: -1 });
@@ -626,7 +639,7 @@ app.put('/api/admin/subscriptions/:id', authMiddleware, headAdminMiddleware, asy
     } else { res.json({ success: true, message: 'Updated.' }); }
 });
 
-// ========== USER MANAGEMENT (HEAD ADMIN ONLY) ==========
+// ========== USER MANAGEMENT (HEAD ADMIN ONLY) (unchanged) ==========
 app.get('/api/admin/users', authMiddleware, headAdminMiddleware, async (req, res) => { res.json(await User.find({ role: { $ne: 'admin' } }).select('-password').sort({ createdAt: -1 })); });
 app.put('/api/admin/users/:id', authMiddleware, headAdminMiddleware, async (req, res) => {
     const { fullName, phone, isFlagged, flagReason, subscription } = req.body;
@@ -641,15 +654,15 @@ app.put('/api/admin/users/:id', authMiddleware, headAdminMiddleware, async (req,
 });
 app.delete('/api/admin/users/:id', authMiddleware, headAdminMiddleware, async (req, res) => { await User.findByIdAndDelete(req.params.id); res.json({ success: true }); });
 
-// ========== FLAGGED USERS ==========
+// ========== FLAGGED USERS (unchanged) ==========
 app.get('/api/admin/flagged-users', authMiddleware, adminMiddleware, async (req, res) => { res.json(await User.find({ isFlagged: true }).select('-password')); });
 app.put('/api/admin/flagged-users/:id', authMiddleware, headAdminMiddleware, async (req, res) => { const user = await User.findById(req.params.id); if (!user) return res.status(404).json({ error: 'Not found' }); if (req.body.action === 'clear') { user.isFlagged = false; user.devices = []; user.deviceCount = 0; } else if (req.body.action === 'terminate') { user.subscription = { plan: 'free', duration: 'none', status: 'expired', maxDevices: 6 }; } await user.save(); res.json({ success: true }); });
 
-// ========== COMMENTS MANAGEMENT ==========
+// ========== COMMENTS MANAGEMENT (unchanged) ==========
 app.get('/api/admin/comments', authMiddleware, adminMiddleware, async (req, res) => { const contents = await Content.find({ 'comments.0': { $exists: true } }).select('title comments'); let all = []; contents.forEach(c => c.comments.forEach(cm => all.push({ _id: cm._id, contentId: c._id, contentTitle: c.title, userName: cm.userName, text: cm.text, likes: cm.likes || 0, createdAt: cm.createdAt }))); res.json(all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); });
 app.delete('/api/admin/comments/:contentId/:commentId', authMiddleware, headAdminMiddleware, async (req, res) => { const c = await Content.findById(req.params.contentId); if (!c) return res.status(404).json({ error: 'Not found' }); c.comments = c.comments.filter(cm => cm._id.toString() !== req.params.commentId); await c.save(); res.json({ success: true }); });
 
-// ========== ADS ==========
+// ========== ADS (unchanged) ==========
 app.get('/api/ads', async (req, res) => { res.json(await Ad.find({ isActive: true }).sort({ createdAt: -1 })); });
 app.get('/api/admin/ads', authMiddleware, adminMiddleware, async (req, res) => { res.json(await Ad.find().sort({ createdAt: -1 })); });
 app.post('/api/admin/ads', authMiddleware, subAdminOrAbove, upload.single('adMedia'), async (req, res) => {
@@ -661,7 +674,7 @@ app.post('/api/admin/ads', authMiddleware, subAdminOrAbove, upload.single('adMed
 app.put('/api/admin/ads/:id', authMiddleware, subAdminOrAbove, async (req, res) => { await Ad.findByIdAndUpdate(req.params.id, { ...req.body, updatedAt: new Date() }); res.json({ success: true }); });
 app.delete('/api/admin/ads/:id', authMiddleware, subAdminOrAbove, async (req, res) => { await Ad.findByIdAndDelete(req.params.id); res.json({ success: true }); });
 
-// ========== PAYMENTS (HEAD ADMIN ONLY) ==========
+// ========== PAYMENTS (HEAD ADMIN ONLY) (unchanged) ==========
 app.get('/api/admin/payments', authMiddleware, headAdminMiddleware, async (req, res) => { const transactions = await Transaction.find({ status: 'approved' }).sort({ createdAt: -1 }); const totalRevenue = transactions.reduce((s, t) => s + (t.amount || 0), 0); const withdrawals = await Withdrawal.find(); const totalWithdrawn = withdrawals.filter(w => w.status === 'completed').reduce((s, w) => s + (w.amount || 0), 0); const subscribers = await User.find({ role: 'user', 'subscription.status': 'active', 'subscription.expiresAt': { $gt: new Date() } }); res.json({ transactions, totalRevenue, totalWithdrawn, availableBalance: totalRevenue - totalWithdrawn, activeSubscribers: subscribers.length, subscribers }); });
 app.post('/api/admin/withdraw', authMiddleware, headAdminMiddleware, async (req, res) => { const { amount, bankName, accountNumber, accountName } = req.body; const w = await Withdrawal.create({ amount, bankDetails: { bankName, accountNumber, accountName }, requestedBy: req.user._id, requestedByEmail: req.user.email, requestedByName: req.user.fullName }); res.json({ success: true, withdrawal: w }); });
 app.get('/api/admin/withdrawals', authMiddleware, headAdminMiddleware, async (req, res) => { res.json(await Withdrawal.find().sort({ createdAt: -1 })); });
@@ -672,61 +685,8 @@ app.post('/api/mylist/:contentId', authMiddleware, async (req, res) => { const u
 app.delete('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); user.myList = user.myList.filter(id => id.toString() !== req.params.contentId); await user.save(); res.json({ success: true }); });
 app.get('/api/mylist', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id).populate('myList'); res.json(user.myList || []); });
 
-// Stream proxy for Pixeldrain direct MP4 links
-app.get('/api/stream', async (req, res) => {
-    try {
-        const videoUrl = req.query.url;
-        if (!videoUrl) return res.status(400).send('Missing url');
-
-        // Only allow approved sources
-        if (!videoUrl.startsWith('https://pixeldrain.com/api/file/') &&
-            !videoUrl.startsWith('https://pd.whale.nahted.com/')) {
-            return res.status(403).send('Unsupported source');
-        }
-
-        // Use native fetch (Node 18+) to get the video stream
-        const response = await fetch(videoUrl, {
-            headers: {
-                'User-Agent': 'niroMovie/1.0',
-                'Referer': 'https://pixeldrain.com/',
-                'Accept': '*/*'
-            }
-        });
-
-        if (!response.ok) {
-            return res.status(response.status).send('Upstream error');
-        }
-
-        // Set headers that exist, avoiding undefined
-        const headers = {
-            'Content-Type': response.headers.get('content-type') || 'video/mp4',
-            'Accept-Ranges': 'bytes',
-            'Access-Control-Allow-Origin': '*'
-        };
-        const len = response.headers.get('content-length');
-        if (len) headers['Content-Length'] = len;
-
-        res.writeHead(response.status, headers);
-
-        // Stream the body
-        const reader = response.body.getReader();
-        const pump = async () => {
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) { res.end(); break; }
-                res.write(value);
-            }
-        };
-        pump().catch(() => res.end());
-    } catch (e) {
-        console.error('Stream proxy error:', e.message);
-        res.status(500).send('Stream error');
-    }
-});
-
-// Health check for UptimeRobot
+// Health check for Railway
 app.get('/health', (req, res) => { res.status(200).send('OK'); });
-
 // YouTube latest video
 app.get('/api/youtube/latest', async (req, res) => {
     try {
@@ -748,11 +708,19 @@ app.get('/api/youtube/latest', async (req, res) => {
         }).on('error', () => res.json({ error: 'Failed to fetch' }));
     } catch (e) { res.json({ error: e.message }); }
 });
+// ========== CLEAN URL ROUTES ==========
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+app.get('/', (req, res) => { res.sendFile(path.join(publicPath, 'index.html')); });
+app.get('/admin', (req, res) => { const token = req.query.token; if (!token) return res.sendFile(path.join(publicPath, 'admin-login.html')); try { jwt.verify(token, process.env.JWT_SECRET || 'agnews_final_secret_2026'); res.sendFile(path.join(publicPath, 'admin.html')); } catch (err) { res.sendFile(path.join(publicPath, 'admin-login.html')); } });
+app.get('/admin-login', (req, res) => { res.sendFile(path.join(publicPath, 'admin-login.html')); });
+app.get('/admin.html', (req, res) => { res.redirect('/admin-login'); });
+app.get('/index.html', (req, res) => { res.redirect('/'); });
 
 // ========== START ==========
 createAdmins().then(() => {
     const PORT = process.env.PORT || 3000;
-    const server = app.listen(PORT, '0.0.0.0', () => { console.log('\nNIROMOVIE API\nPort: ' + PORT + '\nVersion: v1 (Render)\n'); });
+    const server = app.listen(PORT, '0.0.0.0', () => { console.log('\nAGASOBANUYE MOVIES | AGNEWS\nPort: ' + PORT + '\nAdmin: agasobanuyenews@gmail.com\nVersion: v11 - Cloudinary videos\n'); });
     process.on('SIGTERM', () => { server.close(() => { process.exit(0); }); });
     process.on('SIGINT', () => { server.close(() => { process.exit(0); }); });
 });
