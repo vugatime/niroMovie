@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const crypto = require('crypto');
 const cloudinary = require('cloudinary').v2;
 
@@ -15,11 +16,13 @@ const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: '200mb' }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Create folders (still useful for thumbnail/trailer local copies if upload fails)
-['uploads', 'uploads/videos', 'uploads/thumbnails', 'uploads/trailers', 'uploads/ads', 'uploads/payments'].forEach(folder => {
-    const dir = path.join(__dirname, folder);
+// On Vercel the project folder is read-only — only /tmp is writable — so use os.tmpdir() there.
+const UPLOAD_ROOT = process.env.VERCEL ? path.join(os.tmpdir(), 'uploads') : path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(UPLOAD_ROOT));
+['', '/videos', '/thumbnails', '/trailers', '/ads', '/payments'].forEach(folder => {
+    const dir = UPLOAD_ROOT + folder;
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
@@ -168,12 +171,12 @@ const Announcement = mongoose.model('Announcement', AnnouncementSchema);
 // ========== MULTER WITH CLOUDINARY ==========
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        if (file.fieldname === 'thumbnail') cb(null, path.join(__dirname, 'uploads/thumbnails/'));
-        else if (file.fieldname === 'trailer') cb(null, path.join(__dirname, 'uploads/trailers/'));
-        else if (file.fieldname === 'adMedia') cb(null, path.join(__dirname, 'uploads/ads/'));
-        else if (file.fieldname === 'paymentScreenshot') cb(null, path.join(__dirname, 'uploads/payments/'));
-        else if (file.fieldname === 'announcementMedia') cb(null, path.join(__dirname, 'uploads/'));
-        else cb(null, path.join(__dirname, 'uploads/videos/'));
+        if (file.fieldname === 'thumbnail') cb(null, UPLOAD_ROOT + '/thumbnails/');
+        else if (file.fieldname === 'trailer') cb(null, UPLOAD_ROOT + '/trailers/');
+        else if (file.fieldname === 'adMedia') cb(null, UPLOAD_ROOT + '/ads/');
+        else if (file.fieldname === 'paymentScreenshot') cb(null, UPLOAD_ROOT + '/payments/');
+        else if (file.fieldname === 'announcementMedia') cb(null, UPLOAD_ROOT + '/');
+        else cb(null, UPLOAD_ROOT + '/videos/');
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + '-' + file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_'));
@@ -718,9 +721,15 @@ app.get('/admin.html', (req, res) => { res.redirect('/admin-login'); });
 app.get('/index.html', (req, res) => { res.redirect('/'); });
 
 // ========== START ==========
-createAdmins().then(() => {
-    const PORT = process.env.PORT || 3000;
-    const server = app.listen(PORT, '0.0.0.0', () => { console.log('\nAGASOBANUYE MOVIES | AGNEWS\nPort: ' + PORT + '\nAdmin: agasobanuyenews@gmail.com\nVersion: v11 - Cloudinary videos\n'); });
-    process.on('SIGTERM', () => { server.close(() => { process.exit(0); }); });
-    process.on('SIGINT', () => { server.close(() => { process.exit(0); }); });
-});
+if (require.main === module) {
+    createAdmins().then(() => {
+        const PORT = process.env.PORT || 3000;
+        const server = app.listen(PORT, '0.0.0.0', () => { console.log('\nAGASOBANUYE MOVIES | AGNEWS\nPort: ' + PORT + '\nAdmin: agasobanuyenews@gmail.com\nVersion: v11 - Cloudinary videos\n'); });
+        process.on('SIGTERM', () => { server.close(() => { process.exit(0); }); });
+        process.on('SIGINT', () => { server.close(() => { process.exit(0); }); });
+    });
+} else {
+    createAdmins().catch(err => console.log('createAdmins error:', err.message));
+}
+
+module.exports = app;
