@@ -248,7 +248,26 @@ const checkAccessLevel = (userPlan, contentAccessLevel) => {
 
 function getStreamUrl(url) { if (!url) return ''; return url; }
 function getDownloadUrl(url) { if (!url) return ''; return url; }
-function canStream(url) { if (!url) return false; return url.includes('pixeldrain.com') || url.includes('youtube.com') || url.includes('vimeo.com') || url.includes('mega.nz'); }
+function canStream(url) {
+    if (!url) return false;
+    var lower = url.toLowerCase();
+    // standard video file extensions
+    if (lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.ogg') ||
+        lower.endsWith('.mov') || lower.endsWith('.mkv') || lower.endsWith('.m3u8'))
+        return true;
+    // well‑known streaming hosts / CDNs
+    if (lower.includes('pixeldrain.com') ||
+        lower.includes('archive.org') ||
+        lower.includes('cloudinary.com') ||
+        lower.includes('res.cloudinary.com') ||
+        lower.includes('/uploads/') ||
+        lower.includes('cdn.') ||
+        lower.includes('stream.') ||
+        lower.includes('video.') ||
+        lower.includes('media.'))
+        return true;
+    return false;
+}
 
 // ========== CREATE ADMINS ==========
 async function createAdmins() {
