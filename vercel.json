@@ -2,18 +2,34 @@
   "version": 2,
   "builds": [
     {
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "public/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/health",
+      "dest": "/server.js"
+    },
+    {
       "src": "/admin-login",
       "dest": "/public/admin-login.html"
     },
     {
       "src": "/admin",
-      "dest": "/public/admin.html"
+      "dest": "/server.js"
     },
     {
       "src": "/",
