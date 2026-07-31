@@ -139,7 +139,7 @@
 <script>
 var API='/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],allAds=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),loaded=false,selectedPlan=null,selectedDuration='monthly',adTimers={};
 
-// ---- improved video detection (same as before, already fixed) ----
+// ---- improved video detection ----
 function isPlayableUrl(url){
     if(!url) return false;
     var lower = url.toLowerCase();
@@ -154,23 +154,7 @@ function isPlayableUrl(url){
 
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url.indexOf('?')!==-1?url:url+'?download';}return url;}
 
-function playInline(url){
-    var vp = document.getElementById('mainVideoPlayer');
-    var thumb = document.getElementById('modalThumbnail');
-    if(!vp || !url) return false;
-    var streamUrl = getStreamUrl(url);
-    vp.src = streamUrl;
-    vp.style.display = 'block';
-    if(thumb) thumb.style.display = 'none';
-    vp.load();
-    vp.onerror = function(){
-        vp.style.display = 'none';
-        if(thumb) thumb.style.display = 'block';
-        showMessage('Streaming Failed','Could not play this video. Try downloading instead.');
-    };
-    vp.play().catch(function(){});
-    return true;
-}
+function playInline(url){var vp=document.getElementById('mainVideoPlayer');var thumb=document.getElementById('modalThumbnail');if(!vp||!url)return false;var streamUrl=getStreamUrl(url);vp.src=streamUrl;vp.style.display='block';if(thumb)thumb.style.display='none';vp.load();vp.onerror=function(){vp.style.display='none';if(thumb)thumb.style.display='block';showMessage('Streaming Failed','Could not play this video. Try downloading instead.')};vp.play().catch(function(){});return true;}
 
 function resetMainPlayer(){var vp=document.getElementById('mainVideoPlayer');if(vp){vp.pause();vp.removeAttribute('src');vp.load();vp.style.display='none';vp.onerror=null;var thumb=document.getElementById('modalThumbnail');if(thumb)thumb.style.display='block'}}
 
@@ -207,121 +191,17 @@ function searchMovies(){var t=document.getElementById('searchInput').value.toLow
 
 async function openContent(id){currentContentId=id;history.pushState(null,'','/?movie='+id);selectedPartIndex=0;var c=allContents.find(function(x){return x._id===id});if(!c)return;currentContentData=c;var userPlan=currentUser&&currentUser.subscription?currentUser.subscription.plan:'free';var userStatus=currentUser&&currentUser.subscription?currentUser.subscription.status:'none';var planLevels={free:0,basic:1,standard:2,premium:3,ultimate:4};var userLvl=planLevels[userPlan]||0;var contentLvl=planLevels[c.accessLevel]||0;if(contentLvl>userLvl){showMessage('Premium Content','This requires '+(c.accessLevel||'free').toUpperCase()+' plan! Subscribe to unlock!');showPlans();return}if(c.accessLevel!=='free'&&userStatus==='pending'){showMessage('Pending Approval','Your subscription is pending admin approval.');return}document.getElementById('modalTitle').innerText=c.title;resetMainPlayer();var thumb=document.getElementById('modalThumbnail');if(c.thumbnailUrl){thumb.src=c.thumbnailUrl;thumb.style.display='block'}else{thumb.style.display='none'}document.getElementById('modalDesc').innerHTML='<strong>'+(c.description||'No description available')+'</strong>';document.getElementById('modalMeta').innerHTML='<div class="meta-item"><span class="meta-label">Year</span><span class="meta-value">'+(c.year||'N/A')+'</span></div><div class="meta-item"><span class="meta-label">Director</span><span class="meta-value">'+(c.director||'N/A')+'</span></div><div class="meta-item"><span class="meta-label">Cast</span><span class="meta-value">'+(c.cast||'N/A')+'</span></div><div class="meta-item"><span class="meta-label">Translator</span><span class="meta-value">'+(c.translator||'Not translated')+'</span></div><div class="meta-item"><span class="meta-label">Country</span><span class="meta-value">'+(c.country||'N/A')+'</span></div><div class="meta-item"><span class="meta-label">Quality</span><span class="meta-value">'+(c.quality||'HD')+'</span></div><div class="meta-item"><span class="meta-label">Rating</span><span class="meta-value">'+(c.ageRating||'13+')+'</span></div>';if(c.synopsis){document.getElementById('modalSynopsis').style.display='block';document.getElementById('modalSynopsis').innerHTML='<strong>Synopsis:</strong><br>'+c.synopsis}else{document.getElementById('modalSynopsis').style.display='none'}if(c.trailerUrl){document.getElementById('trailerBanner').style.display='flex';document.getElementById('trailerVideo').src=c.trailerUrl}else{document.getElementById('trailerBanner').style.display='none';document.getElementById('modalTrailer').style.display='none'}try{var partsRes=await fetch(API+'/contents/'+id+'/parts');var partsData=await partsRes.json();currentPartsItems=partsData.items||[]}catch(e){currentPartsItems=[]}updateMainButtons();renderEpisodeCards();document.getElementById('movieModal').style.display='flex';updateMyListButton();loadComments(id);loadRelated(id,c);await fetch(API+'/contents/'+id);loadAllContent()}
 
-// --- NEW: Local streaming decision ---
-function watchCurrentVideo(){
-    var player = document.getElementById('mainVideoPlayer');
-    if (!player || !player.src) return;
-    player.play().catch(function(e){
-        console.log('Autoplay prevented – click play manually');
-    });
-}
-
-function updateMainButtons(){
-    var mainWatchBtn = document.getElementById('mainWatchBtn');
-    var mainDownloadBtn = document.getElementById('mainDownloadBtn');
-    var player = document.getElementById('mainVideoPlayer');
-    var thumb = document.getElementById('modalThumbnail');
-
-    // Get the video URL that would be played
-    var videoUrl = '';
-    if (currentPartsItems.length > 0) {
-        var item = currentPartsItems[selectedPartIndex];
-        videoUrl = item.streamUrl || item.videoUrl || '';
-    } else if (currentContentData) {
-        if (currentContentData.parts && currentContentData.parts[0]) {
-            videoUrl = currentContentData.parts[0].videoUrl || '';
-        } else if (currentContentData.seasons && currentContentData.seasons[0] && currentContentData.seasons[0].episodes && currentContentData.seasons[0].episodes[0]) {
-            videoUrl = currentContentData.seasons[0].episodes[0].videoUrl || '';
-        }
-    }
-
-    // Use our local function – NO SERVER FLAG NEEDED
-    var canStreamLocally = isPlayableUrl(videoUrl);
-
-    if (canStreamLocally) {
-        mainWatchBtn.style.display = 'flex';
-        mainWatchBtn.onclick = function(){ watchCurrentVideo(); };
-        // Preload the video so the player appears immediately
-        if (player && videoUrl) {
-            player.src = videoUrl;
-            player.style.display = 'block';
-            if (thumb) thumb.style.display = 'none';
-            player.load();
-        }
-    } else {
-        mainWatchBtn.style.display = 'none';
-        if (player) {
-            player.style.display = 'none';
-            if (thumb) thumb.style.display = 'block';
-        }
-    }
-
-    // Download button always visible
-    mainDownloadBtn.style.display = 'flex';
-    if (currentPartsItems.length > 0) {
-        mainDownloadBtn.onclick = function(){ downloadPart(selectedPartIndex); };
-    } else {
-        mainDownloadBtn.onclick = function(){ downloadContent(currentContentData); };
-    }
-}
-
-function watchMainContent(){
-    if (currentPartsItems.length > 0) {
-        watchPart(selectedPartIndex);
-    } else if (currentContentData) {
-        watchContent(currentContentData);
-    }
-}
-
-function downloadMainContent(){
-    if (currentPartsItems.length > 0) {
-        downloadPart(selectedPartIndex);
-    } else if (currentContentData) {
-        downloadContent(currentContentData);
-    }
-}
-// --- END OF NEW CODE ---
+function updateMainButtons(){var mainWatchBtn=document.getElementById('mainWatchBtn');var mainDownloadBtn=document.getElementById('mainDownloadBtn');if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];mainWatchBtn.onclick=function(){watchPart(selectedPartIndex)};mainDownloadBtn.onclick=function(){downloadPart(selectedPartIndex)};mainWatchBtn.style.display='flex';mainDownloadBtn.innerHTML='<span class="material-symbols-outlined">download</span> Download'}else{mainWatchBtn.onclick=function(){watchContent(currentContentData)};mainDownloadBtn.onclick=function(){downloadContent(currentContentData)};mainWatchBtn.style.display='flex';mainDownloadBtn.innerHTML='<span class="material-symbols-outlined">download</span> Download'}}
 
 function selectPart(index){selectedPartIndex=index;updateMainButtons();resetMainPlayer();var cards=document.querySelectorAll('.episode-card');cards.forEach(function(card,i){card.classList.toggle('active',i===index)})}
 
 function renderEpisodeCards(){var epSection=document.getElementById('episodesSection');var epGrid=document.getElementById('episodeGrid');var epTitle=document.getElementById('episodesSectionTitle');if(currentPartsItems.length>1){epSection.style.display='block';epTitle.textContent=(currentContentData.type==='series'?'Episodes':'Parts')+' ('+currentPartsItems.length+')';epGrid.innerHTML=currentPartsItems.map(function(ep,i){var isLocked=ep.accessLevel&&ep.accessLevel!=='free';var userPlan=currentUser&&currentUser.subscription?currentUser.subscription.plan:'free';var planLevels={free:0,basic:1,standard:2,premium:3,ultimate:4};var canAccess=(planLevels[userPlan]||0)>=(planLevels[ep.accessLevel]||0);var lockIcon=isLocked?'<span class="lock-icon material-symbols-outlined">'+(canAccess?'lock_open':'lock')+'</span>':'';return'<div class="episode-card'+(i===selectedPartIndex?' active':'')+'" onclick="selectPart('+i+')"><div class="ep-thumb"><span class="material-symbols-outlined">'+(ep.type==='episode'?'tv':'movie')+'</span></div>'+lockIcon+'<div class="ep-info"><div class="ep-number">'+ep.number+(isLocked?' <span style="font-size:0.6rem;color:var(--yellow)">'+(ep.accessLevel||'').toUpperCase()+'</span>':'')+'</div><div class="ep-title">'+escHtml(ep.title)+'</div>'+(ep.seasonTitle?'<div class="ep-title" style="color:var(--text3);font-size:0.65rem">'+escHtml(ep.seasonTitle)+'</div>':'')+'<div class="ep-actions"><button class="btn btn-red btn-xs" onclick="event.stopPropagation();watchPart('+i+')"><span class="material-symbols-outlined" style="font-size:0.7rem">play_circle</span> Watch</button><button class="btn btn-outline btn-xs" onclick="event.stopPropagation();downloadPart('+i+')"><span class="material-symbols-outlined" style="font-size:0.7rem">download</span></button></div></div></div>'}).join('')}else{epSection.style.display='none'}}
 
-function watchContent(c){
-    var url = null;
-    if(c.parts && c.parts.length>0 && c.parts[0].videoUrl) url = c.parts[0].videoUrl;
-    else if(c.seasons && c.seasons[0] && c.seasons[0].episodes && c.seasons[0].episodes[0] && c.seasons[0].episodes[0].videoUrl) url = c.seasons[0].episodes[0].videoUrl;
-    if(!url){ showMessage('No Video','No video available for this content.'); return; }
-    var playedInline = isPlayableUrl(url) ? playInline(url) : false;
-    if(!playedInline){ window.open(url,'_blank'); }
-}
+function watchContent(c){var url=null;if(c.parts&&c.parts.length>0&&c.parts[0].videoUrl){url=c.parts[0].videoUrl}else if(c.seasons&&c.seasons[0]&&c.seasons[0].episodes&&c.seasons[0].episodes[0]&&c.seasons[0].episodes[0].videoUrl){url=c.seasons[0].episodes[0].videoUrl}if(!url){showMessage('No Video','No video available for this content.');return}var playedInline=isPlayableUrl(url)?playInline(url):false;if(!playedInline){window.open(url,'_blank')}}
 
 function downloadContent(c){if(c.accessLevel&&c.accessLevel!=='free'&&(!currentUser||currentUser.subscription.status!=='active')){showMessage('Login Required','Please login and subscribe to download premium content.');return}if(c.parts&&c.parts.length>0&&c.parts[0].videoUrl){downloadPart(0)}else if(c.seasons&&c.seasons[0]&&c.seasons[0].episodes&&c.seasons[0].episodes[0]&&c.seasons[0].episodes[0].videoUrl){downloadPart(0)}else{showMessage('No Video','No video available for download.')}}
 
-async function watchPart(index){
-    if(!currentPartsItems.length) return;
-    var item = currentPartsItems[index];
-    if(!item || !item.streamUrl){ showMessage('Error','No streaming URL available.'); return; }
-    if(item.accessLevel && item.accessLevel !== 'free'){
-        var userPlan = currentUser?.subscription?.plan || 'free';
-        var userStatus = currentUser?.subscription?.status || 'none';
-        var planLevels = {free:0, basic:1, standard:2, premium:3, ultimate:4};
-        if(userStatus !== 'active'){
-            showMessage('Subscription Required','This part requires '+item.accessLevel.toUpperCase()+' plan.');
-            return showPlans();
-        }
-        if((planLevels[userPlan]||0) < (planLevels[item.accessLevel]||0)){
-            showMessage('Upgrade Required','This part requires '+item.accessLevel.toUpperCase()+' plan.');
-            return showPlans();
-        }
-    }
-    var videoUrl = item.streamUrl || item.videoUrl;
-    if (isPlayableUrl(videoUrl)) {
-        playInline(videoUrl);
-    } else {
-        window.open(videoUrl, '_blank');
-    }
-    try { await fetch(API+'/contents/'+currentContentId+'/stream?part='+(item.index||0)+'&season='+(item.seasonIndex||0)+'&episode='+(item.episodeIndex||0)); } catch(e) {}
-}
+async function watchPart(index){if(!currentPartsItems.length)return;var item=currentPartsItems[index];if(!item||!item.streamUrl){showMessage('Error','No streaming URL available.');return}if(item.accessLevel&&item.accessLevel!=='free'){var userPlan=currentUser&&currentUser.subscription?currentUser.subscription.plan:'free';var userStatus=currentUser&&currentUser.subscription?currentUser.subscription.status:'none';var planLevels={free:0,basic:1,standard:2,premium:3,ultimate:4};if(userStatus!=='active'){showMessage('Subscription Required','This part requires '+item.accessLevel.toUpperCase()+' plan. Please subscribe!');showPlans();return}if((planLevels[userPlan]||0)<(planLevels[item.accessLevel]||0)){showMessage('Upgrade Required','This part requires '+item.accessLevel.toUpperCase()+' plan.');showPlans();return}}var playedInline=isPlayableUrl(item.streamUrl)?playInline(item.streamUrl):false;if(!playedInline){window.open(item.streamUrl,'_blank')}await fetch(API+'/contents/'+currentContentId+'/stream?part='+(item.index||0)+'&season='+(item.seasonIndex||0)+'&episode='+(item.episodeIndex||0))}
 
 async function downloadPart(index){if(!currentPartsItems.length)return;var item=currentPartsItems[index];if(!item||!item.videoUrl){showMessage('Error','No video available for download.');return}if(item.accessLevel&&item.accessLevel!=='free'){if(!currentUser){showMessage('Login Required','Please login to download premium content.');return}var userPlan=currentUser.subscription.plan||'free';var userStatus=currentUser.subscription.status||'none';var planLevels={free:0,basic:1,standard:2,premium:3,ultimate:4};if(userStatus!=='active'){showMessage('Subscription Required','Your subscription is pending approval.');showPlans();return}if((planLevels[userPlan]||0)<(planLevels[item.accessLevel]||0)){showMessage('Upgrade Required','This part requires '+item.accessLevel.toUpperCase()+' plan.');showPlans();return}}window.open(item.downloadUrl,'_blank');try{await fetch(API+'/contents/'+currentContentId+'/download',{method:'POST',headers:token?{'Authorization':'Bearer '+token,'Content-Type':'application/json'}:{'Content-Type':'application/json'},body:JSON.stringify({part:item.index||0,season:item.seasonIndex||0,episode:item.episodeIndex||0})})}catch(e){}}
 
