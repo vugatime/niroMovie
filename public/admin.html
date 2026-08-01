@@ -1,4 +1,4 @@
-<!-- cache bust v13 - niroMovie rebrand - ad system alignment -->
+<!-- cache bust v15 – niroMovie rebrand – admin with simple back-to-site -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,7 +67,7 @@
         .modal-overlay.active{display:flex!important}
         .modal-box{background:var(--bg2);border-radius:var(--radiusLg);border:1px solid var(--border);max-width:700px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.8)}.modal-box-lg{max-width:900px}
         .modal-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:5}.modal-body{padding:1.5rem}
-#editModal .modal-box button{position:relative!important;z-index:99999!important;pointer-events:auto!important}.close-btn{font-size:26px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:var(--trans);color:var(--text2)}.close-btn:hover{background:rgba(255,255,255,0.08);color:var(--red)}
+        #editModal .modal-box button{position:relative!important;z-index:99999!important;pointer-events:auto!important}.close-btn{font-size:26px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:var(--trans);color:var(--text2)}.close-btn:hover{background:rgba(255,255,255,0.08);color:var(--red)}
         .rich-toolbar{display:flex;gap:0.4rem;margin-bottom:0.5rem;flex-wrap:wrap;background:var(--bg);padding:0.5rem;border-radius:var(--radius);border:1px solid var(--border)}
         .rich-toolbar button{width:34px;height:34px;background:transparent;border:1px solid var(--border);color:var(--text);border-radius:8px;cursor:pointer;font-weight:700;font-size:0.78rem;transition:var(--trans)}.rich-toolbar button:hover{background:var(--red);border-color:var(--red);color:#fff}
         .screenshot-preview{max-width:65px;max-height:65px;border-radius:var(--radius);cursor:pointer;border:2px solid var(--border);object-fit:cover;transition:var(--trans)}.screenshot-preview:hover{border-color:var(--red);transform:scale(1.1)}
@@ -81,7 +81,12 @@
 <div class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')"><span class="material-symbols-outlined">menu</span></div>
 <div class="admin-wrapper">
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h2>niroMovie</h2><div class="admin-role" id="adminRoleLabel">Admin Dashboard</div><div class="head-badge" id="headBadge" style="display:none">HEAD ADMIN</div></div>
+        <div class="sidebar-header"><h2>niroMovie</h2><div class="admin-role" id="adminRoleLabel">Admin Dashboard</div><div class="head-badge" id="headBadge" style="display:none">HEAD ADMIN</div>
+        <!-- Single, simple back-to-site link -->
+        <a href="https://niromovie.site" style="display:inline-block;margin-top:0.6rem;color:#F5C518;text-decoration:none;font-size:0.75rem;font-weight:600;background:rgba(245,197,24,0.08);padding:0.4rem 1rem;border-radius:20px;transition:all 0.3s ease;">
+          ← Back to Site
+        </a>
+        </div>
         <div class="sidebar-menu" id="sidebarMenu">
             <div class="sidebar-item active" onclick="showSection('dashboard')"><span class="material-symbols-outlined">dashboard</span> Dashboard</div>
             <div class="sidebar-item" onclick="showSection('upload')"><span class="material-symbols-outlined">upload</span> Upload Content</div>
@@ -127,36 +132,29 @@ function showMsg(msg,isErr){var el=document.getElementById(isErr?'errorMsg':'suc
 async function fetchAuth(url,options){options=options||{};if(token)options.headers=Object.assign({},options.headers,{'Authorization':'Bearer '+token});var r=await fetch(API+url,options);var d=await r.json();if(!r.ok&&d.error&&(d.error.indexOf('token')!==-1||d.error.indexOf('login')!==-1)){logout()}return d}
 async function checkAuth(){if(!token){window.location.href='/';return false}var r=await fetchAuth('/admin/me');if(r.error||(r.role!=='admin'&&r.role!=='content_creator')){window.location.href='/';return false}currentAdmin=r;currentAdminEmail=r.email||'';if(r.email==='agasobanuyenews@gmail.com'){isHeadAdmin=true;currentAdminLevel='head'}else if(r.email==='vugatime@gmail.com'){isHeadAdmin=false;currentAdminLevel='sub'}else if(r.email==='niromusicvibes@gmail.com'){isHeadAdmin=false;currentAdminLevel='content'}else{if(r.adminLevel==='head'){isHeadAdmin=true;currentAdminLevel='head'}else if(r.adminLevel==='sub'){isHeadAdmin=false;currentAdminLevel='sub'}else if(r.adminLevel==='content'){isHeadAdmin=false;currentAdminLevel='content'}else{isHeadAdmin=false;currentAdminLevel='content'}}document.getElementById('adminName').textContent=r.fullName||r.email;document.getElementById('adminAvatar').textContent=(r.fullName||'A').charAt(0).toUpperCase();if(isHeadAdmin){document.getElementById('headBadge').style.display='inline-block';document.getElementById('adminRoleLabel').textContent='Head Admin'}else if(currentAdminLevel==='sub'){document.getElementById('adminRoleLabel').textContent='Sub Admin'}else{document.getElementById('adminRoleLabel').textContent='Content Creator'}applyRestrictions();return true}
 function applyRestrictions(){
-    // Content creator: only upload + add part
     if(currentAdminLevel==='content'){
         hideEl('menuAnn'); hideEl('menuSubs'); hideEl('menuUsers'); hideEl('menuPayments'); hideEl('menuWithdrawals');
         hideEl('menuManage'); hideEl('menuFlagged'); hideEl('menuComments'); hideEl('menuAds');
     }
-    // Sub admin (vugatime): can do subscriptions, payments, withdrawals, but cannot manage users, announcements, flagged
     if(currentAdminLevel==='sub'){
         hideEl('menuAnn'); hideEl('menuUsers'); hideEl('menuFlagged');
-        // Subscriptions, payments, withdrawals are now visible for sub admin
         showEl('menuSubs'); showEl('menuPayments'); showEl('menuWithdrawals');
     }
-    // Head admin: everything visible (default)
 }
 function hideEl(id){var el=document.getElementById(id);if(el)el.style.display='none'}
 function showEl(id){var el=document.getElementById(id);if(el)el.style.display=''}
 function showSection(name){
-    // Sub admin access control
     if(currentAdminLevel==='sub'){
         if(name==='announcements'||name==='users'||name==='flagged'){
             showMsg('Access Denied: Your role cannot access this',true);return;
         }
     }
-    // Content creator access control
     if(currentAdminLevel==='content'){
         if(name==='manage'||name==='ads'||name==='comments'||name==='flagged'||name==='announcements'||
            name==='subscriptions'||name==='users'||name==='payments'||name==='withdrawals'){
             showMsg('Access Denied: Your role cannot access this',true);return;
         }
     }
-    // Head admin: all access
     document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
     var sec=document.getElementById(name+'Section');if(sec)sec.classList.add('active');
     var titles={dashboard:'Dashboard',upload:'Upload Content',manage:'Manage Content',addpart:'Add Part/Episode',
@@ -184,7 +182,6 @@ async function loadManageContent(){var r=await fetchAuth('/contents');allContent
 function canEditContent(c){
     if(isHeadAdmin)return true;
     if(currentAdminLevel==='sub'){
-        // Allow if uploaded by this admin (match by email or uploader field)
         if(c.uploadedByEmail===currentAdminEmail)return true;
         if(c.uploadedBy&&c.uploadedBy===currentAdminEmail)return true;
         return false;
@@ -225,7 +222,7 @@ async function editContent(id){
     var modal=document.getElementById('editModal');if(modal.parentElement&&modal.parentElement.id!=='body'){document.body.appendChild(modal)}modal.style.display='flex';modal.classList.add('active')
 }
 function closeEditModal(){var modal=document.getElementById('editModal');modal.style.display='none';modal.classList.remove('active');currentEditId=null}
-async function saveEdit(){try{var thumbFile=document.getElementById('editThumbnail').files[0];var trailerFile=document.getElementById('editTrailer').files[0];if(thumbFile||trailerFile){var fd=new FormData();fd.append('title',document.getElementById('editTitle').value);fd.append('category',document.getElementById('editCategory').value);fd.append('description',document.getElementById('editDescription').value);fd.append('year',document.getElementById('editYear').value);fd.append('director',document.getElementById('editDirector').value);fd.append('accessLevel',document.getElementById('editAccessLevel').value);fd.append('quality',document.getElementById('editQuality').value);fd.append('isFeatured',document.getElementById('editFeaturedToggle').classList.contains('active')?'true':'false');fd.append('isTrending',document.getElementById('editTrendingToggle').classList.contains('active')?'true':'false');if(thumbFile)fd.append('thumbnail',thumbFile);if(trailerFile)fd.append('trailer',trailerFile);var r=await Promise.race([fetch(API+'/admin/contents/'+currentEditId,{method:'PUT',headers:{'Authorization':'Bearer '+token},body:fd}),new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'))},15000)})]);var d=await r.json()}else{var data={title:document.getElementById('editTitle').value,category:document.getElementById('editCategory').value,description:document.getElementById('editDescription').value,year:document.getElementById('editYear').value,director:document.getElementById('editDirector').value,accessLevel:document.getElementById('editAccessLevel').value,quality:document.getElementById('editQuality').value,isFeatured:document.getElementById('editFeaturedToggle').classList.contains('active'),isTrending:document.getElementById('editTrendingToggle').classList.contains('active')};var r=await Promise.race([fetch(API+'/admin/contents/'+currentEditId,{method:'PUT',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(data)}),new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'))},10000)})]);var d=await r.json()}if(d.success){showMsg('Updated!');closeEditModal();loadManageContent();loadDashboard()}else{showMsg(d.error||'Failed',true)}}catch(e){showMsg('Request timeout or network error - try again',true)}}
+async function saveEdit(){try{var thumbFile=document.getElementById('editThumbnail').files[0];var trailerFile=document.getElementById('editTrailer').files[0];if(thumbFile||trailerFile){var fd=new FormData();fd.append('title',document.getElementById('editTitle').value);fd.append('category',document.getElementById('editCategory').value);fd.append('description',document.getElementById('editDescription').value);fd.append('year',document.getElementById('editYear').value);fd.append('director',document.getElementById('editDirector').value);fd.append('accessLevel',document.getElementById('editAccessLevel').value);fd.append('quality',document.getElementById('editQuality').value);fd.append('isFeatured',document.getElementById('editFeaturedToggle').classList.contains('active')?'true':'false');fd.append('isTrending',document.getElementById('editTrendingToggle').classList.contains('active')?'true':'false');if(thumbFile)fd.append('thumbnail',thumbFile);if(trailerFile)fd.append('trailer',trailerFile);var r=await Promise.race([fetch(API+'/admin/contents/'+currentEditId,{method:'PUT',headers:{'Authorization':'Bearer '+token},body:fd}),new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'))},15000)})]);var d=await r.json()}else{var data={title:document.getElementById('editTitle').value,category:document.getElementById('editCategory').value,description:document.getElementById('editDescription').value,year:document.getElementById('editYear').value,director:document.getElementById('editDirector').value,accessLevel:document.getElementById('editAccessLevel').value,quality:document.getElementById('editQuality').value,isFeatured:document.getElementById('editFeaturedToggle').classList.contains('active'),isTrending:document.getElementById('editTrendingToggle').classList.contains('active')};var r=await Promise.race([fetch(API+'/admin/contents/'+currentEditId,{method:'PUT',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(data)}),new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'))},10000)])]);var d=await r.json()}if(d.success){showMsg('Updated!');closeEditModal();loadManageContent();loadDashboard()}else{showMsg(d.error||'Failed',true)}}catch(e){showMsg('Request timeout or network error - try again',true)}}
 function toggleUploadType(){document.getElementById('movieUploadFields').style.display=document.getElementById('contentType').value==='movie'?'block':'none';document.getElementById('seriesUploadFields').style.display=document.getElementById('contentType').value==='series'?'block':'none'}
 function toggleUploadVideoSource(){var s=document.getElementById('uploadVideoSource').value;document.getElementById('uploadExternalDiv').style.display=s==='external'?'block':'none';document.getElementById('uploadFileDiv').style.display=s==='upload'?'block':'none'}
 function toggleUploadSeriesVideoSource(){var s=document.getElementById('uploadSeriesVideoSource').value;document.getElementById('uploadSeriesExternalDiv').style.display=s==='external'?'block':'none';document.getElementById('uploadSeriesFileDiv').style.display=s==='upload'?'block':'none'}
@@ -236,7 +233,6 @@ function toggleAnnMedia(){var t=document.getElementById('annMediaType').value;do
 function formatText(cmd){var ta=document.getElementById('uploadDescription');var s=ta.selectionStart,e=ta.selectionEnd,v=ta.value,r='';switch(cmd){case'bold':r='<b>'+v.substring(s,e)+'</b>';break;case'italic':r='<i>'+v.substring(s,e)+'</i>';break;case'underline':r='<u>'+v.substring(s,e)+'</u>';break;case'h2':r='<h2>'+v.substring(s,e)+'</h2>';break;case'center':r='<center>'+v.substring(s,e)+'</center>';break}ta.value=v.substring(0,s)+r+v.substring(e);ta.focus()}
 document.getElementById('uploadForm').addEventListener('submit',async function(e){e.preventDefault();var fd=new FormData();var type=document.getElementById('contentType').value;fd.append('type',type);fd.append('title',document.getElementById('uploadTitle').value.trim());fd.append('description',document.getElementById('uploadDescription').value.trim());fd.append('category',document.getElementById('uploadCategory').value);fd.append('year',document.getElementById('uploadYear').value.trim()||'2026');fd.append('director',document.getElementById('uploadDirector').value.trim());fd.append('cast',document.getElementById('uploadCast').value.trim());fd.append('translator',document.getElementById('uploadTranslator').value.trim());fd.append('language',document.getElementById('uploadLanguage').value.trim()||'English');fd.append('country',document.getElementById('uploadCountry').value.trim()||'Rwanda');fd.append('ageRating',document.getElementById('uploadAgeRating').value);fd.append('accessLevel',document.getElementById('uploadAccessLevel').value);fd.append('quality',document.getElementById('uploadQuality').value);fd.append('tags',document.getElementById('uploadTags').value.trim());fd.append('isFeatured',document.getElementById('uploadFeaturedToggle').classList.contains('active')?'true':'false');fd.append('isTrending',document.getElementById('uploadTrendingToggle').classList.contains('active')?'true':'false');var thumbFile=document.getElementById('uploadThumbnail').files[0];if(!thumbFile){showMsg('Thumbnail required!',true);return}fd.append('thumbnail',thumbFile);var trailerFile=document.getElementById('uploadTrailer').files[0];if(trailerFile)fd.append('trailer',trailerFile);if(type==='movie'){var vs=document.getElementById('uploadVideoSource').value;fd.append('videoSource',vs);if(vs==='external'){var el=document.getElementById('uploadExternalLink').value.trim();if(!el){showMsg('Video link required!',true);return}fd.append('externalLink',el)}else{var vf=document.getElementById('uploadVideoFile').files[0];if(!vf){showMsg('Video file required!',true);return}fd.append('video',vf)}fd.append('partAccessLevel',document.getElementById('uploadPartAccessLevel').value)}else{var svs=document.getElementById('uploadSeriesVideoSource').value;fd.append('videoSource',svs);if(svs==='external'){var sel=document.getElementById('uploadSeriesExternalLink').value.trim();if(!sel){showMsg('Video link required!',true);return}fd.append('externalLink',sel)}else{var svf=document.getElementById('uploadSeriesVideoFile').files[0];if(!svf){showMsg('Video file required!',true);return}fd.append('video',svf)}fd.append('seasonNumber',document.getElementById('uploadSeasonNumber').value||'1');fd.append('episodeNumber',document.getElementById('uploadEpisodeNumber').value||'1');fd.append('episodeTitle',document.getElementById('uploadEpisodeTitle').value||'Episode 1');fd.append('partAccessLevel',document.getElementById('uploadEpisodeAccessLevel').value)}var btn=document.querySelector('#uploadForm button[type="submit"]');btn.textContent='Uploading...';btn.disabled=true;try{var res=await fetch(API+'/admin/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});var d=await res.json();if(d.success){showMsg('Uploaded!');document.getElementById('uploadForm').reset();document.getElementById('uploadFeaturedToggle').classList.remove('active');document.getElementById('uploadTrendingToggle').classList.remove('active');loadDashboard();loadManageContent()}else{showMsg(d.error||'Failed',true)}}catch(err){showMsg('Error: '+err.message,true)}btn.textContent='Upload Content';btn.disabled=false});
 async function loadAddpartSelect(){var r=await fetchAuth('/contents');allContents=Array.isArray(r)?r:[];
-    // Filter: sub admin sees only own content, head admin and content creator see all
     var items=allContents;
     if(currentAdminLevel==='sub'){
         items=allContents.filter(function(c){return c.uploadedByEmail===currentAdminEmail||c.uploadedBy===currentAdminEmail});
