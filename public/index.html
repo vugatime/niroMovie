@@ -92,14 +92,14 @@
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    color: rgba(255, 255, 255, 0.18);  /* very low opacity */
-    font-size: 2.8rem;
+    color: rgba(255, 255, 255, 0.18);
+    font-size: clamp(1rem, 2.5vw, 2rem);  /* scales between 1rem and 2rem based on screen width */
     font-weight: 900;
-    letter-spacing: 4px;
+    letter-spacing: 2px;
     white-space: nowrap;
     text-transform: uppercase;
     z-index: 5;
-    text-shadow: 0 0 6px rgba(0,0,0,0.5);
+    text-shadow: 0 0 4px rgba(0,0,0,0.5);
 }
 </style>
 </head>
