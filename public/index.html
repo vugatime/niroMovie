@@ -138,6 +138,17 @@
 <script>
 // Auto-clean old service worker
 if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(function(regs){for(let r of regs)r.unregister();}); }
+// Pick up token from URL (passed from admin back-to-site)
+(function(){
+    var p = new URLSearchParams(window.location.search);
+    var t = p.get('token');
+    if (t) {
+        localStorage.setItem('token', t);
+        var url = new URL(window.location);
+        url.searchParams.delete('token');
+        window.history.replaceState({}, '', url.toString());
+    }
+})();
 var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],rightCount=18,bottomCount=12,allAds=[],adCarouselTimer=null,adCarouselIndex=0,revealedPartsCount=1;
 
 function isAdminLoggedIn(){ return currentUser && currentUser.role === 'admin'; }
