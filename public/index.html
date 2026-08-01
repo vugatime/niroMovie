@@ -142,7 +142,21 @@ var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('tok
 
 function isAdminLoggedIn(){ return currentUser && currentUser.role === 'admin'; }
 
-function isPlayableUrl(url){if(!url)return false;var lower=url.toLowerCase();if(lower.includes('isatafilez.my'))return false;if(lower.includes('drive.google.com'))return false;if(lower.includes('dropbox.com'))return false;if(lower.includes('mega.nz'))return false;if(lower.includes('mediafire.com'))return false;return(lower.endsWith('.mp4')||lower.endsWith('.webm')||lower.endsWith('.ogg')||lower.endsWith('.mov')||lower.endsWith('.mkv')||lower.endsWith('.m3u8')||lower.includes('pixeldrain.com')||lower.includes('archive.org/download/')||lower.includes('cdn.')||lower.includes('stream.')||lower.includes('video.')||lower.includes('media.'));}
+function isPlayableUrl(url){
+    if(!url)return false;
+    var lower=url.toLowerCase();
+    if(lower.includes('isatafilez.my'))return false;
+    if(lower.includes('drive.google.com'))return false;
+    if(lower.includes('dropbox.com'))return false;
+    if(lower.includes('mega.nz'))return false;
+    if(lower.includes('mediafire.com'))return false;
+    // Pixeldrain cannot be streamed inline – force download
+    if(lower.includes('pixeldrain.com'))return false;
+    return(lower.endsWith('.mp4')||lower.endsWith('.webm')||lower.endsWith('.ogg')||
+           lower.endsWith('.mov')||lower.endsWith('.mkv')||lower.endsWith('.m3u8')||
+           lower.includes('archive.org/download/')||lower.includes('cdn.')||
+           lower.includes('stream.')||lower.includes('video.')||lower.includes('media.'));
+}
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid;}if(url.includes('pixeldrain.com/api/file/')){return url.split('?')[0];}return url;}
 function getDownloadUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url.split('?')[0]+'?download';}return url;}
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
@@ -158,7 +172,24 @@ function updateProfileIcon(){var icon=document.getElementById('profileIcon'),sa=
 function addToMyList(){if(!currentUser){openModal('authModal');return}if(myList.indexOf(currentContentId)===-1)myList.push(currentContentId);else myList=myList.filter(function(id){return id!==currentContentId});localStorage.setItem('myList',JSON.stringify(myList));updateMyListButton()}
 function updateMyListButton(){var btn=document.getElementById('addToListBtn');if(myList.indexOf(currentContentId)!==-1){btn.innerHTML='<span class="material-symbols-outlined">bookmark_added</span> Saved';btn.style.borderColor='var(--green)';btn.style.color='var(--green)'}else{btn.innerHTML='<span class="material-symbols-outlined">bookmark_add</span> My List';btn.style.borderColor='var(--border)';btn.style.color='var(--text)'}}
 function showMyList(){closeSideMenu();var items=allContents.filter(function(c){return myList.indexOf(c._id)!==-1});if(!items.length){renderFiltered('My List',[]);return}document.getElementById('movieGrid').innerHTML=items.map(function(m){return movieCardHTML(m,'240px')}).join('');document.getElementById('loadMoreBtn').style.display='none'}
-async function login(){var e=document.getElementById('loginEmail').value;var p=document.getElementById('loginPassword').value;if(!e||!p)return;var r=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});var d=await r.json();if(r.ok){token=d.token;localStorage.setItem('token',token);closeModal('authModal');if(d.user.role==='admin'){window.location.href='/admin?token='+d.token}else{currentUser=d.user;updateProfileIcon();toast('Welcome!')}}else{toast(d.error||'Login failed')}}
+async function login(){
+    var e=document.getElementById('loginEmail').value;
+    var p=document.getElementById('loginPassword').value;
+    if(!e||!p)return;
+    var r=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});
+    var d=await r.json();
+    if(r.ok){
+        token=d.token;
+        localStorage.setItem('token',token);
+        closeModal('authModal');
+        // Admins stay on the site just like users
+        currentUser=d.user;
+        updateProfileIcon();
+        toast('Welcome!');
+    }else{
+        toast(d.error||'Login failed');
+    }
+}
 async function register(){var n=document.getElementById('regName').value;var e=document.getElementById('regEmail').value;var p=document.getElementById('regPassword').value;var r=await fetch(API+'/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p,fullName:n})});var d=await r.json();if(r.ok){token=d.token;localStorage.setItem('token',token);closeModal('authModal');currentUser=d.user;updateProfileIcon();toast('Account created!')}else{toast(d.error||'Failed')}}
 function logout(){localStorage.removeItem('token');token=null;currentUser=null;updateProfileIcon();loadAllContent()}
 function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
