@@ -87,21 +87,19 @@
 @media(max-width:900px){.detail-top-row{flex-direction:column}.detail-left,.detail-right{flex:1 1 100%}.detail-right{grid-template-columns:repeat(3,1fr)}.detail-bottom-grid{grid-template-columns:repeat(4,1fr)}.ad-card{grid-column:span 1;grid-row:span 2}}
 @media(max-width:768px){.navbar{padding:0.5rem 1rem}.search-box{width:100%;order:3;margin-top:0.4rem}.hero-row{flex-direction:column}.hero-slider{aspect-ratio:16/9}.hero-cta{flex-direction:row;flex-wrap:wrap}.hero-cta .cta-btn{flex:1;min-width:120px;padding:0.6rem 0.8rem;font-size:0.78rem}.movie-card-row{min-width:145px;width:145px}.movie-card-row .movie-thumb{height:190px}.movie-grid .movie-card{min-width:0}.movie-grid .movie-thumb{height:190px}.footer-grid{grid-template-columns:repeat(2,1fr)}.hero-slide-info h2{font-size:1.05rem}.nav-links{display:none}.hero-slide-info{max-width:100%}.modal-body{padding:0.8rem}.cta-btn{padding:0.5rem 0.8rem;font-size:0.76rem}.detail-right{grid-template-columns:repeat(2,1fr)}.detail-right .movie-thumb{height:140px}.detail-bottom-grid{grid-template-columns:repeat(2,1fr)}.detail-bottom-grid .movie-thumb{height:140px}}
 
-/* Watermark – small, centered, low opacity */
+/* Watermark – extremely small, bottom right, Times New Roman, almost invisible */
 .video-watermark {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    bottom: 6px;
+    right: 10px;
     pointer-events: none;
-    color: rgba(255, 255, 255, 0.18);
-    font-size: clamp(1rem, 2.5vw, 2rem);
-    font-weight: 900;
-    letter-spacing: 2px;
-    white-space: nowrap;
-    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.10);
+    font-family: "Times New Roman", Times, serif;
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 1px;
     z-index: 5;
-    text-shadow: 0 0 4px rgba(0,0,0,0.5);
+    text-shadow: none;
 }
 
 /* Hide native fullscreen button */
@@ -129,6 +127,21 @@
 }
 .custom-fullscreen-btn:hover {
     background: rgba(0,0,0,0.8);
+}
+
+/* Password visibility toggle */
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 1.2rem;
+    user-select: none;
+}
+.password-wrapper {
+    position: relative;
 }
 </style>
 </head>
@@ -176,7 +189,7 @@
 <button class="load-more-btn" id="relatedLoadMore" onclick="loadMoreRelated()" style="display:none">See More ▼</button>
 </div></div></div>
 
-<div class="modal-overlay" id="authModal"><div class="modal-box-sm"><div class="modal-header"><h2 id="authTitle">Welcome Back!</h2><span class="close-btn" onclick="closeModal('authModal')">&times;</span></div><div style="padding:1.2rem"><div id="loginDiv"><div class="form-group-sm"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"></div><div class="form-group-sm"><label>Password</label><input type="password" id="loginPassword" placeholder="Enter password"></div><button class="cta-btn cta-download" onclick="login()" style="width:100%;margin-top:0.5rem">Sign In</button><p style="text-align:center;margin-top:0.8rem;font-size:0.82rem">No account? <a onclick="showRegisterDiv()" style="color:var(--accent);cursor:pointer;font-weight:600">Create one</a></p></div><div id="registerDiv" style="display:none"><div class="form-group-sm"><label>Full Name</label><input type="text" id="regName" placeholder="Your full name"></div><div class="form-group-sm"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"></div><div class="form-group-sm"><label>Password</label><input type="password" id="regPassword" placeholder="Min 6 characters"></div><button class="cta-btn cta-download" onclick="register()" style="width:100%;margin-top:0.5rem">Create Account</button><p style="text-align:center;margin-top:0.8rem;font-size:0.82rem">Already have account? <a onclick="showLoginDiv()" style="color:var(--accent);cursor:pointer;font-weight:600">Sign In</a></p></div></div></div></div>
+<div class="modal-overlay" id="authModal"><div class="modal-box-sm"><div class="modal-header"><h2 id="authTitle">Welcome Back!</h2><span class="close-btn" onclick="closeModal('authModal')">&times;</span></div><div style="padding:1.2rem"><div id="loginDiv"><div class="form-group-sm"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"></div><div class="form-group-sm"><label>Password</label><div class="password-wrapper"><input type="password" id="loginPassword" placeholder="Enter password" style="padding-right: 2.2rem;"><span class="password-toggle" onclick="toggleLoginPassword()">👁️</span></div></div><button class="cta-btn cta-download" onclick="login()" style="width:100%;margin-top:0.5rem">Sign In</button><p style="text-align:center;margin-top:0.8rem;font-size:0.82rem">No account? <a onclick="showRegisterDiv()" style="color:var(--accent);cursor:pointer;font-weight:600">Create one</a></p></div><div id="registerDiv" style="display:none"><div class="form-group-sm"><label>Full Name</label><input type="text" id="regName" placeholder="Your full name"></div><div class="form-group-sm"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"></div><div class="form-group-sm"><label>Password</label><input type="password" id="regPassword" placeholder="Min 6 characters"></div><button class="cta-btn cta-download" onclick="register()" style="width:100%;margin-top:0.5rem">Create Account</button><p style="text-align:center;margin-top:0.8rem;font-size:0.82rem">Already have account? <a onclick="showLoginDiv()" style="color:var(--accent);cursor:pointer;font-weight:600">Sign In</a></p></div></div></div></div>
 
 <div class="modal-overlay" id="plansModal"><div class="modal-box-sm" style="max-width:600px"><div class="modal-header"><h2>Choose Your Plan</h2><span class="close-btn" onclick="closeModal('plansModal')">&times;</span></div><div style="padding:1.2rem"><div style="display:flex;gap:0.4rem;margin-bottom:0.8rem" id="durationTabs"></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.6rem" id="plansGrid"></div><div id="paymentForm" style="display:none"><div class="payment-box"><h4 style="color:var(--accent)">Pay via MOMO / Mobile Money</h4><p style="font-size:0.82rem;color:var(--text2)">Dial USSD and send payment</p><div class="momo-code">*182*8*1*1294634#</div><p style="font-size:0.78rem;color:var(--text2)">Pay to: ROBERT NIYONKURU</p></div><div class="form-group-sm"><label>Your Phone Number *</label><input type="text" id="payPhone" placeholder="+250 7XX XXX XXX"></div><div class="form-group-sm"><label>Your Name *</label><input type="text" id="paySenderName"></div><div class="form-group-sm"><label>Upload Payment Screenshot *</label><input type="file" id="payScreenshot" accept="image/*" required></div><button class="cta-btn cta-download" onclick="submitPayment()" style="width:100%;background:var(--green)">Submit Payment Proof</button></div></div></div></div>
 
@@ -243,7 +256,6 @@ async function login(){
         token=d.token;
         localStorage.setItem('token',token);
         closeModal('authModal');
-        // Admins stay on the site just like users
         currentUser=d.user;
         updateProfileIcon();
         toast('Welcome!');
@@ -306,6 +318,16 @@ async function openContent(id){
     var playerWrapper=document.getElementById('playerWrapper'),watchBtn=document.getElementById('watchBtn'),downloadBtn=document.getElementById('downloadMainBtn'),videoPlayer=document.getElementById('videoPlayer');
     if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';downloadBtn.style.flex='1';videoPlayer.src=getStreamUrl(videoUrlToPlay);videoPlayer.style.display='block';videoPlayer.load();}
     else{playerWrapper.style.display='none';watchBtn.style.display='none';downloadBtn.style.flex='1';videoPlayer.src='';videoPlayer.style.display='none';}
+    // Watermark visibility based on plan
+    var wm = document.querySelector('.video-watermark');
+    if (wm) {
+        var userPlan = getUserPlan();
+        if (userPlan === 'premium' || userPlan === 'ultimate') {
+            wm.style.display = 'none';
+        } else {
+            wm.style.display = '';
+        }
+    }
     renderPartsList();openModal('movieModal');document.getElementById('modalBodyContent').scrollTop=0;
     loadComments(id);
     await loadAds();
@@ -585,6 +607,19 @@ function renderTextAdCarousel(ads,container){
 function adCarouselGoTo(i){var container=document.getElementById('welcomeBarInner');if(container&&container._showSlide)container._showSlide(i);}
 function installApp(){if(window.deferredPrompt){window.deferredPrompt.prompt();window.deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted')toast('App installed!')});window.deferredPrompt=null}else{toast('Open in Chrome, tap "Add to Home Screen"')}}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.deferredPrompt=e});
+
+// ============ PASSWORD TOGGLE ============
+function toggleLoginPassword() {
+    var input = document.getElementById('loginPassword');
+    var icon = document.querySelector('.password-toggle');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🔒';
+    } else {
+        input.type = 'password';
+        icon.textContent = '👁️';
+    }
+}
 
 // ============ CUSTOM FULLSCREEN TOGGLE ============
 function toggleWrapperFullscreen() {
