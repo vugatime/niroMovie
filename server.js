@@ -865,6 +865,13 @@ app.get('/api/youtube/latest', async (req, res) => {
 });
 // ========== CLEAN URL ROUTES ==========
 const publicPath = path.join(__dirname, 'public');
+// Serve news.html for the news subdomain
+app.use((req, res, next) => {
+  if (req.hostname === 'news.niromovie.site') {
+    return res.sendFile(path.join(publicPath, 'news.html'));
+  }
+  next();
+});
 app.use(express.static(publicPath));
 app.get('/', (req, res) => { res.sendFile(path.join(publicPath, 'index.html')); });
 app.get('/admin', (req, res) => { const token = req.query.token; if (!token) return res.sendFile(path.join(publicPath, 'admin-login.html')); try { jwt.verify(token, process.env.JWT_SECRET || 'agnews_final_secret_2026'); res.sendFile(path.join(publicPath, 'admin.html')); } catch (err) { res.sendFile(path.join(publicPath, 'admin-login.html')); } });
