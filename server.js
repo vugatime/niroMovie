@@ -772,7 +772,23 @@ app.post('/api/news/:id/comment', async (req, res) => {
         res.json({ success: true, comments: news.comments });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
-
+// Like a comment on a news article (device‑based)
+app.post('/api/news/:newsId/comment/:commentId/like', async (req, res) => {
+    try {
+        const news = await News.findById(req.params.newsId);
+        const comment = news?.comments.id(req.params.commentId);
+        if (!comment) return res.status(404).json({ error: 'Comment not found' });
+        const deviceId = req.headers['x-device-id'] || req.ip || 'unknown';
+        if (!comment.likedByDevice) comment.likedByDevice = [];
+        if (comment.likedByDevice.includes(deviceId)) {
+            return res.status(400).json({ error: 'Already liked from this device' });
+        }
+        comment.likes = (comment.likes || 0) + 1;
+        comment.likedByDevice.push(deviceId);
+        await news.save();
+        res.json({ likes: comment.likes });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
 // Admin: get all news (including unpublished)
 app.get('/api/admin/news', authMiddleware, adminMiddleware, async (req, res) => {
     try {
