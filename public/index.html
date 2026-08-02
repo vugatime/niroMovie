@@ -301,7 +301,7 @@
       <span class="material-symbols-outlined" style="color:var(--text3)">search</span>
       <input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()">
     </div>
-    <!-- Animated WhatsApp Channel CTA (replaces old icon, always visible) -->
+    <!-- Animated WhatsApp Channel CTA (only one, near search) -->
     <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" class="nav-whatsapp-cta" id="channelBtn">
       <span class="channel-icon"><i class="fab fa-whatsapp"></i></span>
       <span class="channel-text" id="channelText">Join Our Channel</span>
@@ -355,11 +355,24 @@
   </div>
 </div>
 <div class="welcome-bar" id="welcomeBar" style="display:none"><div id="welcomeBarInner"></div></div>
-<div class="hero-section"><div class="hero-row"><div class="hero-slider" id="heroSlider" onclick="heroClick()"><div class="hero-slide active" id="heroSlide0"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle0"></h2><p id="heroDesc0"></p></div></div><div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div><div class="hero-slide" id="heroSlide2"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle2"></h2><p id="heroDesc2"></p></div></div></div>
-<div class="hero-cta">
-  <button class="cta-btn cta-download" onclick="installApp()"><span class="material-symbols-outlined">download</span> Download App</button>
-  <button class="cta-btn cta-stream" onclick="showPlans()"><span class="material-symbols-outlined">play_arrow</span> Stream for Subscription</button>
-</div></div><div class="hero-dots" id="heroDots"><div class="hero-dot active" onclick="goToSlide(0)"></div><div class="hero-dot" onclick="goToSlide(1)"></div><div class="hero-dot" onclick="goToSlide(2)"></div></div></div>
+<div class="hero-section">
+  <div class="hero-row">
+    <div class="hero-slider" id="heroSlider" onclick="heroClick()">
+      <div class="hero-slide active" id="heroSlide0"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle0"></h2><p id="heroDesc0"></p></div></div>
+      <div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div>
+      <div class="hero-slide" id="heroSlide2"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle2"></h2><p id="heroDesc2"></p></div></div>
+    </div>
+    <div class="hero-cta">
+      <button class="cta-btn cta-download" onclick="installApp()"><span class="material-symbols-outlined">download</span> Download App</button>
+      <button class="cta-btn cta-stream" onclick="showPlans()"><span class="material-symbols-outlined">play_arrow</span> Stream for Subscription</button>
+    </div>
+  </div>
+  <div class="hero-dots" id="heroDots">
+    <div class="hero-dot active" onclick="goToSlide(0)"></div>
+    <div class="hero-dot" onclick="goToSlide(1)"></div>
+    <div class="hero-dot" onclick="goToSlide(2)"></div>
+  </div>
+</div>
 <div class="ad-banner" id="adBanner" style="display:none"><div class="ad-banner-inner" id="adBannerInner"></div></div>
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">new_releases</span> Latest Added</h2></div><div class="movies-row" id="rowLatest"></div></div>
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">category</span> Categories</h2></div><div class="categories-scroll" id="catRow"></div></div>
