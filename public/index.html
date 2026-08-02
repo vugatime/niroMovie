@@ -447,7 +447,6 @@ if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().t
 var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],rightCount=18,bottomCount=12,allAds=[],adCarouselTimer=null,adCarouselIndex=0,revealedPartsCount=1;
 
 function isAdminLoggedIn(){ return currentUser && currentUser.role === 'admin'; }
-
 function isPlayableUrl(url){
     if(!url)return false;
     var lower=url.toLowerCase();
