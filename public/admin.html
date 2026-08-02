@@ -88,7 +88,7 @@
             <div class="sidebar-item" id="menuManage" onclick="showSection('manage')"><span class="material-symbols-outlined">edit_note</span> Manage Content</div>
             <div class="sidebar-item" id="menuAddpart" onclick="showSection('addpart')"><span class="material-symbols-outlined">add_circle</span> Add Part/Episode</div>
             <div class="sidebar-divider" id="div1"></div>
-            <div class="sidebar-item" id="menuAnn" onclick="showSection('announcements')"><span class="material-symbols-outlined">campaign</span> Announcements</div>
+            <div class="sidebar-item" id="menuNews" onclick="showSection('news')"><span class="material-symbols-outlined">article</span> News</div>
             <div class="sidebar-item" id="menuSubs" onclick="showSection('subscriptions')"><span class="material-symbols-outlined">subscriptions</span> Subscriptions <span id="pendingBadge" style="background:var(--red);color:#fff;padding:0.1rem 0.5rem;border-radius:10px;font-size:0.65rem;margin-left:auto">0</span></div>
             <div class="sidebar-item" id="menuUsers" onclick="showSection('users')"><span class="material-symbols-outlined">group</span> Manage Users</div>
             <div class="sidebar-item" id="menuFlagged" onclick="showSection('flagged')"><span class="material-symbols-outlined">flag</span> Flagged Users</div>
@@ -108,7 +108,49 @@
         <div class="section" id="uploadSection"><div class="card"><div class="card-header"><h3><span class="material-symbols-outlined">upload</span> Upload New Content</h3></div><div class="card-body"><form id="uploadForm" enctype="multipart/form-data"><div class="form-row"><div class="form-group"><label>Type</label><select id="contentType" onchange="toggleUploadType()"><option value="movie">Movie</option><option value="series">Series</option></select></div><div class="form-group"><label>Title *</label><input type="text" id="uploadTitle" required></div></div><div class="form-group"><label>Description *</label><div class="rich-toolbar"><button type="button" onclick="formatText('bold')"><b>B</b></button><button type="button" onclick="formatText('italic')"><i>I</i></button><button type="button" onclick="formatText('underline')"><u>U</u></button><button type="button" onclick="formatText('h2')">H</button><button type="button" onclick="formatText('center')">C</button></div><textarea id="uploadDescription" rows="3" required></textarea></div><div class="form-row"><div class="form-group"><label>Category</label><select id="uploadCategory"><option>Action</option><option>Comedy</option><option>Drama</option><option>Romance</option><option>Thriller</option><option>Kinyarwanda</option><option>African</option><option>Horror</option><option>Sci-Fi</option><option>Documentary</option><option>Animation</option><option>Adventure</option></select></div><div class="form-group"><label>Year</label><input type="text" id="uploadYear" placeholder="2026"></div></div><div class="form-row"><div class="form-group"><label>Director</label><input type="text" id="uploadDirector"></div><div class="form-group"><label>Cast</label><input type="text" id="uploadCast"></div></div><div class="form-row"><div class="form-group"><label>Translator</label><input type="text" id="uploadTranslator" value="Not translated"></div><div class="form-group"><label>Language</label><input type="text" id="uploadLanguage" value="English"></div></div><div class="form-row"><div class="form-group"><label>Country</label><input type="text" id="uploadCountry" value="Rwanda"></div><div class="form-group"><label>Age Rating</label><select id="uploadAgeRating"><option>G (All Ages)</option><option selected>13+</option><option>16+</option><option>18+</option></select></div></div><div class="form-row"><div class="form-group"><label>Access Level</label><select id="uploadAccessLevel"><option value="free">Free</option><option value="basic">Basic</option><option value="standard">Standard</option><option value="premium">Premium</option><option value="ultimate">Ultimate</option></select></div><div class="form-group"><label>Quality</label><select id="uploadQuality"><option value="480p">480p</option><option value="720p" selected>720p HD</option><option value="1080p">1080p Full HD</option><option value="2K">2K</option><option value="4K">4K Ultra HD</option></select></div></div><div class="form-group"><label>Tags</label><input type="text" id="uploadTags" placeholder="action, rwandan, 2026"></div><div class="form-row"><div class="form-group"><label>Thumbnail *</label><input type="file" id="uploadThumbnail" accept="image/*" required></div><div class="form-group"><label>Trailer (optional)</label><input type="file" id="uploadTrailer" accept="video/*"></div></div><div id="movieUploadFields"><div class="form-group"><label>Video Source</label><select id="uploadVideoSource" onchange="toggleUploadVideoSource()"><option value="external">External Link</option><option value="upload">Upload File</option></select></div><div id="uploadExternalDiv"><div class="form-group"><label>Video Link *</label><input type="text" id="uploadExternalLink"></div></div><div id="uploadFileDiv" style="display:none"><div class="form-group"><label>Video File *</label><input type="file" id="uploadVideoFile" accept="video/*"></div></div><div class="form-group"><label>Part Access Level</label><select id="uploadPartAccessLevel"><option value="free">Free</option><option value="basic">Basic</option><option value="standard">Standard</option><option value="premium">Premium</option><option value="ultimate">Ultimate</option></select></div></div><div id="seriesUploadFields" style="display:none"><div class="form-group"><label>Video Source</label><select id="uploadSeriesVideoSource" onchange="toggleUploadSeriesVideoSource()"><option value="external">External Link</option><option value="upload">Upload File</option></select></div><div id="uploadSeriesExternalDiv"><div class="form-group"><label>Episode 1 Link *</label><input type="text" id="uploadSeriesExternalLink"></div></div><div id="uploadSeriesFileDiv" style="display:none"><div class="form-group"><label>Episode 1 File *</label><input type="file" id="uploadSeriesVideoFile" accept="video/*"></div></div><div class="form-row"><div class="form-group"><label>Season #</label><input type="number" id="uploadSeasonNumber" value="1"></div><div class="form-group"><label>Episode #</label><input type="number" id="uploadEpisodeNumber" value="1"></div><div class="form-group"><label>Episode Title</label><input type="text" id="uploadEpisodeTitle"></div></div><div class="form-group"><label>Episode Access Level</label><select id="uploadEpisodeAccessLevel"><option value="free">Free</option><option value="basic">Basic</option><option value="standard">Standard</option><option value="premium">Premium</option><option value="ultimate">Ultimate</option></select></div></div><div class="toggle-group"><span>Featured</span><div class="toggle-switch" id="uploadFeaturedToggle" onclick="this.classList.toggle('active')"><div class="toggle-slider"></div></div></div><div class="toggle-group"><span>Trending</span><div class="toggle-switch" id="uploadTrendingToggle" onclick="this.classList.toggle('active')"><div class="toggle-slider"></div></div></div><button type="submit" class="btn btn-red" style="width:100%;padding:0.8rem"><span class="material-symbols-outlined">rocket_launch</span> Upload Content</button></form></div></div></div>
         <div class="section" id="manageSection"><div class="card"><div class="card-header"><h3><span class="material-symbols-outlined">edit_note</span> All Content</h3><input type="text" id="manageSearch" placeholder="Search..." onkeyup="filterManageContent()" style="padding:0.5rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:30px;color:var(--text);width:200px"></div><div class="card-body"><div class="content-grid" id="manageGrid"></div></div></div></div>
         <div class="section" id="addpartSection"><div class="card"><div class="card-header"><h3><span class="material-symbols-outlined">add_circle</span> Add Part or Episode</h3></div><div class="card-body"><div class="form-group"><label>Select Content</label><select id="addpartSelect" onchange="loadContentForAddpart()"><option value="">-- Choose --</option></select></div><div id="addpartMovieForm" style="display:none"><h4 style="margin-bottom:1rem"><span class="material-symbols-outlined">movie</span> Add Movie Part</h4><div class="form-row"><div class="form-group"><label>Part Number</label><input type="text" id="newPartNumber" placeholder="2"></div><div class="form-group"><label>Part Title</label><input type="text" id="newPartTitle" placeholder="Part 2"></div></div><div class="form-group"><label>Video Source</label><select id="newPartSource" onchange="toggleNewPartSource()"><option value="external">External Link</option><option value="upload">Upload File</option></select></div><div id="newPartExternalDiv"><input type="text" id="newPartLink" placeholder="Pixeldrain link" style="width:100%;padding:0.6rem;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:var(--radius)"></div><div id="newPartFileDiv" style="display:none"><input type="file" id="newPartFile" accept="video/*"></div><div class="form-group"><label>Access Level</label><select id="newPartAccessLevel"><option value="free">Free</option><option value="basic">Basic</option><option value="standard">Standard</option><option value="premium">Premium</option><option value="ultimate">Ultimate</option></select></div><button class="btn btn-red" onclick="addPart()" style="margin-top:0.5rem"><span class="material-symbols-outlined">add</span> Add Part</button></div><div id="addpartSeriesForm" style="display:none"><h4 style="margin-bottom:1rem"><span class="material-symbols-outlined">tv</span> Add Episode</h4><div class="form-row"><div class="form-group"><label>Season</label><input type="number" id="newSeasonNum" value="1"></div><div class="form-group"><label>Episode</label><input type="number" id="newEpisodeNum" value="1"></div><div class="form-group"><label>Title</label><input type="text" id="newEpisodeTitle" placeholder="Episode title"></div></div><div class="form-group"><label>Video Source</label><select id="newEpisodeSource" onchange="toggleNewEpisodeSource()"><option value="external">External Link</option><option value="upload">Upload File</option></select></div><div id="newEpisodeExternalDiv"><input type="text" id="newEpisodeLink" placeholder="Pixeldrain link" style="width:100%;padding:0.6rem;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:var(--radius)"></div><div id="newEpisodeFileDiv" style="display:none"><input type="file" id="newEpisodeFile" accept="video/*"></div><div class="form-group"><label>Access Level</label><select id="newEpisodeAccessLevel"><option value="free">Free</option><option value="basic">Basic</option><option value="standard">Standard</option><option value="premium">Premium</option><option value="ultimate">Ultimate</option></select></div><button class="btn btn-red" onclick="addEpisode()" style="margin-top:0.5rem"><span class="material-symbols-outlined">add</span> Add Episode</button></div></div></div></div>
-        <div class="section" id="announcementsSection"><div class="card"><div class="card-header"><h3><span class="material-symbols-outlined">campaign</span> Create Announcement</h3></div><div class="card-body"><form id="announcementForm" enctype="multipart/form-data"><div class="form-group"><label>Title</label><input type="text" id="annTitle" required></div><div class="form-group"><label>Message</label><textarea id="annMessage" rows="2"></textarea></div><div class="form-row"><div class="form-group"><label>Media Type</label><select id="annMediaType" onchange="toggleAnnMedia()"><option value="text">Text Only</option><option value="image">Image</option><option value="video">Video</option></select></div><div class="form-group" id="annMediaGroup" style="display:none"><label>Media File</label><input type="file" id="annMedia" accept="image/*,video/*"></div></div><button type="submit" class="btn btn-red"><span class="material-symbols-outlined">add</span> Post Announcement</button></form></div></div><div class="card"><div class="card-header"><h3><span class="material-symbols-outlined">list</span> All Announcements</h3></div><div class="card-body"><div class="table-responsive"><table><thead><tr><th>Title</th><th>Message</th><th>Type</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="announcementsBody"></tbody></table></div></div></div></div>
+        <div class="section" id="newsSection">
+    <div class="card">
+        <div class="card-header"><h3><span class="material-symbols-outlined">article</span> Create / Edit News</h3></div>
+        <div class="card-body">
+            <form id="newsForm" enctype="multipart/form-data">
+                <div class="form-group"><label>Title *</label><input type="text" id="newsTitle" required></div>
+                <div class="form-group"><label>Description (can include HTML for inline images)</label>
+                    <div class="rich-toolbar">
+                        <button type="button" onclick="formatNewsText('bold')"><b>B</b></button>
+                        <button type="button" onclick="formatNewsText('italic')"><i>I</i></button>
+                        <button type="button" onclick="formatNewsText('underline')"><u>U</u></button>
+                        <button type="button" onclick="formatNewsText('h2')">H</button>
+                    </div>
+                    <textarea id="newsDescription" rows="4"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Country</label><input type="text" id="newsCountry" value="Rwanda"></div>
+                    <div class="form-group"><label>Category</label>
+                        <select id="newsCategory">
+                            <option value="General">General</option>
+                            <option>Action</option><option>Comedy</option><option>Drama</option><option>Romance</option>
+                            <option>Thriller</option><option>Sci-Fi</option><option>Horror</option><option>Documentary</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Main Thumbnail (optional)</label><input type="file" id="newsThumbnail" accept="image/*"></div>
+                    <div class="form-group"><label>Additional Images (max 10)</label><input type="file" id="newsImages" accept="image/*" multiple></div>
+                </div>
+                <input type="hidden" id="newsEditId">
+                <button type="submit" class="btn btn-red" id="newsSubmitBtn"><span class="material-symbols-outlined">add</span> Publish News</button>
+                <button type="button" class="btn btn-outline" id="newsCancelBtn" style="display:none;margin-left:0.5rem" onclick="cancelNewsEdit()">Cancel</button>
+            </form>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h3><span class="material-symbols-outlined">list</span> All News</h3></div>
+        <div class="card-body"><div class="table-responsive"><table>
+            <thead><tr><th>Thumb</th><th>Title</th><th>Category</th><th>Country</th><th>Likes</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="newsTableBody"></tbody>
+        </table></div></div>
+    </div>
+</div>
         <div class="section" id="subscriptionsSection"><div class="card"><div class="card-header"><h3><span class="material-symbols-outlined">subscriptions</span> Subscription Requests</h3><div class="tabs" id="subTabs"><div class="tab active" onclick="loadSubscriptions('pending')">Pending <span id="pendingBadge2" style="background:var(--red);color:#fff;padding:0.1rem 0.4rem;border-radius:10px;font-size:0.65rem">0</span></div><div class="tab" onclick="loadSubscriptions('approved')">Approved</div><div class="tab" onclick="loadSubscriptions('rejected')">Rejected</div><div class="tab" onclick="loadSubscriptions('archived')">Archived</div></div></div><div class="card-body"><div class="table-responsive"><table><thead><tr><th>Date</th><th>User</th><th>Plan</th><th>Duration</th><th>Amount</th><th>Phone</th><th>Proof</th><th>Status</th><th>Actions</th></tr></thead><tbody id="subscriptionsBody"></tbody></table></div></div></div></div>
         <div class="section" id="usersSection"><div class="card"><div class="card-header"><h3><span class="material-symbols-outlined">group</span> Manage Users</h3></div><div class="card-body"><div class="table-responsive"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Plan</th><th>Status</th><th>Devices</th><th>Flagged</th><th>Actions</th></tr></thead><tbody id="usersBody"></tbody></table></div></div></div>
         <div class="section" id="flaggedSection"><div class="card"><div class="card-header"><h3><span class="material-symbols-outlined">flag</span> Flagged Users</h3></div><div class="card-body"><div class="table-responsive"><table><thead><tr><th>User</th><th>Email</th><th>Plan</th><th>Devices</th><th>Reason</th><th>Actions</th></tr></thead><tbody id="flaggedBody"></tbody></table></div></div></div>
@@ -160,16 +202,18 @@ function showSection(name){
     document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
     var sec=document.getElementById(name+'Section');if(sec)sec.classList.add('active');
     var titles={dashboard:'Dashboard',upload:'Upload Content',manage:'Manage Content',addpart:'Add Part/Episode',
-                announcements:'Announcements',subscriptions:'Subscriptions',users:'Manage Users',flagged:'Flagged Users',
-                comments:'Comments',ads:'Manage Ads',payments:'Payments & Funds',withdrawals:'Withdrawals'};
-    var icons={dashboard:'dashboard',upload:'upload',manage:'edit_note',addpart:'add_circle',
-               announcements:'campaign',subscriptions:'subscriptions',users:'group',flagged:'flag',
-               comments:'chat',ads:'ad_units',payments:'payments',withdrawals:'account_balance'};
+            news:'News',subscriptions:'Subscriptions',users:'Manage Users',flagged:'Flagged Users',
+            comments:'Comments',ads:'Manage Ads',payments:'Payments & Funds',withdrawals:'Withdrawals'};
+var icons={dashboard:'dashboard',upload:'upload',manage:'edit_note',addpart:'add_circle',
+           news:'article',subscriptions:'subscriptions',users:'group',flagged:'flag',
+           comments:'chat',ads:'ad_units',payments:'payments',withdrawals:'account_balance'};
+    
+    if(name==='news') { document.getElementById('sectionTitle').innerHTML='<span class="material-symbols-outlined">article</span> News'; }
     document.getElementById('sectionTitle').innerHTML='<span class="material-symbols-outlined">'+icons[name]+'</span> '+titles[name];
     if(name==='dashboard')loadDashboard();
     if(name==='manage')loadManageContent();
     if(name==='addpart')loadAddpartSelect();
-    if(name==='announcements')loadAnnouncements();
+    if(name==='news'){ loadNewsAdmin(); }
     if(name==='subscriptions'){currentSubFilter='pending';loadSubscriptions('pending')}
     if(name==='users')loadUsers();
     if(name==='flagged')loadFlagged();
@@ -286,6 +330,117 @@ window.toggleAd=toggleAd;window.deleteAd=deleteAd;window.processWithdrawal=proce
 window.filterManageContent=filterManageContent;window.logout=logout;
 setTimeout(function(){var em=document.getElementById('editModal');var sm=document.getElementById('screenshotModal');if(em&&em.parentElement)document.body.appendChild(em);if(sm&&sm.parentElement)document.body.appendChild(sm)},0);
 setTimeout(function(){var sections=['dashboardSection','uploadSection','manageSection','addpartSection','announcementsSection','subscriptionsSection','usersSection','flaggedSection','commentsSection','adsSection','paymentsSection','withdrawalsSection'];sections.forEach(function(id){var el=document.getElementById(id);if(el&&el.parentElement&&el.parentElement.id!=='mainContent'){document.getElementById('mainContent').appendChild(el)}})},600);
+// ===== NEWS ADMIN =====
+let allNews = [];
+let newsEditMode = false;
+
+async function loadNewsAdmin() {
+    try {
+        const res = await fetchAuth('/admin/news');
+        const data = await res.json();
+        allNews = Array.isArray(data) ? data : [];
+        const tbody = document.getElementById('newsTableBody');
+        if (!allNews.length) {
+            tbody.innerHTML = '<tr><td colspan="7">No news yet.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allNews.map(n => `
+            <tr>
+                <td>${n.thumbnailUrl ? `<img src="${n.thumbnailUrl}" style="width:60px;height:40px;object-fit:cover;border-radius:4px">` : '-'}</td>
+                <td>${escH(n.title)}</td>
+                <td>${n.category || 'General'}</td>
+                <td>${n.country || 'Rwanda'}</td>
+                <td>${n.likes || 0}</td>
+                <td>${new Date(n.createdAt).toLocaleDateString()}</td>
+                <td>
+                    <button class="btn btn-outline btn-xs" onclick="editNews('${n._id}')"><span class="material-symbols-outlined" style="font-size:0.6rem">edit</span></button>
+                    <button class="btn btn-danger btn-xs" onclick="deleteNews('${n._id}')"><span class="material-symbols-outlined" style="font-size:0.6rem">delete</span></button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (e) { console.error(e); }
+}
+
+function cancelNewsEdit() {
+    newsEditMode = false;
+    document.getElementById('newsEditId').value = '';
+    document.getElementById('newsForm').reset();
+    document.getElementById('newsSubmitBtn').innerHTML = '<span class="material-symbols-outlined">add</span> Publish News';
+    document.getElementById('newsCancelBtn').style.display = 'none';
+}
+
+async function editNews(id) {
+    const news = allNews.find(n => n._id === id);
+    if (!news) return;
+    document.getElementById('newsEditId').value = news._id;
+    document.getElementById('newsTitle').value = news.title;
+    document.getElementById('newsDescription').value = news.description || '';
+    document.getElementById('newsCountry').value = news.country || 'Rwanda';
+    document.getElementById('newsCategory').value = news.category || 'General';
+    // Can't prefill file inputs, leave blank
+    document.getElementById('newsSubmitBtn').innerHTML = '<span class="material-symbols-outlined">save</span> Update News';
+    document.getElementById('newsCancelBtn').style.display = 'inline-block';
+    newsEditMode = true;
+    // Scroll to form
+    document.getElementById('newsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function deleteNews(id) {
+    if (!confirm('Delete this news permanently?')) return;
+    await fetchAuth('/admin/news/' + id, { method: 'DELETE' });
+    loadNewsAdmin();
+}
+
+document.getElementById('newsForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', document.getElementById('newsTitle').value.trim());
+    formData.append('description', document.getElementById('newsDescription').value.trim());
+    formData.append('country', document.getElementById('newsCountry').value.trim());
+    formData.append('category', document.getElementById('newsCategory').value);
+    const thumbFile = document.getElementById('newsThumbnail').files[0];
+    if (thumbFile) formData.append('thumbnail', thumbFile);
+    const imageFiles = document.getElementById('newsImages').files;
+    for (let i = 0; i < imageFiles.length; i++) {
+        formData.append('images', imageFiles[i]);
+    }
+    const editId = document.getElementById('newsEditId').value;
+    let url = API + '/admin/news';
+    let method = 'POST';
+    if (editId) {
+        url += '/' + editId;
+        method = 'PUT';
+    }
+    try {
+        const res = await fetch(url, {
+            method,
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+            showMsg(editId ? 'News updated!' : 'News published!');
+            cancelNewsEdit();
+            loadNewsAdmin();
+        } else {
+            showMsg(data.error || 'Failed', true);
+        }
+    } catch (err) { showMsg('Error: ' + err.message, true); }
+});
+
+// Helper to format text in news description (similar to upload description)
+function formatNewsText(cmd) {
+    var ta = document.getElementById('newsDescription');
+    var s = ta.selectionStart, e = ta.selectionEnd, v = ta.value, r = '';
+    switch(cmd) {
+        case 'bold': r = '<b>'+v.substring(s,e)+'</b>'; break;
+        case 'italic': r = '<i>'+v.substring(s,e)+'</i>'; break;
+        case 'underline': r = '<u>'+v.substring(s,e)+'</u>'; break;
+        case 'h2': r = '<h2>'+v.substring(s,e)+'</h2>'; break;
+    }
+    ta.value = v.substring(0,s)+r+v.substring(e);
+    ta.focus();
+}
 </script>
 </body>
 </html>
