@@ -144,6 +144,82 @@
 .password-wrapper {
     position: relative;
 }
+/* --- NEWS SECTION (homepage) --- */
+#newsHomeSection {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.news-home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 0.6rem;
+}
+.news-home-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radiusLg);
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--trans);
+    display: flex;
+    flex-direction: column;
+}
+.news-home-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: var(--shadowLg);
+}
+.news-home-card .news-home-thumb {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: var(--bg3);
+}
+.news-home-card .news-home-body {
+    padding: 0.8rem;
+    flex: 1;
+}
+.news-home-card .news-home-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.news-home-card .news-home-excerpt {
+    font-size: 0.75rem;
+    color: var(--text2);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.news-home-card .news-home-date {
+    font-size: 0.65rem;
+    color: var(--text3);
+    margin-top: 0.4rem;
+}
+.news-home-more {
+    text-align: right;
+    margin-top: 0.4rem;
+}
+.news-home-more a {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+.news-home-more a:hover {
+    text-decoration: underline;
+}
+@media(max-width:768px){
+    .news-home-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -156,6 +232,16 @@
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">new_releases</span> Latest Added</h2></div><div class="movies-row" id="rowLatest"></div></div>
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">category</span> Categories</h2></div><div class="categories-scroll" id="catRow"></div></div>
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">movie</span> Browse All</h2></div><div class="movie-grid" id="movieGrid"></div><button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreMovies()">Show More ▼</button></div>
+<!-- CINEMA NEWS (latest 4) -->
+<div class="section" id="newsHomeSection" style="display:none">
+    <div class="section-head">
+        <h2><span class="material-symbols-outlined" style="color:var(--accent)">article</span> Cinema News</h2>
+    </div>
+    <div class="news-home-grid" id="newsHomeGrid"></div>
+    <div class="news-home-more">
+        <a href="/news">View all news →</a>
+    </div>
+</div>
 <div class="footer"><div class="footer-grid"><div class="footer-col"><h4>Categories</h4><div id="footerCats"></div></div><div class="footer-col"><h4>Translators</h4><div id="footerTranslators"></div></div><div class="footer-col"><h4>Quick Links</h4><a onclick="filterContent('trending')">Most Downloaded</a><a onclick="filterContent('latest')">Newly Added</a><a onclick="filterContent('free')">Free Movies</a><a onclick="showPlans()">Subscribe</a></div><div class="footer-col"><h4>niroMovie</h4><a onclick="openModal('aboutModal')">About Us</a><a onclick="openModal('contactModal')">Contact</a><a onclick="openModal('privacyModal')">Privacy</a><a onclick="openModal('termsModal')">Terms</a><div class="footer-social"><a href="https://www.tiktok.com/@nirobwimba" target="_blank"><i class="fab fa-tiktok"></i></a><a href="https://www.instagram.com/nirobwimba" target="_blank"><i class="fab fa-instagram"></i></a></div></div></div><div class="footer-bottom">© 2026 — powered by <strong>niroflixx</strong></div></div>
 
 <div class="modal-overlay" id="movieModal" onclick="if(event.target===this)closeMovieModal()"><div class="modal-full"><div class="modal-header"><span class="back-btn" onclick="closeMovieModal()"><span class="material-symbols-outlined">arrow_back</span> Back</span><h2 id="modalTitle"></h2><span class="close-btn" onclick="closeMovieModal()">&times;</span></div><div class="modal-body" id="modalBodyContent">
@@ -632,7 +718,35 @@ function toggleWrapperFullscreen() {
     }
 }
 
-(function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
+(function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}loadLatestNews();});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
+// ===== NEWS (homepage) =====
+async function loadLatestNews() {
+    try {
+        const res = await fetch(API + '/news/latest');
+        const data = await res.json();
+        const section = document.getElementById('newsHomeSection');
+        const grid = document.getElementById('newsHomeGrid');
+        if (!data.length) {
+            section.style.display = 'none';
+            return;
+        }
+        section.style.display = 'block';
+        grid.innerHTML = data.map(n => {
+            const snippet = (n.description || '').replace(/<[^>]*>/g, '').substring(0, 120);
+            const imgSrc = n.thumbnailUrl || (n.images && n.images[0]) || '';
+            return `<div class="news-home-card" onclick="window.location.href='/news?id=${n._id}'">
+                ${imgSrc ? `<img class="news-home-thumb" src="${imgSrc}" onerror="this.style.display='none'">` : ''}
+                <div class="news-home-body">
+                    <div class="news-home-title">${escHtml(n.title)}</div>
+                    <div class="news-home-excerpt">${escHtml(snippet)}</div>
+                    <div class="news-home-date">📅 ${new Date(n.createdAt).toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'numeric'})}</div>
+                </div>
+            </div>`;
+        }).join('');
+    } catch (e) {
+        console.error('Failed to load latest news:', e);
+    }
+}
 </script>
 </body>
 </html>
