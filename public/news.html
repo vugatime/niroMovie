@@ -55,12 +55,15 @@
         .article-title{font-size:2rem;font-weight:800;margin-bottom:0.5rem}
         .article-meta{display:flex;flex-wrap:wrap;gap:1rem;font-size:0.85rem;color:var(--text2);margin-bottom:1rem}
         .article-content{line-height:1.7;color:var(--text2);font-size:0.95rem;word-wrap:break-word;overflow:hidden}
-        .article-content img.inline-image{float:right;width:45%;margin:0.5rem 0 0.5rem 1rem;border-radius:var(--radius);cursor:pointer;transition:transform 0.2s}
-        .article-content img.inline-image:hover{transform:scale(1.02)}
-        /* Image gallery (multiple images) */
-        .article-gallery{display:flex;gap:0.5rem;overflow-x:auto;padding:0.5rem 0;margin:1rem 0;clear:both}
-        .article-gallery img{height:120px;border-radius:var(--radius);cursor:pointer;flex-shrink:0;border:1px solid var(--border);transition:var(--trans)}
-        .article-gallery img:hover{border-color:var(--accent)}
+        /* Image slider (floats right) */
+        .article-image-slider{position:relative;float:right;width:45%;margin:0.5rem 0 0.5rem 1.5rem;border-radius:var(--radius);overflow:hidden;background:var(--bg3);z-index:2}
+        .article-image-slider img{width:100%;display:block;border-radius:var(--radius);cursor:pointer;transition:opacity 0.3s}
+        .slider-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.7);color:#fff;border:none;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;transition:background 0.2s;z-index:3}
+        .slider-nav:hover{background:var(--accent);color:#000}
+        .slider-nav.prev{left:8px}.slider-nav.next{right:8px}
+        .slider-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:3}
+        .slider-dot{width:6px;height:6px;background:rgba(255,255,255,0.5);border-radius:50%;cursor:pointer}
+        .slider-dot.active{background:var(--accent)}
         .article-sidebar{width:300px;flex-shrink:0}
         .article-sidebar h3{font-size:1rem;margin-bottom:1rem;color:var(--accent)}
         .article-sidebar .news-card{margin-bottom:1rem}
@@ -88,7 +91,7 @@
             .search-box{width:100%}
             .article-container{flex-direction:column}
             .article-sidebar{width:100%}
-            .article-content img.inline-image{float:none;width:100%;margin:0.5rem 0}
+            .article-image-slider{float:none;width:100%;margin:0.5rem 0 1rem 0}
         }
     </style>
     <!-- Monetag Ad Tags -->
@@ -139,8 +142,6 @@
                 <h1 class="article-title" id="articleTitle"></h1>
                 <div class="article-meta" id="articleMeta"></div>
                 <div class="article-content" id="articleContent"></div>
-                <!-- Image gallery for multiple images (hidden if <= 1) -->
-                <div class="article-gallery" id="articleGallery" style="display:none"></div>
                 <div class="like-section">
                     <button class="like-btn" onclick="likeNews()">♡ <span id="likeCount">0</span></button>
                     <button class="share-btn" onclick="shareArticle()"><i class="fas fa-share-alt"></i> Share</button>
@@ -159,7 +160,7 @@
                     </div>
                 </div>
             </div>
-            <aside class="article-sidebar" id="articleSidebar">
+            <aside class="article-sidebar">
                 <h3>Related by Category</h3>
                 <div id="sidebarRelated"></div>
             </aside>
@@ -190,6 +191,8 @@
 <script>
 const API = 'https://niromovie-api.onrender.com/api';
 let currentFilter = 'all', currentNewsId = null, allNewsData = [], currentArticleComments = [];
+window.currentImages = [];
+window.currentSlideIndex = 0;
 
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML;}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
@@ -252,7 +255,6 @@ function renderNewsList(news) {
 async function showArticle(id) {
     if (!id) return;
     currentNewsId = id;
-    // Switch view
     document.getElementById('listView').style.display = 'none';
     document.getElementById('articleView').style.display = 'block';
     document.getElementById('searchBox').style.display = 'none';
@@ -264,7 +266,6 @@ async function showArticle(id) {
         const res = await fetch(API + '/news/' + id);
         const news = await res.json();
         currentArticleComments = news.comments || [];
-        // Fill meta
         document.getElementById('articleTitle').textContent = news.title;
         document.getElementById('articleMeta').innerHTML = `
             <span>📅 ${new Date(news.createdAt).toLocaleDateString()}</span>
@@ -274,42 +275,40 @@ async function showArticle(id) {
         document.getElementById('likeCount').textContent = news.likes || 0;
         document.getElementById('likeError').textContent = '';
 
-        // --- IMAGE PROCESSING ---
-        // 1. Collect images from the `images` array (separate uploads)
+        // --- Image Processing (Slider) ---
         let images = Array.isArray(news.images) ? [...news.images] : [];
-        // 2. Extract any <img> tags from the description and add their URLs to the list
         const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/gi;
-        let descWithoutImages = news.description || '';
+        let descClean = news.description || '';
         let match;
-        while ((match = imgRegex.exec(descWithoutImages)) !== null) {
+        while ((match = imgRegex.exec(descClean)) !== null) {
             images.push(match[1]);
         }
-        // Remove img tags from description (we'll display them properly)
-        descWithoutImages = descWithoutImages.replace(/<img[^>]*>/gi, '');
+        descClean = descClean.replace(/<img[^>]*>/gi, '');
 
-        // Build the content HTML
-        let contentHtml = '';
+        let sliderHtml = '';
         if (images.length > 0) {
-            // Float the first image to the right
-            contentHtml += `<img src="${images[0]}" class="inline-image" onclick="viewImage('${images[0]}')">`;
-            // Remove the first image from the array so it's not repeated in the gallery
-            images.shift();
-        }
-        contentHtml += descWithoutImages;
-
-        // Insert the content
-        document.getElementById('articleContent').innerHTML = contentHtml;
-
-        // Gallery for remaining images (if any)
-        const galleryDiv = document.getElementById('articleGallery');
-        if (images.length > 0) {
-            galleryDiv.style.display = 'flex';
-            galleryDiv.innerHTML = images.map(src => `<img src="${src}" onclick="viewImage('${src}')">`).join('');
-        } else {
-            galleryDiv.style.display = 'none';
+            const imgItems = images.map((src, i) => `
+                <img src="${src}" class="slider-img" style="display:${i===0?'block':'none'}" onclick="viewImage('${src}')" data-index="${i}">
+            `).join('');
+            const dots = images.map((_, i) => `
+                <span class="slider-dot ${i===0?'active':''}" onclick="goToSlide(${i})"></span>
+            `).join('');
+            sliderHtml = `
+                <div class="article-image-slider" id="articleSlider">
+                    ${imgItems}
+                    ${images.length > 1 ? `
+                        <button class="slider-nav prev" onclick="changeSlide(-1)">‹</button>
+                        <button class="slider-nav next" onclick="changeSlide(1)">›</button>
+                        <div class="slider-dots">${dots}</div>
+                    ` : ''}
+                </div>`;
         }
 
-        // Comments (latest 2)
+        document.getElementById('articleContent').innerHTML = sliderHtml + descClean;
+        window.currentImages = images;
+        window.currentSlideIndex = 0;
+
+        // Comments
         renderComments(currentArticleComments.slice(0, 2));
         document.getElementById('loadMoreCommentsContainer').style.display = currentArticleComments.length > 2 ? 'block' : 'none';
 
@@ -364,6 +363,28 @@ function loadLatestNews(excludeId) {
     `).join('');
 }
 
+// Slider controls
+function changeSlide(direction) {
+    const images = window.currentImages;
+    if (!images || images.length <= 1) return;
+    window.currentSlideIndex = (window.currentSlideIndex + direction + images.length) % images.length;
+    updateSlider();
+}
+
+function goToSlide(index) {
+    window.currentSlideIndex = index;
+    updateSlider();
+}
+
+function updateSlider() {
+    const slider = document.getElementById('articleSlider');
+    if (!slider) return;
+    const imgs = slider.querySelectorAll('.slider-img');
+    const dots = slider.querySelectorAll('.slider-dot');
+    imgs.forEach((img, i) => img.style.display = i === window.currentSlideIndex ? 'block' : 'none');
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === window.currentSlideIndex));
+}
+
 function viewImage(src) {
     const overlay = document.createElement('div');
     overlay.style = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:3000;display:flex;justify-content:center;align-items:center;cursor:pointer;';
@@ -375,27 +396,17 @@ function viewImage(src) {
 async function likeNews() {
     const deviceId = localStorage.getItem('deviceId') || (() => { const id = 'dev_' + Math.random().toString(36).substr(2,9); localStorage.setItem('deviceId', id); return id; })();
     try {
-        const res = await fetch(API + '/news/' + currentNewsId + '/like', {
-            method: 'POST',
-            headers: { 'X-Device-ID': deviceId }
-        });
+        const res = await fetch(API + '/news/' + currentNewsId + '/like', { method:'POST', headers:{'X-Device-ID':deviceId} });
         const data = await res.json();
-        if (res.ok) {
-            document.getElementById('likeCount').textContent = data.likes;
-            showToast('Liked!');
-        } else {
-            document.getElementById('likeError').textContent = data.error;
-        }
+        if (res.ok) { document.getElementById('likeCount').textContent = data.likes; showToast('Liked!'); }
+        else { document.getElementById('likeError').textContent = data.error; }
     } catch(e) { console.error(e); }
 }
 
 function shareArticle() {
     const url = window.location.href;
-    if (navigator.share) {
-        navigator.share({ title: document.title, url });
-    } else {
-        navigator.clipboard.writeText(url).then(() => showToast('Link copied!'));
-    }
+    if (navigator.share) { navigator.share({ title: document.title, url }); }
+    else { navigator.clipboard.writeText(url).then(() => showToast('Link copied!')); }
 }
 
 async function postComment() {
@@ -404,15 +415,14 @@ async function postComment() {
     if (!name || !text) return showToast('Name and comment required');
     try {
         const res = await fetch(API + '/news/' + currentNewsId + '/comment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ userName: name, text })
         });
         const data = await res.json();
         if (data.success) {
             document.getElementById('commentName').value = '';
             document.getElementById('commentText').value = '';
-            showArticle(currentNewsId); // refresh
+            showArticle(currentNewsId);
         }
     } catch(e) { console.error(e); }
 }
@@ -442,7 +452,7 @@ function openStaticModal(page) {
                 niroNews is the official cinema news portal of <strong>niroMovie</strong>, your gateway to unlimited entertainment. We bring the latest updates about movies, series, and the entertainment world, with a special focus on African and global cinema.
                 </p>
                 <p style="color:var(--text2);line-height:1.6;margin-bottom:1rem">
-                Founded by <strong>Niyonkuru Robert</strong> (niro bwimba), we are committed to keeping Rwandan and global audiences informed. Our team scours the internet to find trending stories, release dates, and exclusive behind‑the‑scenes content that matters to movie lovers.
+                Founded by <strong>Niyonkuru Robert</strong>, we are committed to keeping Rwandan and global audiences informed. Our team scours the internet to find trending stories, release dates, and exclusive behind‑the‑scenes content that matters to movie lovers.
                 </p>
                 <p style="color:var(--text2);line-height:1.6">
                 Contact us at <a href="mailto:news@niromovie.site" style="color:var(--accent)">news@niromovie.site</a> or call <strong>+250 795 064 502</strong>.
@@ -456,7 +466,7 @@ function openStaticModal(page) {
                 <p style="color:var(--text2);line-height:1.6">
                 📧 <strong>Email:</strong> news@niromovie.site<br>
                 📞 <strong>Phone:</strong> +250 795 064 502<br>
-                👤 <strong>Founder:</strong> Niyonkuru Robert (niro bwimba)<br>
+                👤 <strong>Founder:</strong> Niyonkuru Robert<br>
                 📍 <strong>Location:</strong> Kigali, Rwanda
                 </p>`;
             break;
@@ -499,11 +509,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
     fetch(API + '/news').then(r => r.json()).then(data => { allNewsData = data; });
-    if (id) {
-        showArticle(id);
-    } else {
-        loadNews();
-    }
+    if (id) { showArticle(id); }
+    else { loadNews(); }
 });
 </script>
 </body>
