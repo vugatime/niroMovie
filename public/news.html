@@ -54,9 +54,13 @@
         .article-main{flex:1;min-width:0}
         .article-title{font-size:2rem;font-weight:800;margin-bottom:0.5rem}
         .article-meta{display:flex;flex-wrap:wrap;gap:1rem;font-size:0.85rem;color:var(--text2);margin-bottom:1rem}
-        .article-content{line-height:1.7;color:var(--text2);font-size:0.95rem;word-wrap:break-word}
-        .article-content img{max-width:100%;border-radius:var(--radius);margin:0.8rem 0}
-        .article-content img.inline-image{float:right;width:45%;margin:0.5rem 0 0.5rem 1rem;border-radius:var(--radius)}
+        .article-content{line-height:1.7;color:var(--text2);font-size:0.95rem;word-wrap:break-word;overflow:hidden}
+        .article-content img.inline-image{float:right;width:45%;margin:0.5rem 0 0.5rem 1rem;border-radius:var(--radius);cursor:pointer;transition:transform 0.2s}
+        .article-content img.inline-image:hover{transform:scale(1.02)}
+        /* Image gallery (multiple images) */
+        .article-gallery{display:flex;gap:0.5rem;overflow-x:auto;padding:0.5rem 0;margin:1rem 0;clear:both}
+        .article-gallery img{height:120px;border-radius:var(--radius);cursor:pointer;flex-shrink:0;border:1px solid var(--border);transition:var(--trans)}
+        .article-gallery img:hover{border-color:var(--accent)}
         .article-sidebar{width:300px;flex-shrink:0}
         .article-sidebar h3{font-size:1rem;margin-bottom:1rem;color:var(--accent)}
         .article-sidebar .news-card{margin-bottom:1rem}
@@ -66,10 +70,15 @@
         .like-section,.comment-section{margin-top:1.5rem}
         .like-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:0.4rem 1rem;border-radius:20px;cursor:pointer;font-weight:600}
         .like-btn:hover{background:rgba(245,197,24,0.1)}
+        .share-btn{margin-left:0.5rem;background:transparent;border:1px solid var(--text3);color:var(--text3);padding:0.4rem 1rem;border-radius:20px;cursor:pointer}
+        .share-btn:hover{color:var(--accent);border-color:var(--accent)}
         .comment-input{display:flex;gap:0.5rem;margin-top:0.5rem}
         .comment-input input{flex:1;padding:0.4rem;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-family:inherit}
         .comment-input button{background:var(--accent);color:#000;border:none;padding:0.4rem 1rem;border-radius:20px;cursor:pointer;font-weight:600}
         .comment-item{background:var(--bg3);padding:0.5rem;border-radius:var(--radius);margin:0.3rem 0;font-size:0.8rem}
+        .load-more-comments{color:var(--accent);cursor:pointer;font-size:0.8rem;margin-top:0.5rem;display:inline-block}
+        .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:0.6rem 1.5rem;border-radius:30px;z-index:9999;font-weight:600;font-size:0.85rem;animation:toastIn 0.3s ease;pointer-events:none}
+        @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
         @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @media(max-width:768px){
@@ -130,13 +139,19 @@
                 <h1 class="article-title" id="articleTitle"></h1>
                 <div class="article-meta" id="articleMeta"></div>
                 <div class="article-content" id="articleContent"></div>
+                <!-- Image gallery for multiple images (hidden if <= 1) -->
+                <div class="article-gallery" id="articleGallery" style="display:none"></div>
                 <div class="like-section">
-                    <button class="like-btn" id="likeBtn" onclick="likeNews()">♡ Like</button>
+                    <button class="like-btn" onclick="likeNews()">♡ <span id="likeCount">0</span></button>
+                    <button class="share-btn" onclick="shareArticle()"><i class="fas fa-share-alt"></i> Share</button>
                     <span id="likeError" style="color:var(--red);font-size:0.8rem;margin-left:0.5rem;"></span>
                 </div>
                 <div class="comment-section">
                     <h4>Comments</h4>
                     <div id="commentsContainer"></div>
+                    <div id="loadMoreCommentsContainer" style="display:none">
+                        <span class="load-more-comments" onclick="loadAllComments()">Load more comments</span>
+                    </div>
                     <div class="comment-input">
                         <input type="text" id="commentName" placeholder="Your name">
                         <input type="text" id="commentText" placeholder="Write a comment...">
@@ -144,11 +159,14 @@
                     </div>
                 </div>
             </div>
-            <aside class="article-sidebar" id="articleSidebar"></aside>
+            <aside class="article-sidebar" id="articleSidebar">
+                <h3>Related by Category</h3>
+                <div id="sidebarRelated"></div>
+            </aside>
         </div>
         <div class="article-bottom-related">
-            <h3>Related News</h3>
-            <div class="related-grid" id="bottomRelated"></div>
+            <h3>Latest News</h3>
+            <div class="related-grid" id="bottomLatest"></div>
         </div>
     </div>
 </div>
@@ -166,14 +184,17 @@
 <div id="staticModal" class="page-modal" style="display:none" onclick="if(event.target===this)closeStaticModal()">
     <div class="page-modal-box" id="staticModalContent"></div>
 </div>
+<!-- Toast for share / feedback -->
+<div id="toast" class="toast" style="display:none"></div>
 
 <script>
 const API = 'https://niromovie-api.onrender.com/api';
-let currentFilter = 'all', currentNewsId = null, allNewsData = [];
+let currentFilter = 'all', currentNewsId = null, allNewsData = [], currentArticleComments = [];
 
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML;}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 
-// ========== List View Functions ==========
+// ========== List View ==========
 async function loadNews() {
     let query = '';
     if (currentFilter !== 'all') query = '?' + currentFilter;
@@ -206,7 +227,7 @@ function renderHero(news) {
 
 function renderNewsList(news) {
     const grid = document.getElementById('newsList');
-    const items = news.slice(1); // skip first (hero)
+    const items = news.slice(1);
     if (!items.length) {
         grid.innerHTML = '<p style="color:var(--text2);text-align:center;padding:2rem">No news found.</p>';
         return;
@@ -227,11 +248,11 @@ function renderNewsList(news) {
     }).join('');
 }
 
-// ========== Article View Functions ==========
+// ========== Article View ==========
 async function showArticle(id) {
     if (!id) return;
     currentNewsId = id;
-    // Switch views
+    // Switch view
     document.getElementById('listView').style.display = 'none';
     document.getElementById('articleView').style.display = 'block';
     document.getElementById('searchBox').style.display = 'none';
@@ -242,25 +263,55 @@ async function showArticle(id) {
     try {
         const res = await fetch(API + '/news/' + id);
         const news = await res.json();
-        // Fill article
+        currentArticleComments = news.comments || [];
+        // Fill meta
         document.getElementById('articleTitle').textContent = news.title;
         document.getElementById('articleMeta').innerHTML = `
             <span>📅 ${new Date(news.createdAt).toLocaleDateString()}</span>
             <span>🌍 ${news.country || 'Rwanda'}</span>
             <span>🏷️ ${news.category || 'General'}</span>
-            <span>♡ <span id="likeCount">${news.likes || 0}</span></span>
         `;
-        // Description with images
-        let contentHtml = news.description || '';
-        // If description contains <img> tags, add inline-image class automatically
-        contentHtml = contentHtml.replace(/<img /g, '<img class="inline-image" ');
-        document.getElementById('articleContent').innerHTML = contentHtml;
-        // Like
+        document.getElementById('likeCount').textContent = news.likes || 0;
         document.getElementById('likeError').textContent = '';
-        // Comments
-        renderComments(news.comments || []);
-        // Related news
-        loadRelatedNews(news);
+
+        // Process description and images
+        let desc = news.description || '';
+        let images = [];
+        // Extract all img tags
+        const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/gi;
+        let match;
+        while ((match = imgRegex.exec(desc)) !== null) {
+            images.push(match[1]);
+        }
+        // Remove img tags from description (we'll place them separately)
+        desc = desc.replace(/<img[^>]*>/gi, '');
+        // If there are images, insert the first one as floating right before the text
+        let imageHtml = '';
+        if (images.length > 0) {
+            imageHtml = `<img src="${images[0]}" class="inline-image" onclick="viewImage('${images[0]}')">`;
+        }
+        document.getElementById('articleContent').innerHTML = imageHtml + desc;
+
+        // Build gallery if more than one image
+        const galleryDiv = document.getElementById('articleGallery');
+        if (images.length > 1) {
+            galleryDiv.style.display = 'flex';
+            galleryDiv.innerHTML = images.map(src => `<img src="${src}" onclick="viewImage('${src}')">`).join('');
+        } else {
+            galleryDiv.style.display = 'none';
+        }
+
+        // Show latest 2 comments
+        renderComments(currentArticleComments.slice(0, 2));
+        if (currentArticleComments.length > 2) {
+            document.getElementById('loadMoreCommentsContainer').style.display = 'block';
+        } else {
+            document.getElementById('loadMoreCommentsContainer').style.display = 'none';
+        }
+
+        // Load related and latest news
+        loadRelatedByCategory(news.category, news._id);
+        loadLatestNews(id);
     } catch(e) { console.error(e); }
 }
 
@@ -278,24 +329,44 @@ function renderComments(comments) {
     `).join('');
 }
 
-function loadRelatedNews(current) {
-    const related = allNewsData.filter(n => n._id !== current._id).slice(0, 6);
-    // Sidebar (first 4)
-    const sidebar = document.getElementById('articleSidebar');
-    sidebar.innerHTML = '<h3>Related</h3>' + related.slice(0,4).map(n => `
+function loadAllComments() {
+    renderComments(currentArticleComments);
+    document.getElementById('loadMoreCommentsContainer').style.display = 'none';
+}
+
+function loadRelatedByCategory(category, currentId) {
+    const related = allNewsData.filter(n => n._id !== currentId && n.category === category).slice(0, 4);
+    const sidebar = document.getElementById('sidebarRelated');
+    if (!related.length) {
+        sidebar.innerHTML = '<p style="color:var(--text2);font-size:0.8rem">No related news.</p>';
+        return;
+    }
+    sidebar.innerHTML = related.map(n => `
         <div class="news-card" onclick="showArticle('${n._id}')" style="margin-bottom:0.8rem">
             ${n.thumbnailUrl ? `<img src="${n.thumbnailUrl}" style="height:100px">` : ''}
             <div class="news-card-body"><div class="news-card-title" style="font-size:0.8rem">${escHtml(n.title)}</div></div>
         </div>
     `).join('');
-    // Bottom (all 6)
-    const bottom = document.getElementById('bottomRelated');
-    bottom.innerHTML = related.map(n => `
+}
+
+function loadLatestNews(excludeId) {
+    const latest = allNewsData.filter(n => n._id !== excludeId).slice(0, 6);
+    const bottom = document.getElementById('bottomLatest');
+    bottom.innerHTML = latest.map(n => `
         <div class="news-card" onclick="showArticle('${n._id}')">
             ${n.thumbnailUrl ? `<img src="${n.thumbnailUrl}" style="height:120px">` : ''}
             <div class="news-card-body"><div class="news-card-title" style="font-size:0.8rem">${escHtml(n.title)}</div></div>
         </div>
     `).join('');
+}
+
+function viewImage(src) {
+    // Simple full‑screen image viewer within the page
+    const overlay = document.createElement('div');
+    overlay.style = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:3000;display:flex;justify-content:center;align-items:center;cursor:pointer;';
+    overlay.innerHTML = `<img src="${src}" style="max-width:95%;max-height:95%;object-fit:contain;border-radius:var(--radiusLg)"><span style="position:absolute;top:1rem;right:1rem;color:var(--accent);font-size:2rem;">&times;</span>`;
+    overlay.onclick = () => document.body.removeChild(overlay);
+    document.body.appendChild(overlay);
 }
 
 async function likeNews() {
@@ -308,17 +379,26 @@ async function likeNews() {
         const data = await res.json();
         if (res.ok) {
             document.getElementById('likeCount').textContent = data.likes;
-            document.getElementById('likeError').textContent = '';
+            showToast('Liked!');
         } else {
             document.getElementById('likeError').textContent = data.error;
         }
     } catch(e) { console.error(e); }
 }
 
+function shareArticle() {
+    const url = window.location.href;
+    if (navigator.share) {
+        navigator.share({ title: document.title, url });
+    } else {
+        navigator.clipboard.writeText(url).then(() => showToast('Link copied!'));
+    }
+}
+
 async function postComment() {
     const name = document.getElementById('commentName').value.trim();
     const text = document.getElementById('commentText').value.trim();
-    if (!name || !text) return alert('Name and comment required');
+    if (!name || !text) return showToast('Name and comment required');
     try {
         const res = await fetch(API + '/news/' + currentNewsId + '/comment', {
             method: 'POST',
@@ -327,8 +407,9 @@ async function postComment() {
         });
         const data = await res.json();
         if (data.success) {
-            // Reload article to show new comment
-            showArticle(currentNewsId);
+            document.getElementById('commentName').value = '';
+            document.getElementById('commentText').value = '';
+            showArticle(currentNewsId); // refresh comments
         }
     } catch(e) { console.error(e); }
 }
@@ -346,27 +427,61 @@ document.getElementById('articleNav').addEventListener('click', function(e) {
     }
 });
 
-// ========== Static Modals ==========
+// ========== Static Modals (improved content) ==========
 function openStaticModal(page) {
     const modal = document.getElementById('staticModal');
     const content = document.getElementById('staticModalContent');
     let html = '';
     switch(page) {
-        case 'about': html = `<h2>About niroNews</h2><p style="color:var(--text2);line-height:1.6">niroNews is the official cinema news portal of <strong>niroMovie</strong>. We bring the latest updates about movies, series, and the entertainment world. Founded by <strong>Niyonkuru Robert</strong> (niro bwimba), we are committed to keeping Rwandan and global audiences informed. Contact: <a href="mailto:news@niromovie.site" style="color:var(--accent)">news@niromovie.site</a></p>`;
-        break;
-        case 'contact': html = `<h2>Contact Us</h2><p style="color:var(--text2);line-height:1.6">📧 Email: <strong>news@niromovie.site</strong><br>📞 Phone: <strong>+250 795 064 502</strong><br>👤 Founder: Niyonkuru Robert (niro bwimba)<br><br>For advertising or news tips, reach out anytime.</p>`;
-        break;
-        case 'privacy': html = `<h2>Privacy Policy</h2><p style="color:var(--text2);line-height:1.6">We only collect minimal data (device ID for likes, name for comments). We never sell or share personal information. All data is stored securely and used solely for site functionality. By using niroNews, you agree to this policy.</p>`;
-        break;
-        case 'terms': html = `<h2>Terms of Service</h2><p style="color:var(--text2);line-height:1.6">Content on niroNews is for informational purposes only. Redistribution or commercial use is prohibited. We reserve the right to modify or remove content. Users are responsible for their comments and interactions. Violation of these terms may result in restricted access.</p>`;
-        break;
+        case 'about':
+            html = `<h2>About niroNews</h2>
+                <p style="color:var(--text2);line-height:1.6;margin-bottom:1rem">
+                niroNews is the official cinema news portal of <strong>niroMovie</strong>, your gateway to unlimited entertainment. We bring the latest updates about movies, series, and the entertainment world, with a special focus on African and global cinema.
+                </p>
+                <p style="color:var(--text2);line-height:1.6;margin-bottom:1rem">
+                Founded by <strong>Niyonkuru Robert</strong> (niro bwimba), we are committed to keeping Rwandan and global audiences informed. Our team scours the internet to find trending stories, release dates, and exclusive behind‑the‑scenes content that matters to movie lovers.
+                </p>
+                <p style="color:var(--text2);line-height:1.6">
+                Contact us at <a href="mailto:news@niromovie.site" style="color:var(--accent)">news@niromovie.site</a> or call <strong>+250 795 064 502</strong>.
+                </p>`;
+            break;
+        case 'contact':
+            html = `<h2>Contact Us</h2>
+                <p style="color:var(--text2);line-height:1.6;margin-bottom:1rem">
+                We'd love to hear from you! For news tips, advertising inquiries, or general feedback, reach out using the details below.
+                </p>
+                <p style="color:var(--text2);line-height:1.6">
+                📧 <strong>Email:</strong> news@niromovie.site<br>
+                📞 <strong>Phone:</strong> +250 795 064 502<br>
+                👤 <strong>Founder:</strong> Niyonkuru Robert<br>
+                📍 <strong>Location:</strong> Kigali, Rwanda
+                </p>`;
+            break;
+        case 'privacy':
+            html = `<h2>Privacy Policy</h2>
+                <p style="color:var(--text2);line-height:1.6;margin-bottom:1rem">
+                At niroNews, we take your privacy seriously. We only collect minimal data necessary to provide our services: a device identifier (for likes) and the name you enter when commenting. No personal information is ever sold, traded, or shared with third parties.
+                </p>
+                <p style="color:var(--text2);line-height:1.6">
+                All data is stored securely on our servers and used solely to improve your experience. By using niroNews, you agree to this privacy policy. We do not use tracking cookies or analytics beyond what is essential for site functionality.
+                </p>`;
+            break;
+        case 'terms':
+            html = `<h2>Terms of Service</h2>
+                <p style="color:var(--text2);line-height:1.6;margin-bottom:1rem">
+                Content on niroNews is for informational and entertainment purposes only. Redistribution, resale, or commercial use of any content (including text, images, and video descriptions) is strictly prohibited without prior written permission.
+                </p>
+                <p style="color:var(--text2);line-height:1.6">
+                We reserve the right to modify or remove content at any time. Users are responsible for their comments and interactions. Violation of these terms may result in restricted access. By continuing to use niroNews, you acknowledge and accept these terms.
+                </p>`;
+            break;
     }
     content.innerHTML = html + `<button class="btn btn-accent" style="margin-top:1rem" onclick="closeStaticModal()">Close</button>`;
     modal.style.display = 'flex';
 }
 function closeStaticModal() { document.getElementById('staticModal').style.display = 'none'; }
 
-// ========== Filter ==========
+// ========== Filters ==========
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -380,9 +495,9 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
+    // Preload all news for related/latest lookups
+    fetch(API + '/news').then(r => r.json()).then(data => { allNewsData = data; });
     if (id) {
-        // Load list data in background so related news can be populated
-        fetch(API + '/news').then(r => r.json()).then(data => { allNewsData = data; });
         showArticle(id);
     } else {
         loadNews();
