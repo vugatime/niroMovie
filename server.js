@@ -118,14 +118,12 @@ const ContentSchema = new mongoose.Schema({
     viewedBy: [ViewRecordSchema], downloadedBy: [DownloadRecordSchema],
     parts: [PartSchema], seasons: [SeasonSchema],
     comments: [{
-    userName: String,
-    text: String,
-    parentId: { type: mongoose.Schema.Types.ObjectId, default: null },
+    userName: String, text: String,
     likes: { type: Number, default: 0 },
     likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     likedByDevice: [String],
     createdAt: { type: Date, default: Date.now }
-}]
+}],
     tags: [String], uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, uploadedByEmail: String,
     uploadedAt: { type: Date, default: Date.now }, updatedAt: { type: Date, default: Date.now }
 });
