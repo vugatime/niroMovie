@@ -37,6 +37,13 @@
     },
     {
       "src": "/",
+      "dest": "/public/news.html",
+      "headers": {
+        "host": "news.niromovie.site"
+      }
+    },
+    {
+      "src": "/",
       "dest": "/public/index.html"
     },
     {
