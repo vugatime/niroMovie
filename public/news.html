@@ -274,42 +274,46 @@ async function showArticle(id) {
         document.getElementById('likeCount').textContent = news.likes || 0;
         document.getElementById('likeError').textContent = '';
 
-        // Process description and images
-        let desc = news.description || '';
-        let images = [];
-        // Extract all img tags
+        // --- IMAGE PROCESSING ---
+        // 1. Collect images from the `images` array (separate uploads)
+        let images = Array.isArray(news.images) ? [...news.images] : [];
+        // 2. Extract any <img> tags from the description and add their URLs to the list
         const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/gi;
+        let descWithoutImages = news.description || '';
         let match;
-        while ((match = imgRegex.exec(desc)) !== null) {
+        while ((match = imgRegex.exec(descWithoutImages)) !== null) {
             images.push(match[1]);
         }
-        // Remove img tags from description (we'll place them separately)
-        desc = desc.replace(/<img[^>]*>/gi, '');
-        // If there are images, insert the first one as floating right before the text
-        let imageHtml = '';
-        if (images.length > 0) {
-            imageHtml = `<img src="${images[0]}" class="inline-image" onclick="viewImage('${images[0]}')">`;
-        }
-        document.getElementById('articleContent').innerHTML = imageHtml + desc;
+        // Remove img tags from description (we'll display them properly)
+        descWithoutImages = descWithoutImages.replace(/<img[^>]*>/gi, '');
 
-        // Build gallery if more than one image
+        // Build the content HTML
+        let contentHtml = '';
+        if (images.length > 0) {
+            // Float the first image to the right
+            contentHtml += `<img src="${images[0]}" class="inline-image" onclick="viewImage('${images[0]}')">`;
+            // Remove the first image from the array so it's not repeated in the gallery
+            images.shift();
+        }
+        contentHtml += descWithoutImages;
+
+        // Insert the content
+        document.getElementById('articleContent').innerHTML = contentHtml;
+
+        // Gallery for remaining images (if any)
         const galleryDiv = document.getElementById('articleGallery');
-        if (images.length > 1) {
+        if (images.length > 0) {
             galleryDiv.style.display = 'flex';
             galleryDiv.innerHTML = images.map(src => `<img src="${src}" onclick="viewImage('${src}')">`).join('');
         } else {
             galleryDiv.style.display = 'none';
         }
 
-        // Show latest 2 comments
+        // Comments (latest 2)
         renderComments(currentArticleComments.slice(0, 2));
-        if (currentArticleComments.length > 2) {
-            document.getElementById('loadMoreCommentsContainer').style.display = 'block';
-        } else {
-            document.getElementById('loadMoreCommentsContainer').style.display = 'none';
-        }
+        document.getElementById('loadMoreCommentsContainer').style.display = currentArticleComments.length > 2 ? 'block' : 'none';
 
-        // Load related and latest news
+        // Related and latest
         loadRelatedByCategory(news.category, news._id);
         loadLatestNews(id);
     } catch(e) { console.error(e); }
@@ -361,10 +365,9 @@ function loadLatestNews(excludeId) {
 }
 
 function viewImage(src) {
-    // Simple full‑screen image viewer within the page
     const overlay = document.createElement('div');
     overlay.style = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:3000;display:flex;justify-content:center;align-items:center;cursor:pointer;';
-    overlay.innerHTML = `<img src="${src}" style="max-width:95%;max-height:95%;object-fit:contain;border-radius:var(--radiusLg)"><span style="position:absolute;top:1rem;right:1rem;color:var(--accent);font-size:2rem;">&times;</span>`;
+    overlay.innerHTML = `<img src="${src}" style="max-width:95%;max-height:95%;object-fit:contain;border-radius:18px"><span style="position:absolute;top:1rem;right:1rem;color:#F5C518;font-size:2rem;">&times;</span>`;
     overlay.onclick = () => document.body.removeChild(overlay);
     document.body.appendChild(overlay);
 }
@@ -409,7 +412,7 @@ async function postComment() {
         if (data.success) {
             document.getElementById('commentName').value = '';
             document.getElementById('commentText').value = '';
-            showArticle(currentNewsId); // refresh comments
+            showArticle(currentNewsId); // refresh
         }
     } catch(e) { console.error(e); }
 }
@@ -427,7 +430,7 @@ document.getElementById('articleNav').addEventListener('click', function(e) {
     }
 });
 
-// ========== Static Modals (improved content) ==========
+// ========== Static Modals ==========
 function openStaticModal(page) {
     const modal = document.getElementById('staticModal');
     const content = document.getElementById('staticModalContent');
@@ -453,7 +456,7 @@ function openStaticModal(page) {
                 <p style="color:var(--text2);line-height:1.6">
                 📧 <strong>Email:</strong> news@niromovie.site<br>
                 📞 <strong>Phone:</strong> +250 795 064 502<br>
-                👤 <strong>Founder:</strong> Niyonkuru Robert<br>
+                👤 <strong>Founder:</strong> Niyonkuru Robert (niro bwimba)<br>
                 📍 <strong>Location:</strong> Kigali, Rwanda
                 </p>`;
             break;
@@ -495,7 +498,6 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
-    // Preload all news for related/latest lookups
     fetch(API + '/news').then(r => r.json()).then(data => { allNewsData = data; });
     if (id) {
         showArticle(id);
