@@ -112,7 +112,7 @@
     <div class="card">
         <div class="card-header"><h3><span class="material-symbols-outlined">article</span> Create / Edit News</h3></div>
         <div class="card-body">
-            <form id="newsForm" enctype="multipart/form-data">
+            <form id="newsForm" enctype="multipart/form-data" onsubmit="event.preventDefault(); return false;">
                 <div class="form-group"><label>Title *</label><input type="text" id="newsTitle" required></div>
                 <div class="form-group"><label>Description (can include HTML for inline images)</label>
                     <div class="rich-toolbar">
@@ -289,11 +289,7 @@ async function loadAddpartSelect(){var r=await fetchAuth('/contents');allContent
 }
 function loadContentForAddpart(){var s=document.getElementById('addpartSelect');var opt=s.options[s.selectedIndex];var type=opt.dataset.type;document.getElementById('addpartMovieForm').style.display=type==='movie'?'block':'none';document.getElementById('addpartSeriesForm').style.display=type==='series'?'block':'none'}
 async function addPart(){var id=document.getElementById('addpartSelect').value;var fd=new FormData();fd.append('partNumber',document.getElementById('newPartNumber').value);fd.append('partTitle',document.getElementById('newPartTitle').value);var vs=document.getElementById('newPartSource').value;fd.append('videoSource',vs);if(vs==='external'){fd.append('externalLink',document.getElementById('newPartLink').value.trim())}else{fd.append('video',document.getElementById('newPartFile').files[0])}fd.append('accessLevel',document.getElementById('newPartAccessLevel').value);var r=await fetch(API+'/admin/movies/'+id+'/part',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd}).then(function(r){return r.json()});if(r.success)showMsg('Part added!');else showMsg(r.error||'Failed',true)}
-async function addEpisode(){var id=document.getElementById('addpartSelect').value;var fd=new FormData();fd.append('seasonNumber',document.getElementById('newSeasonNum').value);fd.append('episodeNumber',document.getElementById('newEpisodeNum').value);fd.append('episodeTitle',document.getElementById('newEpisodeTitle').value);var vs=document.getElementById('newEpisodeSource').value;fd.append('videoSource',vs);if(vs==='external'){fd.append('externalLink',document.getElementById('newEpisodeLink').value.trim())}else{fd.append('video',document.getElementById('newEpisodeFile').files[0])}fd.append('accessLevel',document.getElementById('newEpisodeAccessLevel').value);var r=await fetch(API+'/admin/series/'+id+'/episode',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd}).then(function(r){return r.json()});if(r.success)showMsg('Episode added!');else showMsg(r.error||'Failed',true)}
-async function loadAnnouncements(){var r=await fetchAuth('/admin/announcements');var anns=Array.isArray(r)?r:[];document.getElementById('announcementsBody').innerHTML=anns.length?anns.map(function(a){return'<tr><td>'+escH(a.title)+'</td><td>'+escH(a.message||'')+'</td><td>'+a.mediaType+'</td><td><span class="badge badge-'+(a.isActive?'active':'expired')+'">'+(a.isActive?'Active':'Inactive')+'</span></td><td>'+new Date(a.createdAt).toLocaleDateString()+'</td><td>'+(isHeadAdmin?'<button class="btn btn-outline btn-xs" onclick="toggleAnnouncement(\''+a._id+'\','+!a.isActive+')">'+(a.isActive?'Deactivate':'Activate')+'</button><button class="btn btn-danger btn-xs" onclick="deleteAnnouncement(\''+a._id+'\')"><span class="material-symbols-outlined" style="font-size:0.6rem">delete</span></button>':'')+'</td></tr>'}).join(''):'<tr><td colspan="6">No announcements</td></tr>'}
-async function toggleAnnouncement(id,status){await fetchAuth('/admin/announcements/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({isActive:status})});showMsg('Updated');loadAnnouncements()}
-async function deleteAnnouncement(id){if(!confirm('Delete?'))return;await fetchAuth('/admin/announcements/'+id,{method:'DELETE'});showMsg('Deleted');loadAnnouncements()}
-document.getElementById('announcementForm').addEventListener('submit',async function(e){e.preventDefault();var fd=new FormData();fd.append('title',document.getElementById('annTitle').value);fd.append('message',document.getElementById('annMessage').value);fd.append('mediaType',document.getElementById('annMediaType').value);var mf=document.getElementById('annMedia').files[0];if(mf)fd.append('announcementMedia',mf);var r=await fetch(API+'/admin/announcements',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});var d=await r.json();if(d.success){showMsg('Posted!');document.getElementById('announcementForm').reset();loadAnnouncements()}else{showMsg(d.error||'Failed',true)}});
+async function addEpisode(){var id=document.getElementById('addpartSelect').value;var fd=new FormData();fd.append('seasonNumber',document.getElementById('newSeasonNum').value);fd.append('episodeNumber',document.getElementById('newEpisodeNum').value);fd.append('episodeTitle',document.getElementById('newEpisodeTitle').value);var vs=document.getElementById('newEpisodeSource').value;fd.append('videoSource',vs);if(vs==='external'){fd.append('externalLink',document.getElementById('newEpisodeLink').value.trim())}else{fd.append('video',document.getElementById('newEpisodeFile').files[0])}fd.append('accessLevel',document.getElementById('newEpisodeAccessLevel').value);var r=await fetch(API+'/admin/series/'+id+'/episode',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd}).then(function(r){return r.json()});if(r.success)showMsg('Episode added!');else showMsg(r.error||'Failed',true)}    
 async function loadUsers(){var r=await fetchAuth('/admin/users');var users=Array.isArray(r)?r:[];document.getElementById('usersBody').innerHTML=users.map(function(u){return'<tr><td>'+escH(u.fullName||'N/A')+'</td><td>'+u.email+'</td><td>'+(u.phone||'-')+'</td><td><span class="badge badge-'+(u.subscription?u.subscription.plan:'free')+'">'+((u.subscription?u.subscription.plan:'free')).toUpperCase()+'</span></td><td><span class="badge badge-'+(u.subscription&&u.subscription.status==='active'?'active':'expired')+'">'+(u.subscription?u.subscription.status:'none')+'</span></td><td>'+(u.deviceCount||0)+'/'+(u.subscription?u.subscription.maxDevices:6)+'</td><td>'+(u.isFlagged?'<span class="badge badge-flagged">YES</span>':'<span class="badge badge-active">No</span>')+'</td><td><button class="btn btn-outline btn-xs" onclick="editUser(\''+u._id+'\')">Edit</button><button class="btn btn-danger btn-xs" onclick="deleteUser(\''+u._id+'\')"><span class="material-symbols-outlined" style="font-size:0.6rem">delete</span></button></td></tr>'}).join('')||'<tr><td colspan="8">No users</td></tr>'}
 async function editUser(id){var name=prompt('New name:');if(!name)return;var phone=prompt('New phone:');await fetchAuth('/admin/users/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({fullName:name,phone:phone||''})});showMsg('Updated');loadUsers()}
 async function deleteUser(id){if(!confirm('Delete?'))return;await fetchAuth('/admin/users/'+id,{method:'DELETE'});showMsg('Deleted');loadUsers();loadDashboard()}
@@ -377,11 +373,9 @@ async function editNews(id) {
     document.getElementById('newsDescription').value = news.description || '';
     document.getElementById('newsCountry').value = news.country || 'Rwanda';
     document.getElementById('newsCategory').value = news.category || 'General';
-    // Can't prefill file inputs, leave blank
     document.getElementById('newsSubmitBtn').innerHTML = '<span class="material-symbols-outlined">save</span> Update News';
     document.getElementById('newsCancelBtn').style.display = 'inline-block';
     newsEditMode = true;
-    // Scroll to form
     document.getElementById('newsSection').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -391,43 +385,47 @@ async function deleteNews(id) {
     loadNewsAdmin();
 }
 
-document.getElementById('newsForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('title', document.getElementById('newsTitle').value.trim());
-    formData.append('description', document.getElementById('newsDescription').value.trim());
-    formData.append('country', document.getElementById('newsCountry').value.trim());
-    formData.append('category', document.getElementById('newsCategory').value);
-    const thumbFile = document.getElementById('newsThumbnail').files[0];
-    if (thumbFile) formData.append('thumbnail', thumbFile);
-    const imageFiles = document.getElementById('newsImages').files;
-    for (let i = 0; i < imageFiles.length; i++) {
-        formData.append('images', imageFiles[i]);
-    }
-    const editId = document.getElementById('newsEditId').value;
-    let url = API + '/admin/news';
-    let method = 'POST';
-    if (editId) {
-        url += '/' + editId;
-        method = 'PUT';
-    }
-    try {
-        const res = await fetch(url, {
-            method,
-            headers: { 'Authorization': 'Bearer ' + token },
-            body: formData
-        });
-        const data = await res.json();
-        if (data.success) {
-            showMsg(editId ? 'News updated!' : 'News published!');
-            cancelNewsEdit();
-            loadNewsAdmin();
-        } else {
-            showMsg(data.error || 'Failed', true);
+// Attach the listener safely, ensuring the form exists
+(function attachNewsFormListener() {
+    var newsForm = document.getElementById('newsForm');
+    if (!newsForm) { console.error('News form not found'); return; }
+    newsForm.addEventListener('submit', async function(e) {
+        e.preventDefault();   // extra safety, even with onsubmit return false
+        const formData = new FormData();
+        formData.append('title', document.getElementById('newsTitle').value.trim());
+        formData.append('description', document.getElementById('newsDescription').value.trim());
+        formData.append('country', document.getElementById('newsCountry').value.trim());
+        formData.append('category', document.getElementById('newsCategory').value);
+        const thumbFile = document.getElementById('newsThumbnail').files[0];
+        if (thumbFile) formData.append('thumbnail', thumbFile);
+        const imageFiles = document.getElementById('newsImages').files;
+        for (let i = 0; i < imageFiles.length; i++) {
+            formData.append('images', imageFiles[i]);
         }
-    } catch (err) { showMsg('Error: ' + err.message, true); }
-});
-
+        const editId = document.getElementById('newsEditId').value;
+        let url = API + '/admin/news';
+        let method = 'POST';
+        if (editId) {
+            url += '/' + editId;
+            method = 'PUT';
+        }
+        try {
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Authorization': 'Bearer ' + token },
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                showMsg(editId ? 'News updated!' : 'News published!');
+                cancelNewsEdit();
+                loadNewsAdmin();
+            } else {
+                showMsg(data.error || 'Failed', true);
+            }
+        } catch (err) { showMsg('Error: ' + err.message, true); }
+    });
+})();
 // Helper to format text in news description (similar to upload description)
 function formatNewsText(cmd) {
     var ta = document.getElementById('newsDescription');
