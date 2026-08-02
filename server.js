@@ -167,7 +167,27 @@ const AnnouncementSchema = new mongoose.Schema({
     createdBy: String, createdAt: { type: Date, default: Date.now }
 });
 const Announcement = mongoose.model('Announcement', AnnouncementSchema);
-
+// ========== NEWS MODEL ==========
+const NewsSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    description: { type: String, default: '' },       // can contain HTML with inline images
+    thumbnailUrl: String,                              // main thumbnail for card
+    images: [String],                                  // array of Cloudinary URLs (for inline use)
+    country: { type: String, default: 'Rwanda' },
+    category: { type: String, default: 'General' },    // e.g. Action, Drama, etc.
+    likes: { type: Number, default: 0 },
+    likedByDevices: [String],                          // store deviceId for one‑like‑per‑device
+    comments: [{
+        userName: String,
+        text: String,
+        createdAt: { type: Date, default: Date.now }
+    }],
+    isPublished: { type: Boolean, default: true },
+    createdBy: String,                                 // admin email
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+});
+const News = mongoose.model('News', NewsSchema);
 // ========== MULTER WITH CLOUDINARY ==========
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -687,7 +707,139 @@ app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) =>
 app.post('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); if (!user.myList.includes(req.params.contentId)) { user.myList.push(req.params.contentId); await user.save(); } res.json({ success: true }); });
 app.delete('/api/mylist/:contentId', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id); user.myList = user.myList.filter(id => id.toString() !== req.params.contentId); await user.save(); res.json({ success: true }); });
 app.get('/api/mylist', authMiddleware, async (req, res) => { const user = await User.findById(req.user.id).populate('myList'); res.json(user.myList || []); });
+// ========== NEWS ROUTES ==========
+// Public: get latest 4 news for homepage
+app.get('/api/news/latest', async (req, res) => {
+    try {
+        const news = await News.find({ isPublished: true })
+            .sort({ createdAt: -1 })
+            .limit(4)
+            .select('-likedByDevices');
+        res.json(news);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
 
+// Public: get all news (with filters)
+app.get('/api/news', async (req, res) => {
+    try {
+        const { country, category, sort } = req.query;
+        let query = { isPublished: true };
+        if (country) query.country = country;
+        if (category) query.category = category;
+        let sortOption = { createdAt: -1 }; // default newest
+        if (sort === 'likes') sortOption = { likes: -1 };
+        const news = await News.find(query).sort(sortOption).select('-likedByDevices');
+        res.json(news);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Public: single news
+app.get('/api/news/:id', async (req, res) => {
+    try {
+        const news = await News.findById(req.params.id);
+        if (!news) return res.status(404).json({ error: 'News not found' });
+        res.json(news);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Public: like a news (device‑based)
+app.post('/api/news/:id/like', async (req, res) => {
+    try {
+        const deviceId = req.headers['x-device-id'] || req.ip;
+        const news = await News.findById(req.params.id);
+        if (!news) return res.status(404).json({ error: 'Not found' });
+        if (news.likedByDevices.includes(deviceId)) {
+            return res.status(400).json({ error: 'Already liked from this device' });
+        }
+        news.likes = (news.likes || 0) + 1;
+        news.likedByDevices.push(deviceId);
+        await news.save();
+        res.json({ likes: news.likes });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Public: add comment
+app.post('/api/news/:id/comment', async (req, res) => {
+    try {
+        const { userName, text } = req.body;
+        if (!userName || !text) return res.status(400).json({ error: 'Name and comment required' });
+        const news = await News.findById(req.params.id);
+        if (!news) return res.status(404).json({ error: 'Not found' });
+        news.comments.push({ userName: userName.trim(), text: text.trim() });
+        await news.save();
+        res.json({ success: true, comments: news.comments });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Admin: get all news (including unpublished)
+app.get('/api/admin/news', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const news = await News.find().sort({ createdAt: -1 });
+        res.json(news);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Admin: create news
+app.post('/api/admin/news', authMiddleware, subAdminOrAbove, upload.fields([
+    { name: 'thumbnail', maxCount: 1 },
+    { name: 'images', maxCount: 10 }                // multiple images
+]), async (req, res) => {
+    try {
+        const { title, description, country, category } = req.body;
+        let thumbnailUrl = '';
+        if (req.files?.thumbnail?.[0]) {
+            thumbnailUrl = await uploadToCloudinary(req.files.thumbnail[0], 'news/thumbnails');
+        }
+        let imageUrls = [];
+        if (req.files?.images) {
+            for (const file of req.files.images) {
+                const url = await uploadToCloudinary(file, 'news/images');
+                imageUrls.push(url);
+            }
+        }
+        // If no dedicated thumbnail, use first uploaded image
+        if (!thumbnailUrl && imageUrls.length) thumbnailUrl = imageUrls[0];
+        const news = await News.create({
+            title, description: description || '', thumbnailUrl,
+            images: imageUrls, country: country || 'Rwanda',
+            category: category || 'General', createdBy: req.user.email
+        });
+        res.json({ success: true, news });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Admin: update news
+app.put('/api/admin/news/:id', authMiddleware, subAdminOrAbove, upload.fields([
+    { name: 'thumbnail', maxCount: 1 },
+    { name: 'images', maxCount: 10 }
+]), async (req, res) => {
+    try {
+        const updateData = { ...req.body, updatedAt: new Date() };
+        if (req.files?.thumbnail?.[0]) {
+            updateData.thumbnailUrl = await uploadToCloudinary(req.files.thumbnail[0], 'news/thumbnails');
+        }
+        if (req.files?.images) {
+            const newImageUrls = [];
+            for (const file of req.files.images) {
+                const url = await uploadToCloudinary(file, 'news/images');
+                newImageUrls.push(url);
+            }
+            // Replace the whole images array, or you could append – we'll replace for simplicity
+            updateData.images = newImageUrls;
+        }
+        const news = await News.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        if (!news) return res.status(404).json({ error: 'Not found' });
+        res.json({ success: true, news });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Admin: delete news
+app.delete('/api/admin/news/:id', authMiddleware, headAdminMiddleware, async (req, res) => {
+    try {
+        await News.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
 // Health check for Railway
 app.get('/health', (req, res) => { res.status(200).send('OK'); });
 // YouTube latest video
@@ -718,6 +870,7 @@ app.get('/', (req, res) => { res.sendFile(path.join(publicPath, 'index.html')); 
 app.get('/admin', (req, res) => { const token = req.query.token; if (!token) return res.sendFile(path.join(publicPath, 'admin-login.html')); try { jwt.verify(token, process.env.JWT_SECRET || 'agnews_final_secret_2026'); res.sendFile(path.join(publicPath, 'admin.html')); } catch (err) { res.sendFile(path.join(publicPath, 'admin-login.html')); } });
 app.get('/admin-login', (req, res) => { res.sendFile(path.join(publicPath, 'admin-login.html')); });
 app.get('/admin.html', (req, res) => { res.redirect('/admin-login'); });
+app.get('/news', (req, res) => { res.sendFile(path.join(publicPath, 'news.html')); });
 app.get('/index.html', (req, res) => { res.redirect('/'); });
 
 // ========== START ==========
