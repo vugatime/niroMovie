@@ -224,11 +224,84 @@
 </style>
 </head>
 <body>
-<div class="navbar" id="navbar"><div class="nav-container"><div style="display:flex;align-items:center;gap:0.6rem"><div class="hamburger" onclick="toggleSideMenu()"><span class="material-symbols-outlined">menu</span></div><div class="logo" onclick="loadAllContent()"><span class="material-symbols-outlined logo-icon">play_circle</span><div class="logo-text"><span>niro</span>Movie</div></div></div><div class="nav-links" id="navLinks"><a class="nav-link active" onclick="loadAllContent()">Home</a><a class="nav-link" onclick="filterContent('series')">Series</a><a class="nav-link" onclick="filterContent('free')">Free</a><a class="nav-link" onclick="window.location.href='/news'">News</a><a class="nav-link" id="myListNav" onclick="showMyList()" style="display:none">My List</a></div><div class="search-box"><span class="material-symbols-outlined" style="color:var(--text3)">search</span><input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()"></div>
-<a class="nav-link nav-whatsapp" href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" style="background:#25D366;color:#fff;padding:0.4rem 0.9rem;border-radius:30px;font-weight:600;font-size:0.78rem;white-space:nowrap;text-decoration:none;display:flex;align-items:center;gap:0.3rem;"><i class="fab fa-whatsapp"></i> Channel</a>
-<div class="profile-icon" id="profileIcon" onclick="handleProfileClick()">LI</div></div></div>
+<div class="navbar" id="navbar">
+  <div class="nav-container">
+    <div style="display:flex;align-items:center;gap:0.6rem">
+      <div class="hamburger" onclick="toggleSideMenu()">
+        <span class="material-symbols-outlined">menu</span>
+      </div>
+      <div class="logo" onclick="loadAllContent()">
+        <span class="material-symbols-outlined logo-icon">play_circle</span>
+        <div class="logo-text"><span>niro</span>Movie</div>
+      </div>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a class="nav-link active" onclick="loadAllContent()">Home</a>
+      <a class="nav-link" onclick="filterContent('series')">Series</a>
+      <a class="nav-link" onclick="filterContent('free')">Free</a>
+      <a class="nav-link" onclick="window.location.href='/news'">News</a>
+      <a class="nav-link" id="myListNav" onclick="showMyList()" style="display:none">My List</a>
+    </div>
+    <div class="search-box">
+      <span class="material-symbols-outlined" style="color:var(--text3)">search</span>
+      <input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()">
+    </div>
+    <!-- Compact WhatsApp button (round icon, always visible) -->
+    <a class="whatsapp-nav-icon" href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" title="Join WhatsApp Channel" style="background:#25D366;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;font-size:1.2rem;margin-left:0.4rem;">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+    <div class="profile-icon" id="profileIcon" onclick="handleProfileClick()">LI</div>
+  </div>
+</div>
 <div class="side-menu-overlay" id="sideMenuOverlay" onclick="toggleSideMenu()"></div>
-<div class="side-menu" id="sideMenu"><div class="side-menu-header"><h3>niroMovie</h3><span class="material-symbols-outlined" onclick="toggleSideMenu()" style="cursor:pointer">close</span></div><div class="side-menu-item" onclick="closeSideMenu();loadAllContent()"><span class="material-symbols-outlined">home</span>Home</div><div class="side-menu-item" onclick="closeSideMenu();filterContent('series')"><span class="material-symbols-outlined">tv</span>Series</div><div class="side-menu-item" onclick="closeSideMenu();filterContent('free')"><span class="material-symbols-outlined">redeem</span>Free Movies</div><div class="side-menu-item" onclick="closeSideMenu();window.location.href='/news'"><span class="material-symbols-outlined">article</span>News</div><div class="side-menu-item" onclick="closeSideMenu();filterContent('trending')"><span class="material-symbols-outlined">trending_up</span>Trending</div><div class="side-menu-item" id="sideMyList" onclick="closeSideMenu();showMyList()" style="display:none"><span class="material-symbols-outlined">bookmark</span>My List</div><hr style="border-color:var(--border);margin:1rem 0"><div class="side-menu-item" onclick="closeSideMenu();showPlans()"><span class="material-symbols-outlined">subscriptions</span>Subscribe</div><div class="side-menu-item" onclick="closeSideMenu();openModal('aboutModal')"><span class="material-symbols-outlined">info</span>About Us</div><div class="side-menu-item" onclick="closeSideMenu();openModal('contactModal')"><span class="material-symbols-outlined">contact_support</span>Contact</div><div class="side-menu-item" onclick="closeSideMenu();openModal('privacyModal')"><span class="material-symbols-outlined">privacy_tip</span>Privacy</div><div class="side-menu-item" onclick="closeSideMenu();openModal('termsModal')"><span class="material-symbols-outlined">description</span>Terms</div><div class="side-menu-item" id="sideMenuAuth" onclick="handleProfileClick()"><span class="material-symbols-outlined">login</span>Login / Register</div></div>
+<div class="side-menu" id="sideMenu">
+  <div class="side-menu-header">
+    <h3>niroMovie</h3>
+    <span class="material-symbols-outlined" onclick="toggleSideMenu()" style="cursor:pointer">close</span>
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();loadAllContent()">
+    <span class="material-symbols-outlined">home</span>Home
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();filterContent('series')">
+    <span class="material-symbols-outlined">tv</span>Series
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();filterContent('free')">
+    <span class="material-symbols-outlined">redeem</span>Free Movies
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();window.location.href='/news'">
+    <span class="material-symbols-outlined">article</span>News
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();filterContent('trending')">
+    <span class="material-symbols-outlined">trending_up</span>Trending
+  </div>
+  <div class="side-menu-item" id="sideMyList" onclick="closeSideMenu();showMyList()" style="display:none">
+    <span class="material-symbols-outlined">bookmark</span>My List
+  </div>
+  <hr style="border-color:var(--border);margin:1rem 0">
+  <div class="side-menu-item" onclick="closeSideMenu();showPlans()">
+    <span class="material-symbols-outlined">subscriptions</span>Subscribe
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();openModal('aboutModal')">
+    <span class="material-symbols-outlined">info</span>About Us
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();openModal('contactModal')">
+    <span class="material-symbols-outlined">contact_support</span>Contact
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();openModal('privacyModal')">
+    <span class="material-symbols-outlined">privacy_tip</span>Privacy
+  </div>
+  <div class="side-menu-item" onclick="closeSideMenu();openModal('termsModal')">
+    <span class="material-symbols-outlined">description</span>Terms
+  </div>
+  <div class="side-menu-item" id="sideMenuAuth" onclick="handleProfileClick()">
+    <span class="material-symbols-outlined">login</span>Login / Register
+  </div>
+  <!-- WhatsApp Channel (always visible) -->
+  <hr style="border-color:var(--border);margin:1rem 0">
+  <a class="side-menu-item" href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" style="color:#25D366;font-weight:600;text-decoration:none;">
+    <span class="material-symbols-outlined">chat</span>Join WhatsApp Channel
+  </a>
+</div>
 <div class="welcome-bar" id="welcomeBar" style="display:none"><div id="welcomeBarInner"></div></div>
 <div class="hero-section"><div class="hero-row"><div class="hero-slider" id="heroSlider" onclick="heroClick()"><div class="hero-slide active" id="heroSlide0"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle0"></h2><p id="heroDesc0"></p></div></div><div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div><div class="hero-slide" id="heroSlide2"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle2"></h2><p id="heroDesc2"></p></div></div></div><div class="hero-cta"><button class="cta-btn cta-download" onclick="installApp()"><span class="material-symbols-outlined">download</span> Download App</button><button class="cta-btn cta-stream" onclick="showPlans()"><span class="material-symbols-outlined">play_arrow</span> Stream for Subscription</button></div></div><div class="hero-dots" id="heroDots"><div class="hero-dot active" onclick="goToSlide(0)"></div><div class="hero-dot" onclick="goToSlide(1)"></div><div class="hero-dot" onclick="goToSlide(2)"></div></div></div>
 <div class="ad-banner" id="adBanner" style="display:none"><div class="ad-banner-inner" id="adBannerInner"></div></div>
