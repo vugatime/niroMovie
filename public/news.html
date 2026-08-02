@@ -76,32 +76,12 @@
         .share-btn{margin-left:0.5rem;background:transparent;border:1px solid var(--text3);color:var(--text3);padding:0.4rem 1rem;border-radius:20px;cursor:pointer}
         .share-btn:hover{color:var(--accent);border-color:var(--accent)}
         .comment-input{display:flex;gap:0.5rem;margin-top:0.5rem}
-        .comment-input input {
-        flex: 1;
-        padding: 0.5rem 0.6rem;           /* slightly larger */
-        max-width: 400px;                  /* prevents full width */
-        background: var(--bg);
-        border: 1px solid var(--border);
-        color: var(--text);
-        border-radius: var(--radius);
-        font-family: inherit;
-        font-size: 0.85rem;                /* slightly larger */
-    }
+        .comment-input input{flex:1;padding:0.5rem 0.6rem;max-width:400px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-family:inherit;font-size:0.85rem}
         .comment-input button{background:var(--accent);color:#000;border:none;padding:0.4rem 1rem;border-radius:20px;cursor:pointer;font-weight:600}
         .comment-item{background:var(--bg3);padding:0.5rem;border-radius:var(--radius);margin:0.3rem 0;font-size:0.8rem}
         .comment-reply{color:var(--accent);cursor:pointer;font-size:0.75rem;margin-left:0.5rem}
         .reply-form{margin-left:1.5rem;margin-top:0.3rem;display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center}
-        .reply-form input {
-        padding: 0.4rem 0.5rem;
-        max-width: 300px;
-        background: var(--bg);
-        border: 1px solid var(--border);
-        color: var(--text);
-        border-radius: var(--radius);
-        font-size: 0.8rem;
-        flex: 1;
-        min-width: 80px;
-    }
+        .reply-form input{padding:0.4rem 0.5rem;max-width:300px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-size:0.8rem;flex:1;min-width:80px}
         .reply-form button{padding:0.3rem 0.6rem;border-radius:20px;font-size:0.65rem;background:var(--accent);color:#000;border:none;cursor:pointer}
         .reply-item{margin-left:1.5rem;border-left:2px solid var(--border);padding-left:0.8rem;margin-top:0.3rem;font-size:0.78rem}
         .comment-like{color:var(--accent);cursor:pointer;font-size:0.68rem;margin-top:0.2rem;display:inline-flex;align-items:center;gap:0.15rem}
@@ -131,10 +111,10 @@
     <a href="/" class="logo"><i class="material-symbols-outlined">article</i><span><b>niro</b>News</span></a>
     <div id="listNav" class="nav-links">
         <a href="/" class="nav-link active">Home</a>
-        <a href="#" class="nav-link" onclick="filterNews('category=Action')">Action</a>
-        <a href="#" class="nav-link" onclick="filterNews('category=Drama')">Drama</a>
-        <a href="#" class="nav-link" onclick="filterNews('country=Rwanda')">🇷🇼 Rwanda</a>
-        <a href="#" class="nav-link" onclick="filterNews('sort=likes')">Most Liked</a>
+        <a href="#" class="nav-link" onclick="currentFilter='category=Action';setActiveFilterButton('category=Action');loadNews();">Action</a>
+        <a href="#" class="nav-link" onclick="currentFilter='category=Drama';setActiveFilterButton('category=Drama');loadNews();">Drama</a>
+        <a href="#" class="nav-link" onclick="currentFilter='country=Rwanda';setActiveFilterButton('country=Rwanda');loadNews();">🇷🇼 Rwanda</a>
+        <a href="#" class="nav-link" onclick="currentFilter='sort=likes';setActiveFilterButton('sort=likes');loadNews();">Most Liked</a>
         <a href="https://niromovie.site" class="nav-link visit-site" target="_blank"><i class="fas fa-play"></i> Visit niroMovie</a>
     </div>
     <div id="articleNav" class="nav-links" style="display:none">
@@ -341,7 +321,7 @@ async function showArticle(id) {
         renderComments(currentArticleComments.slice(0, 2));
         document.getElementById('loadMoreCommentsContainer').style.display = currentArticleComments.length > 2 ? 'block' : 'none';
 
-        // Related and latest
+        // Related and latest (rely on allNewsData loaded)
         loadRelatedByCategory(news.category, news._id);
         loadLatestNews(id);
     } catch(e) { console.error(e); }
@@ -412,7 +392,6 @@ async function postReply(parentId) {
 }
 
 async function likeComment(commentId) {
-    // One like per device, same logic as movies
     const deviceId = localStorage.getItem('deviceId') || (() => { const id = 'dev_' + Math.random().toString(36).substr(2,9); localStorage.setItem('deviceId', id); return id; })();
     try {
         const res = await fetch(API + '/news/' + currentNewsId + '/comment/' + commentId + '/like', {
@@ -421,8 +400,7 @@ async function likeComment(commentId) {
         });
         const data = await res.json();
         if (res.ok) {
-            // Refresh the article to show updated likes
-            showArticle(currentNewsId);
+            showArticle(currentNewsId); // refresh likes
         } else {
             showToast(data.error || 'Already liked');
         }
@@ -503,6 +481,8 @@ document.getElementById('articleNav').addEventListener('click', function(e) {
         document.getElementById('articleNav').style.display = 'none';
         window.history.pushState({}, '', '/');
         currentNewsId = null;
+        // Reload list with current filter if needed
+        loadNews();
     }
 });
 
@@ -560,7 +540,15 @@ function openStaticModal(page) {
 }
 function closeStaticModal() { document.getElementById('staticModal').style.display = 'none'; }
 
-// ========== Filters ==========
+// ========== Helper to sync filter buttons ==========
+function setActiveFilterButton(filter) {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.filter === filter) btn.classList.add('active');
+    });
+}
+
+// ========== Filters (button row) ==========
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -574,13 +562,18 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 window.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
-    // Load all news data first (used for related/latest)
+    // Load all news data first (needed for related/latest in article view)
     try {
         const res = await fetch(API + '/news');
         allNewsData = await res.json();
-    } catch(e) { allNewsData = []; }
-    if (id) { showArticle(id); }
-    else { loadNews(); }
+    } catch(e) {
+        allNewsData = [];
+    }
+    if (id) {
+        await showArticle(id);
+    } else {
+        loadNews();
+    }
 });
 </script>
 </body>
