@@ -32,6 +32,10 @@
       "dest": "/server.js"
     },
     {
+      "src": "/news",
+      "dest": "/server.js"
+    },
+    {
       "src": "/",
       "dest": "/public/index.html"
     },
