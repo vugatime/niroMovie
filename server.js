@@ -118,12 +118,14 @@ const ContentSchema = new mongoose.Schema({
     viewedBy: [ViewRecordSchema], downloadedBy: [DownloadRecordSchema],
     parts: [PartSchema], seasons: [SeasonSchema],
     comments: [{
-        userName: String, text: String,
-        likes: { type: Number, default: 0 },
-        likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        likedByDevice: [String],
-        createdAt: { type: Date, default: Date.now }
-    }],
+    userName: String,
+    text: String,
+    parentId: { type: mongoose.Schema.Types.ObjectId, default: null },
+    likes: { type: Number, default: 0 },
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    likedByDevice: [String],
+    createdAt: { type: Date, default: Date.now }
+}]
     tags: [String], uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, uploadedByEmail: String,
     uploadedAt: { type: Date, default: Date.now }, updatedAt: { type: Date, default: Date.now }
 });
@@ -761,11 +763,11 @@ app.post('/api/news/:id/like', async (req, res) => {
 // Public: add comment
 app.post('/api/news/:id/comment', async (req, res) => {
     try {
-        const { userName, text } = req.body;
+        const { userName, text, parentId } = req.body;
         if (!userName || !text) return res.status(400).json({ error: 'Name and comment required' });
         const news = await News.findById(req.params.id);
         if (!news) return res.status(404).json({ error: 'Not found' });
-        news.comments.push({ userName: userName.trim(), text: text.trim() });
+        news.comments.push({ userName: userName.trim(), text: text.trim(), parentId: parentId || null, createdAt: new Date() });
         await news.save();
         res.json({ success: true, comments: news.comments });
     } catch (err) { res.status(500).json({ error: err.message }); }
