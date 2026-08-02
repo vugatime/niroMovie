@@ -220,14 +220,14 @@
 @media(max-width:768px){
     .news-home-grid { grid-template-columns: 1fr; }
 }
-/* Animated WhatsApp Channel CTA */
-.cta-channel {
+/* Animated WhatsApp Channel CTA (in navbar) */
+.nav-whatsapp-cta {
   background: linear-gradient(135deg, #25D366, #128C7E);
   color: #fff;
   border: none;
   font-weight: 700;
-  font-size: 0.82rem;
-  padding: 0.7rem 1.2rem;
+  font-size: 0.78rem;
+  padding: 0.5rem 1.2rem;
   border-radius: 50px;
   display: flex;
   align-items: center;
@@ -239,13 +239,16 @@
   transition: all 0.3s ease;
   box-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
   animation: pulseGlow 2s infinite;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 0.4rem;
 }
-.cta-channel:hover {
+.nav-whatsapp-cta:hover {
   transform: translateY(-2px);
   box-shadow: 0 0 25px rgba(37, 211, 102, 0.8);
 }
 .channel-icon {
-  font-size: 1.2rem;
+  font-size: 1rem;
   display: flex;
 }
 .channel-text {
@@ -298,9 +301,11 @@
       <span class="material-symbols-outlined" style="color:var(--text3)">search</span>
       <input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()">
     </div>
-    <!-- Compact WhatsApp button (round icon, always visible) -->
-    <a class="whatsapp-nav-icon" href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" title="Join WhatsApp Channel" style="background:#25D366;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;font-size:1.2rem;margin-left:0.4rem;">
-      <i class="fab fa-whatsapp"></i>
+    <!-- Animated WhatsApp Channel CTA (replaces old icon, always visible) -->
+    <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" class="nav-whatsapp-cta" id="channelBtn">
+      <span class="channel-icon"><i class="fab fa-whatsapp"></i></span>
+      <span class="channel-text" id="channelText">Join Our Channel</span>
+      <span class="channel-bubble"></span>
     </a>
     <div class="profile-icon" id="profileIcon" onclick="handleProfileClick()">LI</div>
   </div>
@@ -348,28 +353,18 @@
   <div class="side-menu-item" id="sideMenuAuth" onclick="handleProfileClick()">
     <span class="material-symbols-outlined">login</span>Login / Register
   </div>
-  <!-- WhatsApp Channel (always visible) -->
-  <hr style="border-color:var(--border);margin:1rem 0">
-  <a class="side-menu-item" href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" style="color:#25D366;font-weight:600;text-decoration:none;">
-    <span class="material-symbols-outlined">chat</span>Join WhatsApp Channel
-  </a>
 </div>
 <div class="welcome-bar" id="welcomeBar" style="display:none"><div id="welcomeBarInner"></div></div>
-<div class="hero-section"><div class="hero-row"><div class="hero-slider" id="heroSlider" onclick="heroClick()"><div class="hero-slide active" id="heroSlide0"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle0"></h2><p id="heroDesc0"></p></div></div><div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div><div class="hero-slide" id="heroSlide2"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle2"></h2><p id="heroDesc2"></p></div></div></div><div class="hero-cta">
+<div class="hero-section"><div class="hero-row"><div class="hero-slider" id="heroSlider" onclick="heroClick()"><div class="hero-slide active" id="heroSlide0"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle0"></h2><p id="heroDesc0"></p></div></div><div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div><div class="hero-slide" id="heroSlide2"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle2"></h2><p id="heroDesc2"></p></div></div></div>
+<div class="hero-cta">
   <button class="cta-btn cta-download" onclick="installApp()"><span class="material-symbols-outlined">download</span> Download App</button>
   <button class="cta-btn cta-stream" onclick="showPlans()"><span class="material-symbols-outlined">play_arrow</span> Stream for Subscription</button>
-  <!-- Animated WhatsApp Channel CTA -->
-  <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" class="cta-btn cta-channel" id="channelBtn">
-    <span class="channel-icon"><i class="fab fa-whatsapp"></i></span>
-    <span class="channel-text" id="channelText">Join Our Channel</span>
-    <span class="channel-bubble"></span>
-  </a>
 </div></div><div class="hero-dots" id="heroDots"><div class="hero-dot active" onclick="goToSlide(0)"></div><div class="hero-dot" onclick="goToSlide(1)"></div><div class="hero-dot" onclick="goToSlide(2)"></div></div></div>
 <div class="ad-banner" id="adBanner" style="display:none"><div class="ad-banner-inner" id="adBannerInner"></div></div>
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">new_releases</span> Latest Added</h2></div><div class="movies-row" id="rowLatest"></div></div>
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">category</span> Categories</h2></div><div class="categories-scroll" id="catRow"></div></div>
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">movie</span> Browse All</h2></div><div class="movie-grid" id="movieGrid"></div><button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreMovies()">Show More ▼</button></div>
-<!-- CINEMA NEWS (latest 4) -->
+    <!-- CINEMA NEWS (latest 4) -->
 <div class="section" id="newsHomeSection" style="display:none">
     <div class="section-head">
         <h2><span class="material-symbols-outlined" style="color:var(--accent)">article</span> Cinema News</h2>
@@ -899,6 +894,7 @@ async function loadLatestNews() {
     }, 300);
   }, 3000);
 })();
+
 </script>
 </body>
 </html>
