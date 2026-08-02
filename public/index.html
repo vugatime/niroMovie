@@ -295,7 +295,7 @@
       <a class="nav-link active" onclick="loadAllContent()">Home</a>
       <a class="nav-link" onclick="filterContent('series')">Series</a>
       <a class="nav-link" onclick="filterContent('free')">Free</a>
-      <a class="nav-link" onclick="window.location.href='/news'">News</a>
+      <a class="nav-link" onclick="window.location.href='https://news.niromovie.site'">News</a>
       <a class="nav-link" id="myListNav" onclick="showMyList()" style="display:none">My List</a>
     </div>
     <div class="search-box">
@@ -326,7 +326,7 @@
   <div class="side-menu-item" onclick="closeSideMenu();filterContent('free')">
     <span class="material-symbols-outlined">redeem</span>Free Movies
   </div>
-  <div class="side-menu-item" onclick="closeSideMenu();window.location.href='/news'">
+  <div class="side-menu-item" onclick="closeSideMenu();window.location.href='https://news.niromovie.site'">
     <span class="material-symbols-outlined">article</span>News
   </div>
   <div class="side-menu-item" onclick="closeSideMenu();filterContent('trending')">
@@ -385,7 +385,7 @@
     </div>
     <div class="news-home-grid" id="newsHomeGrid"></div>
     <div class="news-home-more">
-        <a href="/news">View all news →</a>
+        <a href="https://news.niromovie.site">View all news →</a>
     </div>
 </div>
 <div class="footer"><div class="footer-grid"><div class="footer-col"><h4>Categories</h4><div id="footerCats"></div></div><div class="footer-col"><h4>Translators</h4><div id="footerTranslators"></div></div><div class="footer-col"><h4>Quick Links</h4><a onclick="filterContent('trending')">Most Downloaded</a><a onclick="filterContent('latest')">Newly Added</a><a onclick="filterContent('free')">Free Movies</a><a onclick="showPlans()">Subscribe</a></div><div class="footer-col"><h4>niroMovie</h4><a onclick="openModal('aboutModal')">About Us</a><a onclick="openModal('contactModal')">Contact</a><a onclick="openModal('privacyModal')">Privacy</a><a onclick="openModal('termsModal')">Terms</a><div class="footer-social"><a href="https://www.tiktok.com/@nirobwimba" target="_blank"><i class="fab fa-tiktok"></i></a><a href="https://www.instagram.com/nirobwimba" target="_blank"><i class="fab fa-instagram"></i></a></div></div></div><div class="footer-bottom">© 2026 — powered by <strong>niroflixx</strong></div></div>
@@ -879,7 +879,7 @@ async function loadLatestNews() {
         grid.innerHTML = data.map(n => {
             const snippet = (n.description || '').replace(/<[^>]*>/g, '').substring(0, 120);
             const imgSrc = n.thumbnailUrl || (n.images && n.images[0]) || '';
-            return `<div class="news-home-card" onclick="window.location.href='/news?id=${n._id}'">
+            return `<div class="news-home-card" onclick="window.location.href='https://news.niromovie.site/?id=${n._id}'">
                 ${imgSrc ? `<img class="news-home-thumb" src="${imgSrc}" onerror="this.style.display='none'">` : ''}
                 <div class="news-home-body">
                     <div class="news-home-title">${escHtml(n.title)}</div>
