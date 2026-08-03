@@ -24,7 +24,6 @@
         .search-box input{background:transparent;border:none;color:var(--text);outline:none;width:100%;font-family:inherit;font-size:0.82rem}
         .search-box input::placeholder{color:var(--text3)}
         .container{max-width:1200px;margin:0 auto;padding:1rem 1.5rem}
-        /* Hero slider – 3 slides */
         .hero-slider{position:relative;overflow:hidden;border-radius:var(--radiusLg);margin-bottom:2rem;background:var(--bg3)}
         .hero-slides{display:flex;transition:transform 0.8s ease}
         .hero-slide{min-width:100%;position:relative;aspect-ratio:16/7;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:1.5rem;cursor:pointer}
@@ -51,7 +50,6 @@
         .footer{text-align:center;padding:2rem;color:var(--text3);font-size:0.75rem;border-top:1px solid var(--border);margin-top:2rem;display:flex;flex-wrap:wrap;justify-content:center;gap:2rem}
         .footer-links{display:flex;gap:1rem}
         .footer-links a{color:var(--text2);text-decoration:none;cursor:pointer}.footer-links a:hover{color:var(--accent)}
-        /* Article view layout */
         .article-container{display:flex;gap:2rem;margin-top:1rem}
         .article-main{flex:1;min-width:0}
         .article-title{font-size:2rem;font-weight:800;margin-bottom:0.5rem}
@@ -92,7 +90,6 @@
         @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
         @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        /* Horizontal scroll rows */
         .movies-row{display:flex;gap:0.7rem;overflow-x:auto;scroll-behavior:smooth;padding-bottom:0.4rem;-ms-overflow-style:none;scrollbar-width:none}
         .movies-row::-webkit-scrollbar{display:none}
         .tmdb-card{min-width:150px;width:150px;background:var(--bg2);border-radius:var(--radiusLg);overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:var(--trans);flex-shrink:0}
@@ -121,13 +118,12 @@
             .mini-news-grid{grid-template-columns:1fr}
         }
     </style>
-    <!-- Monetag Ad Tags -->
+    <!-- Monetag Ad Tags (can be blocked by ad blockers, but won't break the site) -->
     <script src="https://5gvci.com/act/files/tag.min.js?z=11238838" data-cfasync="false" async></script>
     <script>(function(s){s.dataset.zone='11482358',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </head>
 <body>
 <div id="reading-progress"></div>
-<!-- Navbar -->
 <div class="navbar">
     <a href="/" class="logo"><i class="material-symbols-outlined">article</i><span><b>niro</b>News</span></a>
     <div id="listNav" class="nav-links">
@@ -146,14 +142,10 @@
         <input type="text" id="searchNews" placeholder="Search news..." oninput="searchNews()">
     </div>
 </div>
-<!-- List View -->
 <div id="listView">
     <div class="container">
         <div class="ad-slot ad-slot-top" id="adTop" style="display:none"></div>
-        <!-- Rotating hero slider (3 slides) -->
-        <div class="hero-slider" id="heroSlider">
-            <div class="hero-slides" id="heroSlidesContainer"></div>
-        </div>
+        <div class="hero-slider" id="heroSlider"><div class="hero-slides" id="heroSlidesContainer"></div></div>
         <div class="hero-dots" id="heroDots"></div>
         <div class="filters">
             <button class="filter-btn active" data-filter="all">All</button>
@@ -166,7 +158,6 @@
         <div id="mixedContentArea"></div>
     </div>
 </div>
-<!-- Article View (hidden by default) -->
 <div id="articleView" style="display:none">
     <div class="container">
         <div class="article-container">
@@ -205,18 +196,15 @@
         </div>
     </div>
 </div>
-<!-- Follow Section -->
 <div class="follow-section" style="text-align:center;padding:1.5rem 0 0.5rem">
-    <div class="follow-label" style="font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.7rem;font-weight:600">Follow us</div>
+    <div class="follow-label" style="font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.7rem;font-weight:600">Follow niroMovie News</div>
     <div class="social-follow" style="display:flex;gap:0.7rem;justify-content:center">
         <a class="sf-yt" href="https://www.youtube.com/@niromovienews" target="_blank" style="width:42px;height:42px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:1.15rem;text-decoration:none;transition:var(--trans)" onmouseover="this.style.background='#FF0000';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color=''"><i class="fab fa-youtube"></i></a>
         <a class="sf-tiktok" href="https://www.tiktok.com/@niromovienews" target="_blank" style="width:42px;height:42px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:1.15rem;text-decoration:none;transition:var(--trans)" onmouseover="this.style.background='#000';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color=''"><i class="fab fa-tiktok"></i></a>
         <a class="sf-ig" href="https://www.instagram.com/niromovienews" target="_blank" style="width:42px;height:42px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:1.15rem;text-decoration:none;transition:var(--trans)" onmouseover="this.style.background='linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color=''"><i class="fab fa-instagram"></i></a>
     </div>
 </div>
-<!-- Footer Ad Slot -->
 <div class="ad-slot ad-slot-footer" id="adFooter" style="display:none;max-width:1200px;margin:0 auto 1rem"></div>
-<!-- Footer -->
 <div class="footer">
     <div class="footer-links">
         <a href="/about">About</a>
@@ -226,9 +214,7 @@
     </div>
     <span>© 2026 — powered by <strong>niroflixx</strong></span>
 </div>
-<!-- Toast -->
 <div id="toast" class="toast" style="display:none"></div>
-<!-- Back to Top -->
 <div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
 
 <script>
@@ -240,20 +226,14 @@ window.currentSlideIndex = 0;
 let heroTimer = null, heroSlideIndex = 0, heroSlideData = [];
 let newsPage = 0;
 const NEWS_PER_PAGE = 12;
-
-// ====== Ads Config ======
-const adsConfig = {
-    top: [],
-    sidebar: [],
-    articleMid: [],
-    footer: []
-};
+const adsConfig = { top: [], sidebar: [], articleMid: [], footer: [] };
 
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML;}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 function adminPrefixName(name){ return '🔵 ' + name; }
 function cleanVerifiedName(raw){ if(typeof raw !== 'string') return raw; if(raw.startsWith('🔵 ')) return raw.substring(3); return raw; }
 function isVerifiedName(raw){ return typeof raw === 'string' && raw.startsWith('🔵 '); }
+
 function renderAdSlot(elId, configKey) {
     const el = document.getElementById(elId);
     if (!el) return;
@@ -267,36 +247,23 @@ function renderAdSlot(elId, configKey) {
     el.innerHTML = inner + (ad.link ? `<a href="${ad.link}" target="_blank" style="display:block;text-decoration:none;color:var(--accent);font-size:0.7rem;margin-top:0.3rem">Learn More</a>` : '');
     el.style.display = 'block';
 }
-function loadAllAdSlots() {
-    renderAdSlot('adTop', 'top');
-    renderAdSlot('adSidebar', 'sidebar');
-    renderAdSlot('adArticleMid', 'articleMid');
-    renderAdSlot('adFooter', 'footer');
-}
+function loadAllAdSlots() { renderAdSlot('adTop','top'); renderAdSlot('adSidebar','sidebar'); renderAdSlot('adArticleMid','articleMid'); renderAdSlot('adFooter','footer'); }
 
 // ====== TMDB Data ======
 async function fetchTMDB(endpoint) {
-    try {
-        const res = await fetch(`https://api.themoviedb.org/3/${endpoint}`, { headers: { Authorization: `Bearer ${TMDB_TOKEN}` } });
-        if (!res.ok) return [];
-        return await res.json();
-    } catch(e) { return []; }
+    try { const res = await fetch(`https://api.themoviedb.org/3/${endpoint}`, { headers: { Authorization: `Bearer ${TMDB_TOKEN}` } });
+        if (!res.ok) return []; return await res.json(); } catch(e) { return []; }
 }
 function renderTMDBRow(data, rowId) {
-    const row = document.getElementById(rowId);
-    if (!row) return;
+    const row = document.getElementById(rowId); if (!row) return;
     if (!data || !data.length) { row.innerHTML = ''; return; }
     const items = data.slice(0, 10);
     row.innerHTML = items.map(m => {
         const poster = m.poster_path ? `https://image.tmdb.org/t/p/w200${m.poster_path}` : '';
-        const title = m.title || m.name || '';
-        const rating = m.vote_average ? '⭐ ' + m.vote_average : '';
+        const title = m.title || m.name || ''; const rating = m.vote_average ? '⭐ ' + m.vote_average : '';
         return `<div class="tmdb-card" onclick="window.open('https://www.themoviedb.org/movie/${m.id}','_blank')">
             ${poster ? `<img src="${poster}" onerror="this.style.background='var(--bg3)'">` : '<div style="height:200px;background:var(--bg3)"></div>'}
-            <div class="tmdb-info">
-                <div class="tmdb-title">${escHtml(title)}</div>
-                <div class="tmdb-meta">${rating}</div>
-            </div>
+            <div class="tmdb-info"><div class="tmdb-title">${escHtml(title)}</div><div class="tmdb-meta">${rating}</div></div>
         </div>`;
     }).join('');
 }
@@ -316,28 +283,13 @@ function setupHero(data) {
     slidesContainer.innerHTML = heroSlideData.map((n, i) => `
         <div class="hero-slide" style="background-image:url(${n.thumbnailUrl || (n.images&&n.images[0]) || ''})" onclick="showArticle('${n._id}')">
             <div class="hero-slide-overlay"></div>
-            <div class="hero-slide-info">
-                <h2>${escHtml(n.title)}</h2>
-                <p>${(n.description || '').substring(0, 120)}</p>
-            </div>
-        </div>
-    `).join('');
+            <div class="hero-slide-info"><h2>${escHtml(n.title)}</h2><p>${(n.description || '').substring(0, 120)}</p></div>
+        </div>`).join('');
     dotsContainer.innerHTML = heroSlideData.map((_, i) => `<div class="hero-dot${i===0?' active':''}" onclick="goToSlide(${i})"></div>`).join('');
-    heroSlideIndex = 0;
-    startHeroRotation();
+    heroSlideIndex = 0; startHeroRotation();
 }
-function startHeroRotation() {
-    if (heroTimer) clearInterval(heroTimer);
-    heroTimer = setInterval(() => {
-        heroSlideIndex = (heroSlideIndex + 1) % heroSlideData.length;
-        updateHero();
-    }, 8000);
-}
-function goToSlide(index) {
-    heroSlideIndex = index;
-    updateHero();
-    startHeroRotation(); // reset timer
-}
+function startHeroRotation() { if (heroTimer) clearInterval(heroTimer); heroTimer = setInterval(() => { heroSlideIndex = (heroSlideIndex + 1) % heroSlideData.length; updateHero(); }, 8000); }
+function goToSlide(index) { heroSlideIndex = index; updateHero(); startHeroRotation(); }
 function updateHero() {
     const slides = document.getElementById('heroSlidesContainer');
     if (slides) slides.style.transform = `translateX(-${heroSlideIndex * 100}%)`;
@@ -346,10 +298,8 @@ function updateHero() {
 
 // ====== Mixed Content Builder ======
 function buildMixedContent(news, tmdbData) {
-    const area = document.getElementById('mixedContentArea');
-    if (!area) return;
-    const newsItems = news.slice(3); // skip hero slides (first 3 used for hero)
-    let newsIndex = 0;
+    const area = document.getElementById('mixedContentArea'); if (!area) return;
+    const newsItems = news.slice(3); let newsIndex = 0;
     function newsCardHTML(n) {
         const img = n.thumbnailUrl || (n.images&&n.images[0]) || '';
         return `<div class="news-card" onclick="showArticle('${n._id}')">
@@ -357,20 +307,14 @@ function buildMixedContent(news, tmdbData) {
             <div class="news-card-body">
                 <div class="news-card-title">${escHtml(n.title)}</div>
                 <div class="news-card-excerpt">${(n.description||'').replace(/<[^>]*>/g,'').substring(0,100)}</div>
-                <div class="news-card-meta">
-                    <span>${n.country || ''} ${n.category ? '· ' + n.category : ''}</span>
-                    <span>♡ ${n.likes || 0}</span>
-                </div>
-            </div>
-        </div>`;
+                <div class="news-card-meta"><span>${n.country || ''} ${n.category ? '· ' + n.category : ''}</span><span>♡ ${n.likes || 0}</span></div>
+            </div></div>`;
     }
     function addSection(title, icon, rowId, slotId, data) {
         if (!data || !data.length) return '';
         return `<div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">${icon}</span> ${title}</h2></div>
-            <div class="movies-row" id="${rowId}"></div>
-            <div class="mini-news-grid" id="${slotId}"></div>`;
+            <div class="movies-row" id="${rowId}"></div><div class="mini-news-grid" id="${slotId}"></div>`;
     }
-
     let html = '';
     if (tmdbData.trending && tmdbData.trending.length) html += addSection('Trending Movies This Week','trending_up','trendingMoviesRow','trendingNewsSlot',tmdbData.trending);
     if (tmdbData.upcoming && tmdbData.upcoming.length) html += addSection('Upcoming Releases','calendar_month','upcomingRow','upcomingNewsSlot',tmdbData.upcoming);
@@ -381,38 +325,22 @@ function buildMixedContent(news, tmdbData) {
         <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreNews()">Show More ▼</button>`;
     area.innerHTML = html;
 
-    renderTMDBRow(tmdbData.trending, 'trendingMoviesRow');
-    renderTMDBRow(tmdbData.upcoming, 'upcomingRow');
-    renderTMDBRow(tmdbData.tv, 'tvPremieresRow');
-    renderTMDBRow(tmdbData.people, 'birthdaysRow');
+    renderTMDBRow(tmdbData.trending, 'trendingMoviesRow'); renderTMDBRow(tmdbData.upcoming, 'upcomingRow');
+    renderTMDBRow(tmdbData.tv, 'tvPremieresRow'); renderTMDBRow(tmdbData.people, 'birthdaysRow');
 
     function fillMiniGrid(slotId) {
-        const slot = document.getElementById(slotId);
-        if (!slot) return;
+        const slot = document.getElementById(slotId); if (!slot) return;
         let cards = '';
-        for (let i=0; i<3 && newsIndex < newsItems.length; i++) {
-            cards += newsCardHTML(newsItems[newsIndex]);
-            newsIndex++;
-        }
-        slot.innerHTML = cards;
-        if (!cards) slot.style.display = 'none';
+        for (let i=0; i<3 && newsIndex < newsItems.length; i++) { cards += newsCardHTML(newsItems[newsIndex]); newsIndex++; }
+        slot.innerHTML = cards; if (!cards) slot.style.display = 'none';
     }
-    fillMiniGrid('trendingNewsSlot');
-    fillMiniGrid('upcomingNewsSlot');
-    fillMiniGrid('tvNewsSlot');
-    fillMiniGrid('birthdaysNewsSlot');
-
-    const remaining = newsItems.slice(newsIndex);
-    window.remainingNews = remaining;
-    newsPage = 0;
-    renderMainNewsGrid(remaining);
+    fillMiniGrid('trendingNewsSlot'); fillMiniGrid('upcomingNewsSlot'); fillMiniGrid('tvNewsSlot'); fillMiniGrid('birthdaysNewsSlot');
+    const remaining = newsItems.slice(newsIndex); window.remainingNews = remaining; newsPage = 0; renderMainNewsGrid(remaining);
 }
 
 function renderMainNewsGrid(newsArray) {
-    const grid = document.getElementById('newsList');
-    if (!grid) return;
-    const start = newsPage * NEWS_PER_PAGE;
-    const end = Math.min(start + NEWS_PER_PAGE, newsArray.length);
+    const grid = document.getElementById('newsList'); if (!grid) return;
+    const start = newsPage * NEWS_PER_PAGE; const end = Math.min(start + NEWS_PER_PAGE, newsArray.length);
     const pageItems = newsArray.slice(start, end);
     let html = '';
     pageItems.forEach(n => {
@@ -422,35 +350,21 @@ function renderMainNewsGrid(newsArray) {
             <div class="news-card-body">
                 <div class="news-card-title">${escHtml(n.title)}</div>
                 <div class="news-card-excerpt">${(n.description||'').replace(/<[^>]*>/g,'').substring(0,100)}</div>
-                <div class="news-card-meta">
-                    <span>${n.country || ''} ${n.category ? '· ' + n.category : ''}</span>
-                    <span>♡ ${n.likes || 0}</span>
-                </div>
-            </div>
-        </div>`;
+                <div class="news-card-meta"><span>${n.country || ''} ${n.category ? '· ' + n.category : ''}</span><span>♡ ${n.likes || 0}</span></div>
+            </div></div>`;
     });
-    if (newsPage === 0) grid.innerHTML = html;
-    else grid.innerHTML += html;
+    if (newsPage === 0) grid.innerHTML = html; else grid.innerHTML += html;
     const btn = document.getElementById('loadMoreBtn');
-    if (end >= newsArray.length) {
-        btn.textContent = 'All loaded ✓'; btn.disabled = true; btn.style.opacity = '0.5';
-    } else {
-        btn.textContent = 'Show More ▼'; btn.disabled = false; btn.style.opacity = '1';
-    }
+    if (end >= newsArray.length) { btn.textContent = 'All loaded ✓'; btn.disabled = true; btn.style.opacity = '0.5'; }
+    else { btn.textContent = 'Show More ▼'; btn.disabled = false; btn.style.opacity = '1'; }
     btn.style.display = newsArray.length > NEWS_PER_PAGE ? 'block' : 'none';
 }
-function loadMoreNews() {
-    newsPage++;
-    if (window.remainingNews) renderMainNewsGrid(window.remainingNews);
-}
+function loadMoreNews() { newsPage++; if (window.remainingNews) renderMainNewsGrid(window.remainingNews); }
 
-// ====== Load all content ======
 async function loadNews() {
-    let query = '';
-    if (currentFilter !== 'all') query = '?' + currentFilter;
+    let query = ''; if (currentFilter !== 'all') query = '?' + currentFilter;
     try {
-        const res = await fetch(API + '/news' + query);
-        const data = await res.json();
+        const res = await fetch(API + '/news' + query); const data = await res.json();
         allNewsData = data;
         setupHero(data);
         const tmdbData = await loadTMDBData();
@@ -458,66 +372,191 @@ async function loadNews() {
     } catch(e) { console.error(e); }
 }
 
-// ====== Article View ======
+// ====== Article View (FULL FUNCTIONS, NO TRUNCATION) ======
 async function showArticle(id) {
-    if (!id) return;
-    currentNewsId = id;
-    document.getElementById('listView').style.display = 'none';
-    document.getElementById('articleView').style.display = 'block';
-    document.getElementById('searchBox').style.display = 'none';
-    document.getElementById('listNav').style.display = 'none';
+    if (!id) return; currentNewsId = id;
+    document.getElementById('listView').style.display = 'none'; document.getElementById('articleView').style.display = 'block';
+    document.getElementById('searchBox').style.display = 'none'; document.getElementById('listNav').style.display = 'none';
     document.getElementById('articleNav').style.display = 'flex';
     window.history.pushState({}, '', '?id=' + id);
     document.getElementById('reading-progress').style.width = '0';
     try {
-        const res = await fetch(API + '/news/' + id);
-        const news = await res.json();
+        const res = await fetch(API + '/news/' + id); const news = await res.json();
         currentArticleComments = news.comments || [];
         document.getElementById('articleTitle').textContent = news.title;
         document.getElementById('articleMeta').innerHTML = `
             <span>📅 ${new Date(news.createdAt).toLocaleDateString()}</span>
             <span>🌍 ${news.country || 'Rwanda'}</span>
-            <span>🏷️ ${news.category || 'General'}</span>
-        `;
+            <span>🏷️ ${news.category || 'General'}</span>`;
         document.getElementById('likeCount').textContent = news.likes || 0;
         document.getElementById('likeError').textContent = '';
-        // Image slider
         let images = Array.isArray(news.images) ? [...news.images] : [];
         const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/gi;
-        let descClean = news.description || '';
-        let match;
+        let descClean = news.description || ''; let match;
         while ((match = imgRegex.exec(descClean)) !== null) images.push(match[1]);
         descClean = descClean.replace(/<img[^>]*>/gi, '');
         let sliderHtml = '';
         if (images.length > 0) {
-            const imgItems = images.map((src, i) => `
-                <img src="${src}" class="slider-img" style="display:${i===0?'block':'none'}" onclick="viewImage('${src}')" data-index="${i}">
-            `).join('');
+            const imgItems = images.map((src, i) => `<img src="${src}" class="slider-img" style="display:${i===0?'block':'none'}" onclick="viewImage('${src}')" data-index="${i}">`).join('');
             const dots = images.map((_, i) => `<span class="slider-dot ${i===0?'active':''}" onclick="goToSlide(${i})"></span>`).join('');
-            sliderHtml = `
-                <div class="article-image-slider" id="articleSlider">
-                    ${imgItems}
-                    ${images.length > 1 ? `
-                        <button class="slider-nav prev" onclick="changeSlide(-1)">‹</button>
-                        <button class="slider-nav next" onclick="changeSlide(1)">›</button>
-                        <div class="slider-dots">${dots}</div>
-                    ` : ''}
-                </div>`;
+            sliderHtml = `<div class="article-image-slider" id="articleSlider">${imgItems}${images.length > 1 ? `<button class="slider-nav prev" onclick="changeSlide(-1)">‹</button><button class="slider-nav next" onclick="changeSlide(1)">›</button><div class="slider-dots">${dots}</div>` : ''}</div>`;
         }
         document.getElementById('articleContent').innerHTML = sliderHtml + descClean;
-        window.currentImages = images;
-        window.currentSlideIndex = 0;
+        window.currentImages = images; window.currentSlideIndex = 0;
         renderComments(currentArticleComments.slice(0,2));
         document.getElementById('loadMoreCommentsContainer').style.display = currentArticleComments.length > 2 ? 'block' : 'none';
-        loadRelatedByCategory(news.category, news._id);
-        loadLatestNews(id);
-        loadAllAdSlots();
-        window.scrollTo(0,0);
+        loadRelatedByCategory(news.category, news._id); loadLatestNews(id);
+        loadAllAdSlots(); window.scrollTo(0,0);
     } catch(e) { console.error(e); }
 }
 
-// (Keep all remaining functions unchanged: buildCommentHTML, renderComments, etc. — they are identical to the previous complete file.)
-// ... (abbreviated here for brevity, but the final file will contain the full article functions)
+function buildCommentHTML(comment, allComments, depth = 0) {
+    const replies = allComments.filter(c => c.parentId && c.parentId.toString() === comment._id.toString());
+    let replyHTML = '';
+    if (replies.length > 0) replyHTML = replies.map(r => buildCommentHTML(r, allComments, depth + 1)).join('');
+    const indent = depth > 0 ? 'style="margin-left:1.5rem;border-left:2px solid var(--border);padding-left:0.8rem;"' : '';
+    const rawName = comment.userName || 'Anon'; const isVer = isVerifiedName(rawName);
+    const displayName = cleanVerifiedName(rawName); const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
+    return `<div class="comment-item" ${indent}>
+        <div><span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}<span class="comment-date">${new Date(comment.createdAt).toLocaleString()}</span></div>
+        <div class="comment-text">${escHtml(comment.text)}</div>
+        <span class="comment-like" onclick="likeComment('${comment._id}')">♡ ${comment.likes || 0}</span>
+        <span class="comment-reply" onclick="showReplyForm('${comment._id}')">↩ Reply</span>
+        <div class="reply-form" id="replyForm-${comment._id}" style="display:none">
+            <input type="text" id="replyName-${comment._id}" placeholder="Your name">
+            <input type="text" id="replyText-${comment._id}" placeholder="Write a reply...">
+            <button onclick="postReply('${comment._id}')">Reply</button></div>${replyHTML}</div>`;
+}
+function renderComments(commentsToShow) {
+    const container = document.getElementById('commentsContainer');
+    if (!commentsToShow.length) { container.innerHTML = '<p style="color:var(--text2);font-size:0.8rem">No comments yet.</p>'; return; }
+    const topLevel = commentsToShow.filter(c => !c.parentId);
+    container.innerHTML = topLevel.map(c => buildCommentHTML(c, currentArticleComments)).join('');
+}
+function loadAllComments() { renderComments(currentArticleComments); document.getElementById('loadMoreCommentsContainer').style.display = 'none'; }
+function showReplyForm(commentId) { const form = document.getElementById('replyForm-' + commentId); form.style.display = form.style.display === 'flex' ? 'none' : 'flex'; }
+async function postReply(parentId) {
+    const name = document.getElementById('replyName-' + parentId).value.trim();
+    const text = document.getElementById('replyText-' + parentId).value.trim();
+    if (!name || !text) return showToast('Name and reply required');
+    try {
+        const res = await fetch(API + '/news/' + currentNewsId + '/comment', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ userName: name, text, parentId }) });
+        const data = await res.json(); if (data.success) showArticle(currentNewsId);
+    } catch(e) { console.error(e); }
+}
+async function likeComment(commentId) {
+    const deviceId = localStorage.getItem('deviceId') || (() => { const id = 'dev_' + Math.random().toString(36).substr(2,9); localStorage.setItem('deviceId', id); return id; })();
+    try {
+        const res = await fetch(API + '/news/' + currentNewsId + '/comment/' + commentId + '/like', { method:'POST', headers:{'X-Device-ID':deviceId} });
+        const data = await res.json(); if (res.ok) showArticle(currentNewsId); else showToast(data.error || 'Already liked');
+    } catch(e) { console.error(e); }
+}
+function changeSlide(direction) {
+    const images = window.currentImages; if (!images || images.length <= 1) return;
+    window.currentSlideIndex = (window.currentSlideIndex + direction + images.length) % images.length; updateSlider();
+}
+function goToSlide(index) { window.currentSlideIndex = index; updateSlider(); }
+function updateSlider() {
+    const slider = document.getElementById('articleSlider'); if (!slider) return;
+    const imgs = slider.querySelectorAll('.slider-img'); const dots = slider.querySelectorAll('.slider-dot');
+    imgs.forEach((img, i) => img.style.display = i === window.currentSlideIndex ? 'block' : 'none');
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === window.currentSlideIndex));
+}
+function viewImage(src) {
+    const overlay = document.createElement('div');
+    overlay.style = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:3000;display:flex;justify-content:center;align-items:center;cursor:pointer;';
+    overlay.innerHTML = `<img src="${src}" style="max-width:95%;max-height:95%;object-fit:contain;border-radius:18px"><span style="position:absolute;top:1rem;right:1rem;color:#F5C518;font-size:2rem;">&times;</span>`;
+    overlay.onclick = () => document.body.removeChild(overlay); document.body.appendChild(overlay);
+}
+async function likeNews() {
+    const deviceId = localStorage.getItem('deviceId') || (() => { const id = 'dev_' + Math.random().toString(36).substr(2,9); localStorage.setItem('deviceId', id); return id; })();
+    try {
+        const res = await fetch(API + '/news/' + currentNewsId + '/like', { method:'POST', headers:{'X-Device-ID':deviceId} });
+        const data = await res.json(); if (res.ok) { document.getElementById('likeCount').textContent = data.likes; showToast('Liked!'); }
+        else document.getElementById('likeError').textContent = data.error;
+    } catch(e) { console.error(e); }
+}
+function shareArticle() {
+    const url = window.location.href; if (navigator.share) navigator.share({ title: document.title, url });
+    else navigator.clipboard.writeText(url).then(() => showToast('Link copied!'));
+}
+async function postComment() {
+    const name = document.getElementById('commentName').value.trim(); const text = document.getElementById('commentText').value.trim();
+    if (!name || !text) return showToast('Name and comment required');
+    try {
+        const res = await fetch(API + '/news/' + currentNewsId + '/comment', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ userName: name, text }) });
+        const data = await res.json();
+        if (data.success) { document.getElementById('commentName').value = ''; document.getElementById('commentText').value = ''; showArticle(currentNewsId); }
+    } catch(e) { console.error(e); }
+}
+function loadRelatedByCategory(category, currentId) {
+    const sidebar = document.getElementById('sidebarRelated'); if (!sidebar) return;
+    const related = allNewsData.filter(n => n._id !== currentId && category && n.category === category).slice(0,5);
+    if (!related.length) { sidebar.innerHTML = '<p style="color:var(--text2);font-size:0.8rem">No related news yet.</p>'; return; }
+    sidebar.innerHTML = related.map(n => {
+        const img = n.thumbnailUrl || (n.images && n.images[0]) || '';
+        return `<div class="news-card" onclick="showArticle('${n._id}')" style="margin-bottom:0.8rem">
+            ${img ? `<img src="${img}" style="height:100px">` : ''}
+            <div class="news-card-body"><div class="news-card-title" style="font-size:0.8rem">${escHtml(n.title)}</div></div></div>`;
+    }).join('');
+}
+function loadLatestNews(excludeId) {
+    const grid = document.getElementById('bottomLatest'); if (!grid) return;
+    const latest = allNewsData.filter(n => n._id !== excludeId).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0,8);
+    if (!latest.length) { grid.innerHTML = '<p style="color:var(--text2);font-size:0.8rem">No news yet.</p>'; return; }
+    grid.innerHTML = latest.map(n => {
+        const img = n.thumbnailUrl || (n.images && n.images[0]) || '';
+        return `<div class="news-card" onclick="showArticle('${n._id}')">
+            ${img ? `<img src="${img}" style="height:120px">` : ''}
+            <div class="news-card-body"><div class="news-card-title" style="font-size:0.8rem">${escHtml(n.title)}</div></div></div>`;
+    }).join('');
+}
+// Back to list
+document.getElementById('articleNav').addEventListener('click', function(e) {
+    if (e.target.closest('.back-btn')) {
+        document.getElementById('listView').style.display = 'block'; document.getElementById('articleView').style.display = 'none';
+        document.getElementById('searchBox').style.display = 'flex'; document.getElementById('listNav').style.display = 'flex';
+        document.getElementById('articleNav').style.display = 'none'; window.history.pushState({}, '', '/');
+        currentNewsId = null; loadNews();
+    }
+});
+// Filters & Search
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active'); currentFilter = this.dataset.filter; loadNews();
+    });
+});
+function setActiveFilterButton(filter) { document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('active'); if (b.dataset.filter === filter) b.classList.add('active'); }); }
+function searchNews() { applySearchAndRender(); }
+function applySearchAndRender() {
+    const raw = (document.getElementById('searchNews').value || '').trim().toLowerCase();
+    const words = raw.split(/\s+/).filter(Boolean);
+    let filtered = allNewsData;
+    if (words.length) {
+        filtered = allNewsData.filter(n => {
+            const haystack = ((n.title||'') + ' ' + (n.description||'').replace(/<[^>]*>/g,'') + ' ' + (n.category||'') + ' ' + (n.country||'')).toLowerCase();
+            return words.every(w => haystack.includes(w));
+        });
+    }
+    setupHero(filtered);
+    buildMixedContent(filtered, { trending:[], upcoming:[], tv:[], people:[] });
+}
+// Init
+window.addEventListener('DOMContentLoaded', async () => {
+    if (typeof SHOW_VISIT_LINK !== 'undefined' && !SHOW_VISIT_LINK) { const link = document.getElementById('visitNiroLink'); if (link) link.style.display = 'none'; }
+    loadAllAdSlots();
+    const params = new URLSearchParams(window.location.search); const id = params.get('id');
+    if (id) { try { const res = await fetch(API + '/news'); allNewsData = await res.json(); } catch(e) { allNewsData = []; } await showArticle(id); }
+    else await loadNews();
+    window.addEventListener('scroll', () => { document.getElementById('back-to-top').style.display = window.scrollY > 300 ? 'flex' : 'none'; });
+    window.addEventListener('scroll', () => {
+        if (!currentNewsId) return;
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        document.getElementById('reading-progress').style.width = (winScroll / height) * 100 + '%';
+    });
+});
 </script>
 </body>
 </html>
