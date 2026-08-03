@@ -3,23 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | niroNews</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Contact niroNews</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root{--bg:#0d0d0d;--bg2:#161616;--text:#f0f0f0;--text2:#a0a0a0;--accent:#F5C518}
-        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);padding:2rem;max-width:800px;margin:0 auto;line-height:1.8}
-        h1{color:var(--accent);margin-bottom:1.5rem}
-        p{margin-bottom:1.2rem;color:var(--text2)}
-        a{color:var(--accent);text-decoration:none}
+        :root{--bg:#0d0d0d;--bg2:#161616;--bg3:#1e1e1e;--text:#f0f0f0;--text2:#a0a0a0;--text3:#666;--accent:#F5C518;--border:#2a2a2a;--radius:12px;--radiusLg:18px}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7}
+        .navbar{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0.8rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{display:flex;align-items:center;gap:0.5rem;text-decoration:none}
+        .logo i{color:var(--accent);font-size:1.4rem}
+        .logo span{font-weight:800;font-size:1.2rem;color:var(--text)}.logo span b{color:var(--accent)}
+        .back-link{color:var(--accent);text-decoration:none;font-weight:600;font-size:0.85rem;display:flex;align-items:center;gap:0.3rem}
+        .container{max-width:760px;margin:0 auto;padding:3rem 1.5rem}
+        h1{font-size:2rem;font-weight:800;margin-bottom:0.4rem}
+        .subtitle{color:var(--accent);font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:2rem}
+        p{color:var(--text2);margin-bottom:1.2rem;font-size:0.98rem}
+        .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radiusLg);padding:1.5rem;margin-top:2rem}
+        .card h3{color:var(--accent);font-size:1rem;margin-bottom:0.6rem}
+        .card p{margin-bottom:0.4rem;font-size:0.9rem}
+        .footer{text-align:center;padding:2rem;color:var(--text3);font-size:0.75rem;border-top:1px solid var(--border)}
     </style>
 </head>
 <body>
-    <h1>Contact Us</h1>
-    <p>We'd love to hear from you! For news tips, advertising inquiries, or general feedback, reach out using the details below.</p>
-    <p>📧 <strong>Email:</strong> <a href="mailto:news@niromovie.site">news@niromovie.site</a></p>
-    <p>📞 <strong>Phone:</strong> +250 795 064 502</p>
-    <p>👤 <strong>Founder:</strong> Niyonkuru Robert</p>
-    <p>📍 <strong>Location:</strong> Kigali, Rwanda</p>
-    <p><a href="/news">← Back to News</a></p>
+    <div class="navbar">
+        <a href="/" class="logo"><i class="fas fa-newspaper"></i><span><b>niro</b>News</span></a>
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to News</a>
+    </div>
+    <div class="container">
+        <div class="subtitle">Contact Us</div>
+        <h1>Get in Touch</h1>
+        <p>We’d love to hear from you. For advertising, news tips, feedback, or any other inquiry, reach out using the details below.</p>
+        <div class="card">
+            <h3>Contact Details</h3>
+            <p>📧 Email: <strong>news@niromovie.site</strong></p>
+            <p>📞 Phone: <strong>+250 795 064 502</strong></p>
+            <p>👤 Founder: <strong>Niyonkuru Robert</strong></p>
+            <p>📍 Location: <strong>Kigali, Rwanda</strong></p>
+        </div>
+    </div>
+    <div class="footer">© 2026 — powered by <strong>niroflixx</strong></div>
 </body>
 </html>
