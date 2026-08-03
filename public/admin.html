@@ -330,8 +330,7 @@ let newsEditMode = false;
 
 async function loadNewsAdmin() {
     try {
-        const res = await fetchAuth('/admin/news');
-        const data = await res.json();
+        const data = await fetchAuth('/admin/news');   // fetchAuth already returns parsed JSON
         allNews = Array.isArray(data) ? data : [];
         const tbody = document.getElementById('newsTableBody');
         if (!tbody) return;
