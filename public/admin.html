@@ -334,6 +334,7 @@ async function loadNewsAdmin() {
         const data = await res.json();
         allNews = Array.isArray(data) ? data : [];
         const tbody = document.getElementById('newsTableBody');
+        if (!tbody) return;
         if (!allNews.length) {
             tbody.innerHTML = '<tr><td colspan="7">No news yet.</td></tr>';
             return;
@@ -354,7 +355,6 @@ async function loadNewsAdmin() {
         `).join('');
     } catch (e) { console.error(e); }
 }
-
 function cancelNewsEdit() {
     newsEditMode = false;
     document.getElementById('newsEditId').value = '';
