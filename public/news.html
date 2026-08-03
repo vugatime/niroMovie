@@ -100,6 +100,33 @@
             .article-sidebar{width:100%}
             .article-image-slider{float:none;width:100%;margin:0.5rem 0 1rem 0}
         }
+        /* ===== Social follow row ===== */
+        .follow-section{text-align:center;padding:1.5rem 0 0.5rem;animation:fadeIn 0.6s ease}
+        .follow-label{font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.7rem;font-weight:600}
+        .social-follow{display:flex;gap:0.7rem;justify-content:center}
+        .social-follow a{width:42px;height:42px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:1.15rem;text-decoration:none;transition:var(--trans)}
+        .social-follow a:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+        .social-follow a.sf-yt:hover{background:#FF0000;color:#fff;border-color:#FF0000}
+        .social-follow a.sf-tiktok:hover{background:#000;color:#fff;border-color:#000}
+        .social-follow a.sf-ig:hover{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border-color:transparent}
+        .social-handle{text-align:center;color:var(--accent);font-size:0.8rem;font-weight:600;margin-top:0.6rem}
+        /* ===== Ad slots (text / image / video) ===== */
+        .ad-slot{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radiusLg);overflow:hidden;animation:fadeIn 0.5s ease}
+        .sponsored-tag{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.65);color:var(--text2);font-size:0.58rem;font-weight:600;letter-spacing:0.5px;padding:0.15rem 0.5rem;border-radius:10px;z-index:2;text-transform:uppercase}
+        .ad-body{padding:1rem;text-align:center}
+        .ad-placeholder-media{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.3rem;background:repeating-linear-gradient(45deg,var(--bg3),var(--bg3) 10px,var(--bg2) 10px,var(--bg2) 20px);border:1.5px dashed var(--border);border-radius:var(--radius);color:var(--text3);font-size:0.7rem;padding:1.4rem 1rem;margin-bottom:0.6rem}
+        .ad-placeholder-media .material-symbols-outlined{font-size:1.8rem;color:var(--text3)}
+        .ad-body img,.ad-body video{width:100%;border-radius:var(--radius);margin-bottom:0.6rem;object-fit:cover;background:#000}
+        .ad-text-title{font-weight:700;font-size:0.85rem;color:var(--accent)}
+        .ad-text-desc{font-size:0.78rem;color:var(--text2);margin-top:0.25rem;line-height:1.4}
+        .ad-cta{display:inline-flex;align-items:center;gap:0.25rem;background:var(--accent);color:#000;padding:0.35rem 0.9rem;border-radius:20px;font-weight:700;font-size:0.72rem;text-decoration:none;margin-top:0.6rem}
+        .ad-cta:hover{background:#d4a810}
+        .ad-contact-line{font-size:0.66rem;color:var(--text3);margin-top:0.4rem}
+        .ad-slot-top{margin:0.8rem 0}.ad-slot-top .ad-body{padding:0.7rem 1rem;display:flex;align-items:center;justify-content:center;gap:0.6rem;flex-wrap:wrap;text-align:left}.ad-slot-top .ad-placeholder-media{padding:0.5rem 0.9rem;flex-direction:row;margin-bottom:0}.ad-slot-top img,.ad-slot-top video{max-height:44px;width:auto;border-radius:8px;margin-bottom:0}
+        .ad-slot-infeed .ad-placeholder-media{padding:2.4rem 1rem}
+        .ad-slot-sidebar{margin-top:1rem}
+        .ad-slot-article-mid{margin:1.5rem 0}
+        .ad-slot-footer{margin:1rem 1.5rem 0}
     </style>
     <!-- Monetag Ad Tags -->
     <script src="https://5gvci.com/act/files/tag.min.js?z=11238838" data-cfasync="false" async></script>
@@ -124,6 +151,10 @@
         <span class="material-symbols-outlined" style="color:var(--text3)">search</span>
         <input type="text" id="searchNews" placeholder="Search news..." oninput="loadNews()">
     </div>
+</div>
+<!-- Global top ad slot (shows above both list & article views) -->
+<div class="container" style="padding-bottom:0">
+    <div class="ad-slot ad-slot-top" id="adTop" style="display:none"></div>
 </div>
 <!-- List View -->
 <div id="listView">
@@ -154,6 +185,7 @@
                     <button class="share-btn" onclick="shareArticle()"><i class="fas fa-share-alt"></i> Share</button>
                     <span id="likeError" style="color:var(--red);font-size:0.8rem;margin-left:0.5rem;"></span>
                 </div>
+                <div class="ad-slot ad-slot-article-mid" id="adArticleMid" style="display:none"></div>
                 <div class="comment-section">
                     <h4>Comments</h4>
                     <div id="commentsContainer"></div>
@@ -170,6 +202,7 @@
             <aside class="article-sidebar">
                 <h3>Related by Category</h3>
                 <div id="sidebarRelated"></div>
+                <div class="ad-slot ad-slot-sidebar" id="adSidebar" style="display:none"></div>
             </aside>
         </div>
         <div class="article-bottom-related">
@@ -178,6 +211,18 @@
         </div>
     </div>
 </div>
+<!-- Follow Us -->
+<div class="follow-section">
+    <div class="follow-label">Follow niroMovie News</div>
+    <div class="social-follow">
+        <a class="sf-yt" href="https://www.youtube.com/@niromovienews" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+        <a class="sf-tiktok" href="https://www.tiktok.com/@niromovienews" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+        <a class="sf-ig" href="https://www.instagram.com/niromovienews" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+    <div class="social-handle">@niromovienews</div>
+</div>
+<!-- Footer ad slot -->
+<div class="ad-slot ad-slot-footer" id="adFooter" style="display:none"></div>
 <!-- Footer -->
 <div class="footer">
     <div class="footer-links">
@@ -206,6 +251,68 @@ function showToast(msg){var t=document.getElementById('toast');t.textContent=msg
 function adminPrefixName(name){ return '🔵 ' + name; }
 function cleanVerifiedName(raw){ if(typeof raw !== 'string') return raw; if(raw.startsWith('🔵 ')) return raw.substring(3); return raw; }
 function isVerifiedName(raw){ return typeof raw === 'string' && raw.startsWith('🔵 '); }
+
+// ========================================================================
+// ADS ENGINE (demo/placeholder data below — edit adsConfig to plug in real
+// ads later, or swap loadAdsFromConfig() for a fetch('/api/ads') call like
+// your niroMovie site already does. Each ad supports type: 'text' | 'image' | 'video'.
+// ========================================================================
+const adsConfig = {
+    top: [],
+    infeed: [],
+    sidebar: [],
+    articleMid: [],
+    footer: []
+};
+
+function renderAdInner(ad) {
+    if (!ad) return '';
+    var media = '';
+    if (ad.type === 'image') {
+        media = ad.mediaUrl
+            ? `<img src="${ad.mediaUrl}" onerror="this.style.display='none'">`
+            : `<div class="ad-placeholder-media"><span class="material-symbols-outlined">image</span><span>Image ad goes here (e.g. 728×90 banner or 300×250 box)</span></div>`;
+    } else if (ad.type === 'video') {
+        media = ad.mediaUrl
+            ? `<video src="${ad.mediaUrl}" autoplay muted loop playsinline></video>`
+            : `<div class="ad-placeholder-media"><span class="material-symbols-outlined">videocam</span><span>Short muted autoplay video ad goes here</span></div>`;
+    }
+    var cta = ad.link ? `<a class="ad-cta" href="${ad.link}" target="_blank">Learn More <span class="material-symbols-outlined" style="font-size:0.9rem">arrow_forward</span></a>` : '';
+    var contact = (ad.contactPhone || ad.businessName) ? `<div class="ad-contact-line">${escHtml(ad.businessName||'')} ${escHtml(ad.contactPhone||'')}</div>` : '';
+    return `<span class="sponsored-tag">Sponsored</span>
+        <div class="ad-body">
+            ${media}
+            <div class="ad-text-title">${escHtml(ad.title||'')}</div>
+            ${ad.description ? `<div class="ad-text-desc">${escHtml(ad.description)}</div>` : ''}
+            ${cta}
+            ${contact}
+        </div>`;
+}
+function renderAdCard(ad, extraClass) {
+    if (!ad) return '';
+    return `<div class="ad-slot ${extraClass||''}">${renderAdInner(ad)}</div>`;
+}
+function loadAdSlot(elId, configKey) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const ad = (adsConfig[configKey] || [])[0];
+    if (!ad) { el.style.display = 'none'; el.innerHTML=''; return; }
+    el.innerHTML = renderAdInner(ad);
+    el.style.display = 'block';
+}
+function getInfeedAdHTML(cycleIndex) {
+    const ads = adsConfig.infeed || [];
+    if (!ads.length) return '';
+    return renderAdCard(ads[cycleIndex % ads.length], 'ad-slot-infeed');
+}
+function loadAllAdSlots() {
+    loadAdSlot('adTop', 'top');
+    loadAdSlot('adFooter', 'footer');
+}
+function loadArticleAdSlots() {
+    loadAdSlot('adSidebar', 'sidebar');
+    loadAdSlot('adArticleMid', 'articleMid');
+}
 
 // ========== List View ==========
 async function loadNews() {
@@ -245,9 +352,11 @@ function renderNewsList(news) {
         grid.innerHTML = '<p style="color:var(--text2);text-align:center;padding:2rem">No news found.</p>';
         return;
     }
-    grid.innerHTML = items.map(n => {
+    let html = '';
+    let adCycle = 0;
+    items.forEach((n, i) => {
         const img = n.thumbnailUrl || (n.images&&n.images[0]) || '';
-        return `<div class="news-card" onclick="showArticle('${n._id}')">
+        html += `<div class="news-card" onclick="showArticle('${n._id}')">
             ${img ? `<img src="${img}" onerror="this.style.display='none'">` : ''}
             <div class="news-card-body">
                 <div class="news-card-title">${escHtml(n.title)}</div>
@@ -258,7 +367,13 @@ function renderNewsList(news) {
                 </div>
             </div>
         </div>`;
-    }).join('');
+        // in-feed ad every 6 cards
+        if ((i + 1) % 6 === 0 && (adsConfig.infeed || []).length) {
+            html += getInfeedAdHTML(adCycle);
+            adCycle++;
+        }
+    });
+    grid.innerHTML = html;
 }
 
 // ========== Article View ==========
@@ -324,6 +439,9 @@ async function showArticle(id) {
         // Related and latest (rely on allNewsData loaded)
         loadRelatedByCategory(news.category, news._id);
         loadLatestNews(id);
+
+        // Ads for this view
+        loadArticleAdSlots();
     } catch(e) { console.error(e); }
 }
 
@@ -623,6 +741,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     } catch(e) {
         allNewsData = [];
     }
+    loadAllAdSlots();
     if (id) {
         await showArticle(id);
     } else {
