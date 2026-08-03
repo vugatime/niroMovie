@@ -140,7 +140,6 @@
         <a href="/" class="nav-link active">Home</a>
         <a href="#" class="nav-link" onclick="currentFilter='category=Action';setActiveFilterButton('category=Action');loadNews();">Action</a>
         <a href="#" class="nav-link" onclick="currentFilter='category=Drama';setActiveFilterButton('category=Drama');loadNews();">Drama</a>
-        <a href="#" class="nav-link" onclick="currentFilter='country=Rwanda';setActiveFilterButton('country=Rwanda');loadNews();">🇷🇼 Rwanda</a>
         <a href="#" class="nav-link" onclick="currentFilter='sort=likes';setActiveFilterButton('sort=likes');loadNews();">Most Liked</a>
         <a href="https://niromovie.site" class="nav-link visit-site" target="_blank"><i class="fas fa-play"></i> Visit niroMovie</a>
     </div>
@@ -149,7 +148,7 @@
     </div>
     <div class="search-box" id="searchBox">
         <span class="material-symbols-outlined" style="color:var(--text3)">search</span>
-        <input type="text" id="searchNews" placeholder="Search news..." oninput="loadNews()">
+        <input type="text" id="searchNews" placeholder="Search news..." oninput="searchNews()">
     </div>
 </div>
 <!-- Global top ad slot (shows above both list & article views) -->
@@ -166,7 +165,6 @@
             <button class="filter-btn" data-filter="category=Drama">Drama</button>
             <button class="filter-btn" data-filter="category=Comedy">Comedy</button>
             <button class="filter-btn" data-filter="category=Romance">Romance</button>
-            <button class="filter-btn" data-filter="country=Rwanda">🇷🇼 Rwanda</button>
             <button class="filter-btn" data-filter="sort=likes">Most Liked</button>
         </div>
         <div class="news-grid" id="newsList"></div>
@@ -219,6 +217,7 @@
         <a class="sf-tiktok" href="https://www.tiktok.com/@niromovienews" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
         <a class="sf-ig" href="https://www.instagram.com/niromovienews" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
     </div>
+    <div class="social-handle">@niromovienews</div>
 </div>
 <!-- Footer ad slot -->
 <div class="ad-slot ad-slot-footer" id="adFooter" style="display:none"></div>
@@ -317,15 +316,43 @@ function loadArticleAdSlots() {
 async function loadNews() {
     let query = '';
     if (currentFilter !== 'all') query = '?' + currentFilter;
-    const search = document.getElementById('searchNews').value.trim();
-    if (search) query += (query?'&':'?') + 'search=' + encodeURIComponent(search);
     try {
         const res = await fetch(API + '/news' + query);
         const data = await res.json();
         allNewsData = data;
-        renderHero(data);
-        renderNewsList(data);
+        applySearchAndRender();
     } catch(e) { console.error(e); }
+}
+
+// Instant, in-memory, word-by-word search — runs on every keystroke with
+// zero network wait. Matches if EVERY typed word appears somewhere in the
+// title, description, category or country (in any order).
+function searchNews() {
+    applySearchAndRender();
+}
+
+function applySearchAndRender() {
+    const raw = (document.getElementById('searchNews').value || '').trim().toLowerCase();
+    const words = raw.split(/\s+/).filter(Boolean);
+    let filtered = allNewsData;
+    if (words.length) {
+        filtered = allNewsData.filter(n => {
+            const haystack = (
+                (n.title || '') + ' ' +
+                (n.description || '').replace(/<[^>]*>/g, '') + ' ' +
+                (n.category || '') + ' ' +
+                (n.country || '')
+            ).toLowerCase();
+            return words.every(w => haystack.includes(w));
+        });
+    }
+    if (words.length) {
+        document.getElementById('heroNews').style.display = 'none';
+        renderNewsList(filtered, true);
+    } else {
+        renderHero(filtered);
+        renderNewsList(filtered);
+    }
 }
 
 function renderHero(news) {
@@ -344,9 +371,9 @@ function renderHero(news) {
     hero.onclick = () => showArticle(n._id);
 }
 
-function renderNewsList(news) {
+function renderNewsList(news, showAll) {
     const grid = document.getElementById('newsList');
-    const items = news.slice(1);
+    const items = showAll ? news : news.slice(1);
     if (!items.length) {
         grid.innerHTML = '<p style="color:var(--text2);text-align:center;padding:2rem">No news found.</p>';
         return;
