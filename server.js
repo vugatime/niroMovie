@@ -884,7 +884,19 @@ const publicPath = path.join(__dirname, 'public');
 // Serve news.html for the news subdomain
 app.use((req, res, next) => {
   if (req.hostname === 'news.niromovie.site') {
-    return res.sendFile(path.join(publicPath, 'news.html'));
+    // Map friendly URLs to static HTML files
+    const staticPages = {
+      '/about': 'about.html',
+      '/contact': 'contact.html',
+      '/privacy': 'privacy.html',
+      '/terms': 'terms.html'
+    };
+    if (staticPages[req.path]) {
+      return res.sendFile(path.join(publicPath, staticPages[req.path]));
+    }
+    if (req.path === '/') {
+      return res.sendFile(path.join(publicPath, 'news.html'));
+    }
   }
   next();
 });
