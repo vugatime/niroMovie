@@ -4,42 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | niroNews</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root{--bg:#0d0d0d;--bg2:#161616;--text:#f0f0f0;--text2:#a0a0a0;--accent:#F5C518}
-        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);padding:2rem;max-width:800px;margin:0 auto;line-height:1.8}
-        h1{color:var(--accent);margin-bottom:1.5rem}
-        h2{color:var(--accent);margin-top:2rem}
-        p{margin-bottom:1.2rem;color:var(--text2)}
-        a{color:var(--accent);text-decoration:none}
+        :root{--bg:#0d0d0d;--bg2:#161616;--bg3:#1e1e1e;--text:#f0f0f0;--text2:#a0a0a0;--text3:#666;--accent:#F5C518;--border:#2a2a2a;--radius:12px;--radiusLg:18px}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7}
+        .navbar{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0.8rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{display:flex;align-items:center;gap:0.5rem;text-decoration:none}
+        .logo i{color:var(--accent);font-size:1.4rem}
+        .logo span{font-weight:800;font-size:1.2rem;color:var(--text)}.logo span b{color:var(--accent)}
+        .back-link{color:var(--accent);text-decoration:none;font-weight:600;font-size:0.85rem;display:flex;align-items:center;gap:0.3rem}
+        .container{max-width:760px;margin:0 auto;padding:3rem 1.5rem}
+        h1{font-size:2rem;font-weight:800;margin-bottom:0.4rem}
+        .subtitle{color:var(--accent);font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:2rem}
+        h2{font-size:1.3rem;font-weight:700;color:var(--accent);margin-top:2rem;margin-bottom:0.8rem}
+        p{color:var(--text2);margin-bottom:1.2rem;font-size:0.98rem}
+        .footer{text-align:center;padding:2rem;color:var(--text3);font-size:0.75rem;border-top:1px solid var(--border)}
     </style>
 </head>
 <body>
-    <h1>Privacy Policy</h1>
-    <p>Last updated: August 2026</p>
+    <div class="navbar">
+        <a href="/" class="logo"><i class="fas fa-newspaper"></i><span><b>niro</b>News</span></a>
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to News</a>
+    </div>
+    <div class="container">
+        <div class="subtitle">Privacy Policy</div>
+        <h1>Privacy Policy</h1>
+        <p>Last updated: August 2026</p>
 
-    <h2>1. Information We Collect</h2>
-    <p>We only collect minimal data necessary to provide our services:</p>
-    <p>- A <strong>device identifier</strong> (random string stored in your browser) to enable the "like" feature without requiring an account. This identifier cannot identify you personally.</p>
-    <p>- The <strong>name you provide</strong> when posting a comment (optional). You may use a pseudonym.</p>
+        <h2>1. Information We Collect</h2>
+        <p>We only collect a device identifier (a random string stored in your browser) to allow you to like articles without logging in. When you post a comment, you may provide a name, which will be displayed publicly alongside your comment. No other personal data is collected.</p>
 
-    <h2>2. How We Use Your Data</h2>
-    <p>- The device ID is used solely to remember which news articles you have liked, so you cannot like the same article multiple times.</p>
-    <p>- Comment names are displayed publicly alongside your comment.</p>
-    <p>We do <strong>not</strong> sell, trade, or share any personal information with third parties. No advertising networks receive your comment name or device ID.</p>
+        <h2>2. How We Use Your Data</h2>
+        <p>The device ID is used solely to remember which articles you have liked, so you cannot like the same article multiple times. The name you provide with a comment is shown publicly next to your comment. We do not sell, trade, or share any personal information with third parties.</p>
 
-    <h2>3. Cookies and Tracking</h2>
-    <p>We do not use cookies for tracking or analytics. The only data stored in your browser is the device ID mentioned above, which is used for functional purposes only.</p>
+        <h2>3. Cookies and Tracking</h2>
+        <p>We do not use tracking cookies. The only data stored in your browser is the device ID mentioned above, which is used for functional purposes only.</p>
 
-    <h2>4. Third‑Party Services</h2>
-    <p>We display advertisements through Monetag (PropellerAds). Monetag may use its own cookies and tracking technologies. Please refer to Monetag's privacy policy for details.</p>
-    <p>We also fetch movie data from The Movie Database (TMDB) for display purposes. No personal data is sent to TMDB.</p>
+        <h2>4. Third‑Party Services</h2>
+        <p>We display advertisements through Monetag (PropellerAds). Monetag may use its own cookies and tracking technologies – please refer to their privacy policy for details. We also fetch movie data from The Movie Database (TMDB) for display purposes; no personal data is sent to TMDB.</p>
 
-    <h2>5. Your Rights</h2>
-    <p>You can clear your browser's site data at any time to reset your device ID. If you wish to have a comment removed, please contact us at news@niromovie.site and we will delete it promptly.</p>
+        <h2>5. Your Rights</h2>
+        <p>You can clear your browser’s site data at any time to reset your device ID. To request removal of a comment, please contact us at <strong>news@niromovie.site</strong> and we will delete it promptly.</p>
 
-    <h2>6. Contact</h2>
-    <p>For privacy concerns, email <a href="mailto:news@niromovie.site">news@niromovie.site</a>.</p>
-    <p><a href="/news">← Back to News</a></p>
+        <h2>6. Contact</h2>
+        <p>For privacy concerns, email <strong>news@niromovie.site</strong>.</p>
+    </div>
+    <div class="footer">© 2026 — powered by <strong>niroflixx</strong></div>
 </body>
 </html>
