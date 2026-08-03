@@ -138,6 +138,7 @@
         <a href="#" class="nav-link" onclick="currentFilter='category=Action';setActiveFilterButton('category=Action');loadNews();">Action</a>
         <a href="#" class="nav-link" onclick="currentFilter='category=Drama';setActiveFilterButton('category=Drama');loadNews();">Drama</a>
         <a href="#" class="nav-link" onclick="currentFilter='sort=likes';setActiveFilterButton('sort=likes');loadNews();">Most Liked</a>
+        <!-- Toggleable Visit niroMovie link (set SHOW_VISIT_LINK to false during AdSense review) -->
         <script>var SHOW_VISIT_LINK = true;</script>
         <a href="https://niromovie.site" class="nav-link visit-site" id="visitNiroLink" target="_blank"><i class="fas fa-play"></i> Visit niroMovie</a>
     </div>
@@ -206,7 +207,7 @@
 </div>
 <!-- Follow Section -->
 <div class="follow-section" style="text-align:center;padding:1.5rem 0 0.5rem">
-    <div class="follow-label" style="font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.7rem;font-weight:600">Our Platforms</div>
+    <div class="follow-label" style="font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.7rem;font-weight:600">Follow niroMovie News</div>
     <div class="social-follow" style="display:flex;gap:0.7rem;justify-content:center">
         <a class="sf-yt" href="https://www.youtube.com/@niromovienews" target="_blank" style="width:42px;height:42px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:1.15rem;text-decoration:none;transition:var(--trans)" onmouseover="this.style.background='#FF0000';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color=''"><i class="fab fa-youtube"></i></a>
         <a class="sf-tiktok" href="https://www.tiktok.com/@niromovienews" target="_blank" style="width:42px;height:42px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:1.15rem;text-decoration:none;transition:var(--trans)" onmouseover="this.style.background='#000';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color=''"><i class="fab fa-tiktok"></i></a>
@@ -218,37 +219,18 @@
 <!-- Footer -->
 <div class="footer">
     <div class="footer-links">
-        <a onclick="openStaticModal('about')">About</a>
-        <a onclick="openStaticModal('contact')">Contact</a>
-        <a onclick="openStaticModal('privacy')">Privacy</a>
-        <a onclick="openStaticModal('terms')">Terms</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
     </div>
     <span>© 2026 — powered by <strong>niroflixx</strong></span>
 </div>
-<!-- Hidden SEO-friendly static pages (for AdSense) -->
-<div style="display:none" aria-hidden="true">
-    <div id="seo-about">
-        <h2>About niroNews</h2>
-        <p>niroNews is the official cinema news portal of niroMovie. We bring the latest updates about movies, series, and the entertainment world, with a special focus on African and global cinema. Founded by Niyonkuru Robert, we are committed to keeping Rwandan and global audiences informed. Contact us at news@niromovie.site or call +250 795 064 502.</p>
-    </div>
-    <div id="seo-contact">
-        <h2>Contact Us</h2>
-        <p>Email: news@niromovie.site | Phone: +250 795 064 502 | Founder: Niyonkuru Robert | Location: Kigali, Rwanda</p>
-    </div>
-    <div id="seo-privacy">
-        <h2>Privacy Policy</h2>
-        <p>We collect only minimal data (device ID for likes, name for comments). No personal information is sold, traded, or shared. All data is stored securely and used solely for site functionality. By using niroNews, you agree to this policy.</p>
-    </div>
-    <div id="seo-terms">
-        <h2>Terms of Service</h2>
-        <p>Content on niroNews is for informational purposes only. Redistribution or commercial use is prohibited. We reserve the right to modify or remove content. Users are responsible for their comments. By continuing to use niroNews, you accept these terms.</p>
-    </div>
-</div>
-<!-- Static page modal -->
+<!-- Static page modal (fallback) -->
 <div id="staticModal" class="page-modal" style="display:none" onclick="if(event.target===this)closeStaticModal()">
     <div class="page-modal-box" id="staticModalContent"></div>
 </div>
-<!-- Toast for share / feedback -->
+<!-- Toast -->
 <div id="toast" class="toast" style="display:none"></div>
 <!-- Back to Top -->
 <div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
@@ -270,14 +252,12 @@ const adsConfig = {
     footer: []
 };
 
-// ====== Utility functions ======
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML;}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 function adminPrefixName(name){ return '🔵 ' + name; }
 function cleanVerifiedName(raw){ if(typeof raw !== 'string') return raw; if(raw.startsWith('🔵 ')) return raw.substring(3); return raw; }
 function isVerifiedName(raw){ return typeof raw === 'string' && raw.startsWith('🔵 '); }
 
-// ====== Ad rendering ======
 function renderAdSlot(elId, configKey) {
     const el = document.getElementById(elId);
     if (!el) return;
@@ -298,7 +278,7 @@ function loadAllAdSlots() {
     renderAdSlot('adFooter', 'footer');
 }
 
-// ====== TMDB Live Data ======
+// ====== TMDB Data ======
 async function fetchTMDB(endpoint) {
     try {
         const res = await fetch(`https://api.themoviedb.org/3/${endpoint}`, {
@@ -364,7 +344,6 @@ function buildMixedContent(news, tmdbData) {
         </div>`;
     }
 
-    // Helper to add a TMDB row + mini news grid
     function addSection(title, icon, rowId, slotId, data) {
         if (!data || !data.length) return '';
         return `
@@ -554,6 +533,7 @@ async function showArticle(id) {
     } catch(e) { console.error(e); }
 }
 
+// ========== Comment, Like, Share, etc. (unchanged) ==========
 function buildCommentHTML(comment, allComments, depth = 0) {
     const replies = allComments.filter(c => c.parentId && c.parentId.toString() === comment._id.toString());
     let replyHTML = '';
@@ -592,12 +572,10 @@ function loadAllComments() {
     renderComments(currentArticleComments);
     document.getElementById('loadMoreCommentsContainer').style.display = 'none';
 }
-
 function showReplyForm(commentId) {
     const form = document.getElementById('replyForm-' + commentId);
     form.style.display = form.style.display === 'flex' ? 'none' : 'flex';
 }
-
 async function postReply(parentId) {
     const name = document.getElementById('replyName-' + parentId).value.trim();
     const text = document.getElementById('replyText-' + parentId).value.trim();
@@ -611,7 +589,6 @@ async function postReply(parentId) {
         if (data.success) showArticle(currentNewsId);
     } catch(e) { console.error(e); }
 }
-
 async function likeComment(commentId) {
     const deviceId = localStorage.getItem('deviceId') || (() => { const id = 'dev_' + Math.random().toString(36).substr(2,9); localStorage.setItem('deviceId', id); return id; })();
     try {
@@ -623,16 +600,13 @@ async function likeComment(commentId) {
         else showToast(data.error || 'Already liked');
     } catch(e) { console.error(e); }
 }
-
 function changeSlide(direction) {
     const images = window.currentImages;
     if (!images || images.length <= 1) return;
     window.currentSlideIndex = (window.currentSlideIndex + direction + images.length) % images.length;
     updateSlider();
 }
-
 function goToSlide(index) { window.currentSlideIndex = index; updateSlider(); }
-
 function updateSlider() {
     const slider = document.getElementById('articleSlider');
     if (!slider) return;
@@ -641,7 +615,6 @@ function updateSlider() {
     imgs.forEach((img, i) => img.style.display = i === window.currentSlideIndex ? 'block' : 'none');
     dots.forEach((dot, i) => dot.classList.toggle('active', i === window.currentSlideIndex));
 }
-
 function viewImage(src) {
     const overlay = document.createElement('div');
     overlay.style = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:3000;display:flex;justify-content:center;align-items:center;cursor:pointer;';
@@ -649,7 +622,6 @@ function viewImage(src) {
     overlay.onclick = () => document.body.removeChild(overlay);
     document.body.appendChild(overlay);
 }
-
 async function likeNews() {
     const deviceId = localStorage.getItem('deviceId') || (() => { const id = 'dev_' + Math.random().toString(36).substr(2,9); localStorage.setItem('deviceId', id); return id; })();
     try {
@@ -659,13 +631,11 @@ async function likeNews() {
         else document.getElementById('likeError').textContent = data.error;
     } catch(e) { console.error(e); }
 }
-
 function shareArticle() {
     const url = window.location.href;
     if (navigator.share) navigator.share({ title: document.title, url });
     else navigator.clipboard.writeText(url).then(() => showToast('Link copied!'));
 }
-
 async function postComment() {
     const name = document.getElementById('commentName').value.trim();
     const text = document.getElementById('commentText').value.trim();
@@ -683,7 +653,6 @@ async function postComment() {
         }
     } catch(e) { console.error(e); }
 }
-
 function loadRelatedByCategory(category, currentId) {
     const sidebar = document.getElementById('sidebarRelated');
     if (!sidebar) return;
@@ -700,7 +669,6 @@ function loadRelatedByCategory(category, currentId) {
         </div>`;
     }).join('');
 }
-
 function loadLatestNews(excludeId) {
     const grid = document.getElementById('bottomLatest');
     if (!grid) return;
@@ -732,23 +700,7 @@ document.getElementById('articleNav').addEventListener('click', function(e) {
     }
 });
 
-// ====== Static Modals (expanded) ======
-function openStaticModal(page) {
-    const modal = document.getElementById('staticModal');
-    const content = document.getElementById('staticModalContent');
-    let html = '';
-    switch(page) {
-        case 'about': html = `<h2>About niroNews</h2><p style="color:var(--text2);line-height:1.6">niroNews is the official cinema news portal of niroMovie, dedicated to bringing you the latest updates about movies, series, and the entertainment world. Founded by Niyonkuru Robert, we strive to keep Rwandan and global audiences informed. Contact: news@niromovie.site | +250 795 064 502</p>`; break;
-        case 'contact': html = `<h2>Contact Us</h2><p style="color:var(--text2);line-height:1.6">📧 news@niromovie.site<br>📞 +250 795 064 502<br>👤 Founder: Niyonkuru Robert<br>📍 Kigali, Rwanda</p>`; break;
-        case 'privacy': html = `<h2>Privacy Policy</h2><p style="color:var(--text2);line-height:1.6">We only collect a device ID for likes and the name you provide for comments. No personal data is sold or shared. All data is stored securely. By using niroNews, you agree to this policy.</p>`; break;
-        case 'terms': html = `<h2>Terms of Service</h2><p style="color:var(--text2);line-height:1.6">Content on niroNews is for informational purposes only. Redistribution or commercial use is prohibited. We reserve the right to modify or remove content. Users are responsible for their comments. By continuing, you accept these terms.</p>`; break;
-    }
-    content.innerHTML = html + `<button class="btn btn-accent" style="margin-top:1rem" onclick="closeStaticModal()">Close</button>`;
-    modal.style.display = 'flex';
-}
-function closeStaticModal() { document.getElementById('staticModal').style.display = 'none'; }
-
-// ====== Filters ======
+// ====== Filters & Search ======
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -757,12 +709,29 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
         loadNews();
     });
 });
-
 function setActiveFilterButton(filter) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
         if (btn.dataset.filter === filter) btn.classList.add('active');
     });
+}
+function searchNews() {
+    applySearchAndRender();
+}
+function applySearchAndRender() {
+    const raw = (document.getElementById('searchNews').value || '').trim().toLowerCase();
+    const words = raw.split(/\s+/).filter(Boolean);
+    let filtered = allNewsData;
+    if (words.length) {
+        filtered = allNewsData.filter(n => {
+            const haystack = ((n.title||'') + ' ' + (n.description||'').replace(/<[^>]*>/g,'') + ' ' + (n.category||'') + ' ' + (n.country||'')).toLowerCase();
+            return words.every(w => haystack.includes(w));
+        });
+    }
+    // Temporarily rebuild mixed content with filtered data
+    // (to keep it simple, we just rebuild the whole view)
+    renderHero(filtered);
+    buildMixedContent(filtered, { trending: [], upcoming: [], tv: [], people: [] });
 }
 
 // ====== Init ======
