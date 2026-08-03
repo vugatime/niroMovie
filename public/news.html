@@ -401,6 +401,20 @@ function renderNewsList(news, showAll) {
     });
     grid.innerHTML = html;
 }
+function formatDescriptionHTML(desc) {
+    if (!desc) return '';
+    // If the text already contains HTML tags (e.g., <b>, <i>, <h2>, <center>, etc.), keep them but convert line breaks.
+    if (/<[a-z][\s\S]*>/i.test(desc)) {
+        // Replace newlines with <br> so line breaks inside HTML still work.
+        return desc.replace(/\n/g, '<br>');
+    }
+    // Plain text: split by double newlines into paragraphs, then handle single newlines.
+    const paragraphs = desc.split(/\n\s*\n/).filter(p => p.trim());
+    return paragraphs.map(p => {
+        // Inside each paragraph, replace single newlines with <br> for soft line breaks.
+        return '<p style="margin-bottom:0.8rem;">' + p.replace(/\n/g, '<br>').trim() + '</p>';
+    }).join('');
+}
 
 // ========== Article View ==========
 async function showArticle(id) {
@@ -454,7 +468,8 @@ async function showArticle(id) {
                     ` : ''}
                 </div>`;
         }
-        document.getElementById('articleContent').innerHTML = sliderHtml + descClean;
+        const formattedDesc = formatDescriptionHTML(descClean);
+        document.getElementById('articleContent').innerHTML = sliderHtml + formattedDesc;
         window.currentImages = images;
         window.currentSlideIndex = 0;
 
