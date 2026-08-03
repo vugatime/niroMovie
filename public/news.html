@@ -407,6 +407,60 @@ async function likeComment(commentId) {
     } catch(e) { console.error(e); }
 }
 
+// ========== Related / Latest (sidebar + bottom grid) ==========
+function loadRelatedByCategory(category, excludeId) {
+    const sidebar = document.getElementById('sidebarRelated');
+    if (!sidebar) return;
+    const related = allNewsData
+        .filter(n => n._id !== excludeId && category && n.category === category)
+        .slice(0, 5);
+    if (!related.length) {
+        sidebar.innerHTML = '<p style="color:var(--text2);font-size:0.8rem">No related news yet.</p>';
+        return;
+    }
+    sidebar.innerHTML = related.map(n => {
+        const img = n.thumbnailUrl || (n.images && n.images[0]) || '';
+        return `<div class="news-card" onclick="showArticle('${n._id}')">
+            ${img ? `<img src="${img}" onerror="this.style.display='none'">` : ''}
+            <div class="news-card-body">
+                <div class="news-card-title">${escHtml(n.title)}</div>
+                <div class="news-card-meta">
+                    <span>${n.country || ''} ${n.category ? '· ' + n.category : ''}</span>
+                    <span>♡ ${n.likes || 0}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function loadLatestNews(excludeId) {
+    const grid = document.getElementById('bottomLatest');
+    if (!grid) return;
+    const latest = allNewsData
+        .filter(n => n._id !== excludeId)
+        .slice()
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 8);
+    if (!latest.length) {
+        grid.innerHTML = '<p style="color:var(--text2);font-size:0.8rem">No news yet.</p>';
+        return;
+    }
+    grid.innerHTML = latest.map(n => {
+        const img = n.thumbnailUrl || (n.images && n.images[0]) || '';
+        return `<div class="news-card" onclick="showArticle('${n._id}')">
+            ${img ? `<img src="${img}" onerror="this.style.display='none'">` : ''}
+            <div class="news-card-body">
+                <div class="news-card-title">${escHtml(n.title)}</div>
+                <div class="news-card-excerpt">${(n.description||'').replace(/<[^>]*>/g,'').substring(0,100)}</div>
+                <div class="news-card-meta">
+                    <span>${n.country || ''} ${n.category ? '· ' + n.category : ''}</span>
+                    <span>♡ ${n.likes || 0}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
 // Slider controls
 function changeSlide(direction) {
     const images = window.currentImages;
