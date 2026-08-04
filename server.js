@@ -552,6 +552,17 @@ app.post('/api/comments/:contentId/:commentId/like', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+app.post('/api/contents/:id/view', async (req, res) => {
+    try {
+        const content = await Content.findById(req.params.id);
+        if (!content) return res.status(404).json({ error: 'Content not found' });
+        // Always increment views – every page open counts
+        content.views = (content.views || 0) + 1;
+        await content.save();
+        res.json({ views: content.views });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // ========== PLANS (unchanged) ==========
 app.get('/api/plans', (req, res) => { res.json({ free: { name: 'Free', weekly: 0, monthly: 0, quarterly: 0, yearly: 0, features: ['Free movies', 'Ads', '480p'] }, basic: { name: 'Basic', weekly: 300, monthly: 500, quarterly: 1200, yearly: 3000, features: ['Free+Basic', 'Fewer ads', '720p', 'Download'] }, standard: { name: 'Standard', weekly: 500, monthly: 1000, quarterly: 2500, yearly: 7000, features: ['Most movies', 'Very few ads', '1080p', 'HD Download'] }, premium: { name: 'Premium', weekly: 1000, monthly: 2000, quarterly: 5000, yearly: 15000, features: ['Almost all', 'Almost no ads', '2K'] }, ultimate: { name: 'Ultimate', weekly: 2000, monthly: 5000, quarterly: 12000, yearly: 30000, features: ['ALL movies', 'NO ADS', '4K', 'VIP'] } }); });
 
