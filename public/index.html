@@ -479,30 +479,118 @@ function escHtml(t){var d=document.createElement('div');d.textContent=t||'';retu
 function toggleSideMenu(){document.getElementById('sideMenu').classList.toggle('open');document.getElementById('sideMenuOverlay').classList.toggle('show')}
 function closeSideMenu(){document.getElementById('sideMenu').classList.remove('open');document.getElementById('sideMenuOverlay').classList.remove('show')}
 function handleProfileClick(){closeSideMenu();if(currentUser)logout();else{showLoginDiv();openModal('authModal')}}
-function showLoginDiv(){document.getElementById('loginDiv').style.display='block';document.getElementById('registerDiv').style.display='none';document.getElementById('authTitle').innerText='Welcome Back!'}
-function showRegisterDiv(){document.getElementById('loginDiv').style.display='none';document.getElementById('registerDiv').style.display='block';document.getElementById('authTitle').innerText='Create Account'}
+function showLoginDiv() {
+    document.getElementById('loginDiv').style.display = 'block';
+    document.getElementById('registerDiv').style.display = 'none';
+    document.getElementById('authTitle').innerText = 'Sign In';
+    // Clear any old error messages or inputs
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+}
+
+function showRegisterDiv() {
+    document.getElementById('loginDiv').style.display = 'none';
+    document.getElementById('registerDiv').style.display = 'block';
+    document.getElementById('authTitle').innerText = 'Create Account';
+    // Clear all registration inputs
+    document.getElementById('regName').value = '';
+    document.getElementById('regEmail').value = '';
+    document.getElementById('regPassword').value = '';
+}
+    
 function updateProfileIcon(){var icon=document.getElementById('profileIcon'),sa=document.getElementById('sideMenuAuth'),ml=document.getElementById('myListNav'),sm=document.getElementById('sideMyList');if(currentUser){icon.innerHTML=(currentUser.fullName||currentUser.email).charAt(0).toUpperCase();icon.style.background='var(--green)';if(sa)sa.innerHTML='<span class="material-symbols-outlined">logout</span>Logout';if(ml)ml.style.display='flex';if(sm)sm.style.display='flex'}else{icon.innerHTML='LI';icon.style.background='var(--accent)';if(sa)sa.innerHTML='<span class="material-symbols-outlined">login</span>Login / Register';if(ml)ml.style.display='none';if(sm)sm.style.display='none'}}
 function addToMyList(){if(!currentUser){openModal('authModal');return}if(myList.indexOf(currentContentId)===-1)myList.push(currentContentId);else myList=myList.filter(function(id){return id!==currentContentId});localStorage.setItem('myList',JSON.stringify(myList));updateMyListButton()}
 function updateMyListButton(){var btn=document.getElementById('addToListBtn');if(myList.indexOf(currentContentId)!==-1){btn.innerHTML='<span class="material-symbols-outlined">bookmark_added</span> Saved';btn.style.borderColor='var(--green)';btn.style.color='var(--green)'}else{btn.innerHTML='<span class="material-symbols-outlined">bookmark_add</span> My List';btn.style.borderColor='var(--border)';btn.style.color='var(--text)'}}
 function showMyList(){closeSideMenu();var items=allContents.filter(function(c){return myList.indexOf(c._id)!==-1});if(!items.length){renderFiltered('My List',[]);return}document.getElementById('movieGrid').innerHTML=items.map(function(m){return movieCardHTML(m,'240px')}).join('');document.getElementById('loadMoreBtn').style.display='none'}
 async function login(){
-    var e=document.getElementById('loginEmail').value;
-    var p=document.getElementById('loginPassword').value;
-    if(!e||!p)return;
-    var r=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});
-    var d=await r.json();
-    if(r.ok){
-        token=d.token;
-        localStorage.setItem('token',token);
-        closeModal('authModal');
-        currentUser=d.user;
-        updateProfileIcon();
-        toast('Welcome!');
-    }else{
-        toast(d.error||'Login failed');
+    var e = document.getElementById('loginEmail').value.trim();
+    var p = document.getElementById('loginPassword').value;
+    if(!e || !p){
+        toast('Email and password required');
+        return;
+    }
+    var btn = document.querySelector('#authModal .cta-download');
+    btn.textContent = 'Signing in…'; btn.disabled = true;
+    try {
+        var r = await fetch(API+'/login', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({email:e, password:p})
+        });
+        var d = await r.json();
+        if(r.ok){
+            token = d.token;
+            localStorage.setItem('token', token);
+            currentUser = d.user;
+            updateProfileIcon();
+            closeModal('authModal');
+            toast('Welcome back!');
+            // If user was in the middle of subscribing, return to the plan
+            if(selectedPlan){
+                setTimeout(function(){
+                    showPlans();
+                    // Auto‑select the plan and show payment form after a short delay
+                    setTimeout(function(){
+                        selectPlan(selectedPlan);
+                    }, 500);
+                }, 500);
+            }
+        } else {
+            toast(d.error || 'Login failed');
+        }
+    } catch(err){
+        toast('Network error. Please try again.');
+    } finally {
+        btn.textContent = 'Sign In'; btn.disabled = false;
     }
 }
-async function register(){var n=document.getElementById('regName').value;var e=document.getElementById('regEmail').value;var p=document.getElementById('regPassword').value;var r=await fetch(API+'/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p,fullName:n})});var d=await r.json();if(r.ok){token=d.token;localStorage.setItem('token',token);closeModal('authModal');currentUser=d.user;updateProfileIcon();toast('Account created!')}else{toast(d.error||'Failed')}}
+async function register(){
+    var n = document.getElementById('regName').value.trim();
+    var e = document.getElementById('regEmail').value.trim();
+    var pw = document.getElementById('regPassword').value;
+    if(!n || !e || !pw){
+        toast('All fields are required');
+        return;
+    }
+    if(pw.length < 6){
+        toast('Password must be at least 6 characters');
+        return;
+    }
+    var btn = document.querySelector('#authModal .cta-download');
+    btn.textContent = 'Creating…'; btn.disabled = true;
+    try {
+        var r = await fetch(API+'/register', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({email:e, password:pw, fullName:n})
+        });
+        var d = await r.json();
+        if(r.ok){
+            // Auto‑login
+            token = d.token;
+            localStorage.setItem('token', token);
+            currentUser = d.user;
+            updateProfileIcon();
+            closeModal('authModal');
+            toast('Account created!');
+            // If user was in the middle of subscribing, return to the plan
+            if(selectedPlan){
+                setTimeout(function(){
+                    showPlans();
+                    setTimeout(function(){
+                        selectPlan(selectedPlan);
+                    }, 500);
+                }, 500);
+            }
+        } else {
+            toast(d.error || 'Registration failed');
+        }
+    } catch(err){
+        toast('Network error. Please try again.');
+    } finally {
+        btn.textContent = 'Create Account'; btn.disabled = false;
+    }
+}
 function logout(){localStorage.removeItem('token');token=null;currentUser=null;updateProfileIcon();loadAllContent()}
 function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
 function toggleDescription(){var desc=document.getElementById('modalDesc');var link=document.getElementById('viewMoreLink');if(desc.classList.contains('desc-truncated')){desc.classList.remove('desc-truncated');desc.classList.add('desc-expanded');link.textContent='Show less'}else{desc.classList.add('desc-truncated');desc.classList.remove('desc-expanded');link.textContent='... View more'}}
@@ -820,7 +908,24 @@ async function showPlans(){
     document.getElementById('paymentForm').style.display='none';openModal('plansModal')
 }
 function selectDuration(d){selectedDuration=d;showPlans()}
-function selectPlan(plan){if(plan==='free'){toast('Enjoy free movies!');closeModal('plansModal');return}if(!currentUser){closeModal('plansModal');showLoginDiv();openModal('authModal');return}selectedPlan=plan;document.getElementById('paymentForm').style.display='block'}
+function selectPlan(plan){
+    if(plan==='free'){
+        toast('Enjoy free movies!');
+        closeModal('plansModal');
+        return;
+    }
+    if(!currentUser){
+        // Store the chosen plan so we can resume after login
+        selectedPlan = plan;
+        closeModal('plansModal');
+        // Show the auth modal with register view first (faster for new users)
+        showRegisterDiv();
+        openModal('authModal');
+        return;
+    }
+    selectedPlan = plan;
+    document.getElementById('paymentForm').style.display = 'block';
+}
 async function submitPayment(){var fd=new FormData();fd.append('plan',selectedPlan);fd.append('duration',selectedDuration);fd.append('phone',document.getElementById('payPhone').value);fd.append('senderName',document.getElementById('paySenderName').value);fd.append('paymentScreenshot',document.getElementById('payScreenshot').files[0]);var r=await fetch(API+'/subscribe',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});var d=await r.json();if(d.success){closeModal('plansModal');toast('Payment submitted!')}else{toast(d.error||'Failed')}}
 async function loadAds(){
     try{
