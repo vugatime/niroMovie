@@ -454,13 +454,29 @@ app.post('/api/contents/:id/download', async (req, res) => {
     try {
         const content = await Content.findById(req.params.id);
         if (!content) return res.status(404).json({ error: 'Content not found' });
-        const partIndex = parseInt(req.body?.part) || 0; const seasonIndex = parseInt(req.body?.season) || 0; const episodeIndex = parseInt(req.body?.episode) || 0;
-        let videoUrl = ''; let itemAccessLevel = 'free';
-        if (content.type === 'movie' && content.parts && content.parts.length > partIndex) { videoUrl = content.parts[partIndex].videoUrl; itemAccessLevel = content.parts[partIndex].accessLevel || content.accessLevel || 'free'; }
-        else if (content.type === 'series' && content.seasons && content.seasons[seasonIndex] && content.seasons[seasonIndex].episodes && content.seasons[seasonIndex].episodes[episodeIndex]) { videoUrl = content.seasons[seasonIndex].episodes[episodeIndex].videoUrl; itemAccessLevel = content.seasons[seasonIndex].episodes[episodeIndex].accessLevel || content.accessLevel || 'free'; }
-        else if (content.parts?.[0]?.videoUrl) { videoUrl = content.parts[0].videoUrl; }
-        else if (content.seasons?.[0]?.episodes?.[0]?.videoUrl) { videoUrl = content.seasons[0].episodes[0].videoUrl; }
+
+        const partIndex = parseInt(req.body?.part) || 0;
+        const seasonIndex = parseInt(req.body?.season) || 0;
+        const episodeIndex = parseInt(req.body?.episode) || 0;
+
+        let videoUrl = '';
+        let itemAccessLevel = 'free';
+
+        if (content.type === 'movie' && content.parts && content.parts.length > partIndex) {
+            videoUrl = content.parts[partIndex].videoUrl;
+            itemAccessLevel = content.parts[partIndex].accessLevel || content.accessLevel || 'free';
+        } else if (content.type === 'series' && content.seasons && content.seasons[seasonIndex] && content.seasons[seasonIndex].episodes && content.seasons[seasonIndex].episodes[episodeIndex]) {
+            videoUrl = content.seasons[seasonIndex].episodes[episodeIndex].videoUrl;
+            itemAccessLevel = content.seasons[seasonIndex].episodes[episodeIndex].accessLevel || content.accessLevel || 'free';
+        } else if (content.parts?.[0]?.videoUrl) {
+            videoUrl = content.parts[0].videoUrl;
+        } else if (content.seasons?.[0]?.episodes?.[0]?.videoUrl) {
+            videoUrl = content.seasons[0].episodes[0].videoUrl;
+        }
+
         if (!videoUrl) return res.status(404).json({ error: 'No video available for download' });
+
+        // Premium access check (unchanged)
         if (itemAccessLevel !== 'free') {
             const token = req.header('Authorization')?.replace('Bearer ', '');
             if (!token) return res.status(401).json({ error: 'Login required for premium content.' });
@@ -468,19 +484,31 @@ app.post('/api/contents/:id/download', async (req, res) => {
                 const verified = jwt.verify(token, process.env.JWT_SECRET || 'agnews_final_secret_2026');
                 const user = await User.findById(verified.id);
                 if (!user) return res.status(401).json({ error: 'User not found.' });
-                const userPlan = user.subscription.plan || 'free'; const userStatus = user.subscription.status || 'none';
+                const userPlan = user.subscription.plan || 'free';
+                const userStatus = user.subscription.status || 'none';
                 if (userStatus !== 'active') return res.status(403).json({ error: 'Your subscription is pending approval.' });
                 if (!checkAccessLevel(userPlan, itemAccessLevel)) return res.status(403).json({ error: 'Subscribe to ' + itemAccessLevel.toUpperCase() + ' plan to download!' });
-            } catch (err) { return res.status(401).json({ error: 'Please login to download premium content.' }); }
+            } catch (err) {
+                return res.status(401).json({ error: 'Please login to download premium content.' });
+            }
         }
-        const downloadUrl = getDownloadUrl(videoUrl);
-        const userId = req.user?.id || null; const deviceId = req.headers['x-device-id'] || req.ip || 'unknown';
-        let alreadyDownloaded = content.downloadedBy && content.downloadedBy.some(d => (userId && d.userId && d.userId.toString() === userId.toString()) || (!userId && d.deviceId === deviceId));
-        if (!alreadyDownloaded) { content.downloads = (content.downloads || 0) + 1; if (!content.downloadedBy) content.downloadedBy = []; content.downloadedBy.push({ userId, deviceId, partIndex, seasonIndex, episodeIndex, downloadedAt: new Date() }); await content.save(); }
-        res.json({ downloadUrl, quality: content.quality, title: content.title, canStream: canStream(videoUrl) });
-    } catch (err) { res.status(500).json({ error: err.message }); }
-});
 
+        // ALWAYS increment downloads — no duplicate check
+        content.downloads = (content.downloads || 0) + 1;
+        await content.save();
+
+        const downloadUrl = getDownloadUrl(videoUrl);
+        res.json({
+            downloadUrl,
+            downloads: content.downloads,
+            quality: content.quality,
+            title: content.title,
+            canStream: canStream(videoUrl)
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.get('/api/contents/:id/parts', async (req, res) => {
     try {
         const content = await Content.findById(req.params.id);
