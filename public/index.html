@@ -465,7 +465,14 @@ function isPlayableUrl(url){
 }
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid;}if(url.includes('pixeldrain.com/api/file/')){return url.split('?')[0];}return url;}
 function getDownloadUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url.split('?')[0]+'?download';}return url;}
-function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
+function closeModal(id){
+    document.getElementById(id).classList.remove('active');
+    document.body.classList.remove('body-no-scroll');
+    // If the plans modal was closed, remove the ?plans from the URL
+    if (id === 'plansModal') {
+        history.pushState(null, '', '/');
+    }
+}
 function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
 function closeMovieModal(){closeModal('movieModal');if(window.modalAdTimer)clearInterval(window.modalAdTimer);history.pushState(null,'','/')}
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
@@ -803,7 +810,10 @@ function renderRelatedGrids(){
 }
 function loadMoreRelated(){bottomCount+=12;renderRelatedGrids();document.getElementById('modalBodyContent').scrollTop+=400}
 window.addEventListener('resize',function(){if(document.getElementById('movieModal').classList.contains('active'))adjustRelatedRightCount()});
+    
 async function showPlans(){
+    // Update URL to reflect the subscription page
+    history.pushState({modal:'plans'}, '', '/?plans');
     var r=await fetch(API+'/plans');var plans=await r.json();
     document.getElementById('durationTabs').innerHTML=['weekly','monthly','quarterly','yearly'].map(function(d){return'<button class="cat-pill '+(d===selectedDuration?'active':'')+'" onclick="selectDuration(\''+d+'\')">'+(d==='weekly'?'Weekly':d==='monthly'?'Monthly':d==='quarterly'?'Quarterly':'Yearly')+'</button>'}).join('');
     document.getElementById('plansGrid').innerHTML=Object.keys(plans).map(function(k){var v=plans[k];return'<div class="plan-card '+(k==='ultimate'?'featured':'')+'" onclick="selectPlan(\''+k+'\')"><div class="plan-name">'+v.name+'</div><div class="plan-price">'+(v[selectedDuration]||0).toLocaleString()+' <span>RWF</span></div></div>'}).join('');
@@ -864,7 +874,7 @@ function toggleWrapperFullscreen() {
     }
 }
 
-(function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}loadLatestNews();});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
+(function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');var plans=p.has('plans');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}loadLatestNews();if(plans){setTimeout(function(){showPlans()},600)};});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
 // ===== NEWS (homepage) =====
 async function loadLatestNews() {
     try {
