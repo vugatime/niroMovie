@@ -527,7 +527,6 @@ async function openContent(id){
     currentContentId=id;selectedPartIndex=0;revealedPartsCount=1;
     var c=allContents.find(function(x){return x._id===id});
     if(!c)return;currentContentData=c;
-    incrementView(id);
     history.pushState(null,'','/?movie='+id);
     document.getElementById('modalTitle').innerText=c.title;
     var desc=c.description||'No description available';
@@ -547,6 +546,8 @@ async function openContent(id){
     if(currentPartsItems.length>0&&currentPartsItems[0]&&currentPartsItems[0].videoUrl){videoUrlToPlay=currentPartsItems[0].videoUrl;canPlay=isPlayableUrl(videoUrlToPlay);}
     if(!canPlay&&c.parts&&c.parts[0]&&c.parts[0].videoUrl){videoUrlToPlay=c.parts[0].videoUrl;canPlay=isPlayableUrl(videoUrlToPlay);}
     if(!canPlay&&c.videoUrl){videoUrlToPlay=c.videoUrl;canPlay=isPlayableUrl(videoUrlToPlay);}
+    // Only count a view if the video is streamable
+    if(canPlay) { incrementView(id); }
     var playerWrapper=document.getElementById('playerWrapper'),watchBtn=document.getElementById('watchBtn'),downloadBtn=document.getElementById('downloadMainBtn'),videoPlayer=document.getElementById('videoPlayer');
     if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';downloadBtn.style.flex='1';videoPlayer.src=getStreamUrl(videoUrlToPlay);videoPlayer.style.display='block';videoPlayer.load();}
     else{playerWrapper.style.display='none';watchBtn.style.display='none';downloadBtn.style.flex='1';videoPlayer.src='';videoPlayer.style.display='none';}
