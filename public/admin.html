@@ -161,7 +161,7 @@
     </div>
 </div>
 <div class="modal-overlay" id="editModal"><div class="modal-box modal-box-lg"><div class="modal-header"><h3>Edit Content</h3><span class="close-btn" onclick="closeEditModal()">&times;</span></div><div class="modal-body" id="editModalBody"></div></div></div>
-<div class="modal-overlay" id="screenshotModal"><div class="modal-box"><div class="modal-header"><h3>Payment Screenshot</h3><span class="close-btn" onclick="document.getElementById('screenshotModal').classList.remove('active')">&times;</span></div><div class="modal-body" style="text-align:center"><img id="screenshotFull" style="max-width:100%;max-height:70vh;border-radius:var(--radius)"></div></div></div>
+<div class="modal-overlay" id="screenshotModal" onclick="if(event.target===this){ this.style.display='none'; this.classList.remove('active'); }"><div class="modal-box"><div class="modal-header"><h3>Payment Screenshot</h3><span class="close-btn" onclick="var m=document.getElementById('screenshotModal'); m.style.display='none'; m.classList.remove('active');">&times;</span></div><div class="modal-body" style="text-align:center"><img id="screenshotFull" style="max-width:100%;max-height:70vh;border-radius:var(--radius)"></div></div></div>
 
 <script>
 var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentAdmin=null,isHeadAdmin=false,currentAdminLevel=null,currentAdminEmail='',allContents=[],currentEditId=null,currentSubFilter='pending';
@@ -297,7 +297,12 @@ async function approveSub(id){var note=prompt('Note:');await fetchAuth('/admin/s
 async function rejectSub(id){var note=prompt('Reason:');if(!note)return;await fetchAuth('/admin/subscriptions/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'rejected',adminNote:note})});showMsg('Rejected');loadSubscriptions(currentSubFilter);loadDashboard()}
 async function archiveSub(id){await fetchAuth('/admin/subscriptions/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'archived'})});showMsg('Archived');loadSubscriptions(currentSubFilter);loadDashboard()}
 async function unarchiveSub(id){await fetchAuth('/admin/subscriptions/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'pending'})});showMsg('Unarchived');loadSubscriptions(currentSubFilter);loadDashboard()}
-function viewScreenshot(url){document.getElementById('screenshotFull').src=url;document.getElementById('screenshotModal').style.display='flex';document.getElementById('screenshotModal').classList.add('active')}
+function viewScreenshot(url){
+    var modal = document.getElementById('screenshotModal');
+    document.getElementById('screenshotFull').src = url;
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+}
 async function loadFlagged(){var r=await fetchAuth('/admin/flagged-users');var users=Array.isArray(r)?r:[];document.getElementById('flaggedBody').innerHTML=users.map(function(u){return'<tr><td>'+escH(u.fullName||'N/A')+'</td><td>'+u.email+'</td><td><span class="badge badge-'+(u.subscription?u.subscription.plan:'free')+'">'+((u.subscription?u.subscription.plan:'free')).toUpperCase()+'</span></td><td>'+(u.deviceCount||0)+'/'+(u.subscription?u.subscription.maxDevices:6)+'</td><td>'+(u.flagReason||'Unknown')+'</td><td><button class="btn btn-green btn-xs" onclick="clearFlag(\''+u._id+'\')">Clear</button><button class="btn btn-danger btn-xs" onclick="terminateFlag(\''+u._id+'\')">Terminate</button></td></tr>'}).join('')||'<tr><td colspan="6">No flagged users</td></tr>'}
 async function clearFlag(id){await fetchAuth('/admin/flagged-users/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'clear'})});showMsg('Cleared');loadFlagged();loadDashboard()}
 async function terminateFlag(id){var note=prompt('Reason:');await fetchAuth('/admin/flagged-users/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'terminate',adminNote:note})});showMsg('Terminated');loadFlagged();loadDashboard()}
