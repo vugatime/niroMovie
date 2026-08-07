@@ -277,6 +277,10 @@
   80% { opacity: 0.3; }
   100% { transform: translate(10%, 10%) scale(1.2); opacity: 0; }
 }
+/* Ensure subscription prompt overlay behaves identically */
+#subscriptionPromptModal {
+    z-index: 4000; /* above movie modal */
+}
 </style>
 </head>
 <body>
@@ -431,6 +435,22 @@
 <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Privacy Policy</h2><span class="close-btn" onclick="closeModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">At niroMovie, we take your privacy seriously. We only collect minimal information necessary to provide our services, such as your email address for account creation and comments. We do not sell, trade, or share your personal information with third parties. All data is stored securely and used solely to improve your experience on our platform. By using niroMovie, you agree to this privacy policy and our commitment to keeping your information safe.</p></div></div></div>
 <div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Terms</h2><span class="close-btn" onclick="closeModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">By using niroMovie, you agree to these terms of service. All content provided on this platform is for personal, non-commercial use only. You may stream or download content for your own viewing but redistribution, resale, or public broadcast of any content is strictly prohibited. niroMovie reserves the right to modify or remove content at any time without notice. Users are responsible for maintaining the confidentiality of their account credentials. Any misuse of the platform, including attempts to bypass security measures or access restricted content without authorization, may result in account termination. By continuing to use niroMovie, you acknowledge and accept these terms.</p></div></div></div>
 <div class="whatsapp-btn" onclick="window.open('https://wa.me/250795064502','_blank')"><i class="fab fa-whatsapp" style="font-size:22px;color:#fff"></i></div>
+<!-- Custom Subscription Prompt Modal -->
+<div class="modal-overlay" id="subscriptionPromptModal" style="display:none; align-items:center; justify-content:center;">
+  <div class="modal-box-sm" style="max-width:480px; width:100%;">
+    <div class="modal-header">
+      <h2>Subscription Required</h2>
+      <span class="close-btn" onclick="closeSubscriptionPrompt(false)">&times;</span>
+    </div>
+    <div style="padding:1.5rem;">
+      <p id="subscriptionPromptMsg" style="color:var(--text2); line-height:1.6; font-size:0.95rem; margin-bottom:1.5rem;"></p>
+      <div style="display:flex; gap:0.8rem; justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="closeSubscriptionPrompt(false)" style="border-color:var(--border); color:var(--text);">Cancel</button>
+        <button class="btn btn-accent" onclick="closeSubscriptionPrompt(true)" style="padding:0.6rem 1.8rem;">Agree and Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 // Auto-clean old service worker
 if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(function(regs){for(let r of regs)r.unregister();}); }
@@ -636,48 +656,47 @@ function checkPartAccess(partAccessLevel, callback) {
     }
     callback(true);
 }
+let subscriptionPromptCallback = null;
 
 function showSubscriptionPrompt(requiredPlan, callback) {
-    var msg = 'Iyi ' + (currentContentData && currentContentData.type || 'movie') + ' ' +
-              (currentContentData ? currentContentData.title : '') +
-              ' igice ' + (currentPartsItems[selectedPartIndex] ? currentPartsItems[selectedPartIndex].number : '') +
+    // Build the message
+    var type = currentContentData ? (currentContentData.type || 'movie') : 'movie';
+    var title = currentContentData ? currentContentData.title : '';
+    var partNumber = (currentPartsItems && currentPartsItems[selectedPartIndex]) ? currentPartsItems[selectedPartIndex].number : '';
+    var msg = 'Iyi ' + type + ' ' + title +
+              ' igice ' + partNumber +
               ' bisaba kuba waguze abonoma (subscription) kugira ngo uyi downloadinge cg uyirebe. ' +
               'Iyandikishe none aha ukomeze kuryoherwa na movies.';
-    if (confirm(msg)) {
-        if (!currentUser) {
-            selectedPlan = requiredPlan;
-            closeMovieModal();
-            showLoginDiv();
-            openModal('authModal');
-        } else {
-            selectedPlan = requiredPlan;
-            closeMovieModal();
-            showPlans();
-        }
-        callback(false);
-    } else {
-        callback(false);
-    }
+    
+    document.getElementById('subscriptionPromptMsg').textContent = msg;
+    subscriptionPromptCallback = callback;
+    // Store the required plan in a temporary global for use when agreed
+    window._promptRequiredPlan = requiredPlan;
+    var modal = document.getElementById('subscriptionPromptModal');
+    modal.style.display = 'flex';
 }
-function showSubscriptionPrompt(prefix, type, requiredPlan, callback) {
-    var msg = prefix + ' ' + type + ' bisaba kuba waguze abonoma (subscription) kugira ngo uyi downloadinge cg uyirebe. Iyandikishe none aha ukomeze kuryoherwa na movies.';
-    // Simple confirm dialog with agree button
-    if (confirm(msg)) {
+
+function closeSubscriptionPrompt(agreed) {
+    var modal = document.getElementById('subscriptionPromptModal');
+    modal.style.display = 'none';
+    var requiredPlan = window._promptRequiredPlan;
+    window._promptRequiredPlan = null;
+    if (agreed) {
         if (!currentUser) {
             selectedPlan = requiredPlan;
             closeMovieModal();
             showLoginDiv();
             openModal('authModal');
-            // After login/register, we'll resume – handled in login/register functions already
         } else {
             selectedPlan = requiredPlan;
             closeMovieModal();
             showPlans();
         }
-        callback(false);
+        if (subscriptionPromptCallback) subscriptionPromptCallback(false);
     } else {
-        callback(false);
+        if (subscriptionPromptCallback) subscriptionPromptCallback(false);
     }
+    subscriptionPromptCallback = null;
 }
 function adMatchesPlan(ad){var plan=getUserPlan();if(!ad.targetPlans||ad.targetPlans.length===0)return true;var targets=Array.isArray(ad.targetPlans)?ad.targetPlans:ad.targetPlans.split(',').map(function(s){return s.trim().toLowerCase()});return targets.indexOf(plan.toLowerCase())!==-1}
 async function incrementView(id){try{var r=await fetch(API+'/contents/'+id+'/view',{method:'POST'});var d=await r.json();if(d&&d.views!==undefined){var c=allContents.find(function(x){return x._id===id});if(c)c.views=d.views}else{var c=allContents.find(function(x){return x._id===id});if(c)c.views=(c.views||0)+1}}catch(e){var c=allContents.find(function(x){return x._id===id});if(c)c.views=(c.views||0)+1}}
