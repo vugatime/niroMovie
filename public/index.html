@@ -464,7 +464,21 @@ function isPlayableUrl(url){
            lower.includes('stream.')||lower.includes('video.')||lower.includes('media.'));
 }
 function getStreamUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid;}if(url.includes('pixeldrain.com/api/file/')){return url.split('?')[0];}return url;}
-function getDownloadUrl(url){if(!url)return'';if(url.includes('pixeldrain.com/u/')){var fid=url.split('/u/')[1].split('/')[0].split('?')[0];return'https://pixeldrain.com/api/file/'+fid+'?download';}if(url.includes('pixeldrain.com/api/file/')){return url.split('?')[0]+'?download';}return url;}
+function getDownloadUrl(url) {
+    if (!url) return '';
+    // For Pixeldrain, return the public file page (avoids hotlink block)
+    if (url.includes('pixeldrain.com/u/')) {
+        var fid = url.split('/u/')[1].split('/')[0].split('?')[0];
+        return 'https://pixeldrain.com/u/' + fid;
+    }
+    if (url.includes('pixeldrain.com/api/file/')) {
+        var fid = url.split('/api/file/')[1].split('?')[0];
+        return 'https://pixeldrain.com/u/' + fid;
+    }
+    // For all other URLs, return as is (or your original logic)
+    if (url.includes('pixeldrain.com')) return url; // fallback
+    return url;
+}
 function closeModal(id){
     document.getElementById(id).classList.remove('active');
     document.body.classList.remove('body-no-scroll');
