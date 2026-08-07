@@ -610,6 +610,52 @@ function toast(msg){var d=document.createElement('div');d.className='toast';d.te
 function toggleDescription(){var desc=document.getElementById('modalDesc');var link=document.getElementById('viewMoreLink');if(desc.classList.contains('desc-truncated')){desc.classList.remove('desc-truncated');desc.classList.add('desc-expanded');link.textContent='Show less'}else{desc.classList.add('desc-truncated');desc.classList.remove('desc-expanded');link.textContent='... View more'}}
 function toggleTrailer(){var tc=document.getElementById('trailerContainer');var tv=document.getElementById('trailerVideo');if(tc.style.display==='block'){tc.style.display='none';tv.pause()}else{tc.style.display='block';tv.play().catch(function(){})}}
 function getUserPlan(){return currentUser&&currentUser.subscription&&currentUser.subscription.plan?currentUser.subscription.plan:'free'}
+function checkPartAccess(partAccessLevel, callback) {
+    // If the part is free, allow immediately
+    if (!partAccessLevel || partAccessLevel === 'free') {
+        callback(true);
+        return;
+    }
+    // Check login
+    if (!currentUser) {
+        showSubscriptionPrompt('iyi', 'movie', partAccessLevel, callback);
+        return;
+    }
+    // Check subscription status
+    var plan = getUserPlan();
+    var status = (currentUser.subscription && currentUser.subscription.status) || 'none';
+    if (status !== 'active') {
+        showSubscriptionPrompt('iyi', 'movie', partAccessLevel, callback);
+        return;
+    }
+    var planLevels = { free:0, basic:1, standard:2, premium:3, ultimate:4 };
+    if ((planLevels[plan] || 0) < (planLevels[partAccessLevel] || 0)) {
+        showSubscriptionPrompt('iyi', 'movie', partAccessLevel, callback);
+        return;
+    }
+    callback(true);
+}
+
+function showSubscriptionPrompt(prefix, type, requiredPlan, callback) {
+    var msg = prefix + ' ' + type + ' bisaba kuba waguze abonoma (subscription) kugira ngo uyi downloadinge cg uyirebe. Iyandikishe none aha ukomeze kuryoherwa na movies.';
+    // Simple confirm dialog with agree button
+    if (confirm(msg)) {
+        if (!currentUser) {
+            selectedPlan = requiredPlan;
+            closeMovieModal();
+            showLoginDiv();
+            openModal('authModal');
+            // After login/register, we'll resume – handled in login/register functions already
+        } else {
+            selectedPlan = requiredPlan;
+            closeMovieModal();
+            showPlans();
+        }
+        callback(false);
+    } else {
+        callback(false);
+    }
+}
 function adMatchesPlan(ad){var plan=getUserPlan();if(!ad.targetPlans||ad.targetPlans.length===0)return true;var targets=Array.isArray(ad.targetPlans)?ad.targetPlans:ad.targetPlans.split(',').map(function(s){return s.trim().toLowerCase()});return targets.indexOf(plan.toLowerCase())!==-1}
 async function incrementView(id){try{var r=await fetch(API+'/contents/'+id+'/view',{method:'POST'});var d=await r.json();if(d&&d.views!==undefined){var c=allContents.find(function(x){return x._id===id});if(c)c.views=d.views}else{var c=allContents.find(function(x){return x._id===id});if(c)c.views=(c.views||0)+1}}catch(e){var c=allContents.find(function(x){return x._id===id});if(c)c.views=(c.views||0)+1}}
 async function incrementDownload(id){try{var r=await fetch(API+'/contents/'+id+'/download',{method:'POST'});var d=await r.json();if(d&&d.downloads!==undefined){var c=allContents.find(function(x){return x._id===id});if(c)c.downloads=d.downloads}else{var c=allContents.find(function(x){return x._id===id});if(c)c.downloads=(c.downloads||0)+1}}catch(e){var c=allContents.find(function(x){return x._id===id});if(c)c.downloads=(c.downloads||0)+1}}
@@ -698,8 +744,51 @@ function renderPartsList(){
     }
 }
 function revealMoreParts(){revealedPartsCount=Math.min(revealedPartsCount+2,currentPartsItems.length);renderPartsList();}
-function selectPart(i){selectedPartIndex=i;renderPartsList();var item=currentPartsItems[i],playerWrapper=document.getElementById('playerWrapper'),watchBtn=document.getElementById('watchBtn'),videoPlayer=document.getElementById('videoPlayer');if(item&&item.videoUrl){var canPlay=isPlayableUrl(item.videoUrl);if(canPlay){playerWrapper.style.display='block';watchBtn.style.display='flex';videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';}}else{playerWrapper.style.display='none';watchBtn.style.display='none';videoPlayer.src='';videoPlayer.style.display='none';}}
-function downloadPartItem(i){var item=currentPartsItems[i];if(item&&item.videoUrl){incrementDownload(currentContentId);window.open(getDownloadUrl(item.videoUrl),'_blank');}}
+function selectPart(i) {
+    var item = currentPartsItems[i];
+    if (!item) return;
+    // Check access for streaming
+    checkPartAccess(item.accessLevel || 'free', function(allowed) {
+        if (!allowed) return;
+        selectedPartIndex = i;
+        renderPartsList();
+        var playerWrapper = document.getElementById('playerWrapper'),
+            watchBtn = document.getElementById('watchBtn'),
+            videoPlayer = document.getElementById('videoPlayer');
+        if (item.videoUrl) {
+            var canPlay = isPlayableUrl(item.videoUrl);
+            if (canPlay) {
+                playerWrapper.style.display = 'block';
+                watchBtn.style.display = 'flex';
+                videoPlayer.src = getStreamUrl(item.videoUrl);
+                videoPlayer.style.display = 'block';
+                videoPlayer.load();
+                videoPlayer.play().catch(function() {});
+            } else {
+                playerWrapper.style.display = 'none';
+                watchBtn.style.display = 'none';
+                videoPlayer.src = '';
+                videoPlayer.style.display = 'none';
+            }
+        } else {
+            playerWrapper.style.display = 'none';
+            watchBtn.style.display = 'none';
+            videoPlayer.src = '';
+            videoPlayer.style.display = 'none';
+        }
+    });
+}
+function downloadPartItem(i) {
+    var item = currentPartsItems[i];
+    if (!item) return;
+    checkPartAccess(item.accessLevel || 'free', function(allowed) {
+        if (!allowed) return;
+        if (item.videoUrl) {
+            incrementDownload(currentContentId);
+            window.open(getDownloadUrl(item.videoUrl), '_blank');
+        }
+    });
+}
 function watchCurrentContent(){var videoPlayer=document.getElementById('videoPlayer');if(videoPlayer.src&&videoPlayer.style.display!=='none'){videoPlayer.play().catch(function(e){});return;}if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){var url=getStreamUrl(currentContentData.parts[0].videoUrl);videoPlayer.src=url;videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}}
 function downloadCurrentContent(){if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){incrementDownload(currentContentId);window.open(getDownloadUrl(item.videoUrl),'_blank');return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){incrementDownload(currentContentId);window.open(getDownloadUrl(currentContentData.parts[0].videoUrl),'_blank');}}
 function shareMovie(p){var u=window.location.origin+'/?movie='+currentContentId;if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}else if(p==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent('Watch on niroMovie! '+u),'_blank')}}
