@@ -630,7 +630,7 @@ function toast(msg){var d=document.createElement('div');d.className='toast';d.te
 function toggleDescription(){var desc=document.getElementById('modalDesc');var link=document.getElementById('viewMoreLink');if(desc.classList.contains('desc-truncated')){desc.classList.remove('desc-truncated');desc.classList.add('desc-expanded');link.textContent='Show less'}else{desc.classList.add('desc-truncated');desc.classList.remove('desc-expanded');link.textContent='... View more'}}
 function toggleTrailer(){var tc=document.getElementById('trailerContainer');var tv=document.getElementById('trailerVideo');if(tc.style.display==='block'){tc.style.display='none';tv.pause()}else{tc.style.display='block';tv.play().catch(function(){})}}
 function getUserPlan(){return currentUser&&currentUser.subscription&&currentUser.subscription.plan?currentUser.subscription.plan:'free'}
-function checkPartAccess(partAccessLevel, callback) {
+function checkPartAccess(partAccessLevel, callback, partLabel) {
     // Free content is always allowed
     if (!partAccessLevel || partAccessLevel === 'free') {
         callback(true);
@@ -638,33 +638,39 @@ function checkPartAccess(partAccessLevel, callback) {
     }
     // Not logged in
     if (!currentUser) {
-        showSubscriptionPrompt(partAccessLevel, callback);
+        showSubscriptionPrompt(partAccessLevel, callback, partLabel);
         return;
     }
     // Not subscribed or expired
     var status = (currentUser.subscription && currentUser.subscription.status) || 'none';
     if (status !== 'active') {
-        showSubscriptionPrompt(partAccessLevel, callback);
+        showSubscriptionPrompt(partAccessLevel, callback, partLabel);
         return;
     }
     // Plan level insufficient
     var plan = getUserPlan();
     var planLevels = { free:0, basic:1, standard:2, premium:3, ultimate:4 };
     if ((planLevels[plan] || 0) < (planLevels[partAccessLevel] || 0)) {
-        showSubscriptionPrompt(partAccessLevel, callback);
+        showSubscriptionPrompt(partAccessLevel, callback, partLabel);
         return;
     }
     callback(true);
 }
 let subscriptionPromptCallback = null;
 
-function showSubscriptionPrompt(requiredPlan, callback) {
+function showSubscriptionPrompt(requiredPlan, callback, partLabel) {
     // Build the message
     var type = currentContentData ? (currentContentData.type || 'movie') : 'movie';
     var title = currentContentData ? currentContentData.title : '';
-    var partNumber = (currentPartsItems && currentPartsItems[selectedPartIndex]) ? currentPartsItems[selectedPartIndex].number : '';
+    // Use the passed part label if available, otherwise fallback to selectedPartIndex
+    var partDesc = partLabel;
+    if (!partDesc) {
+        partDesc = (currentPartsItems && currentPartsItems[selectedPartIndex]) 
+            ? currentPartsItems[selectedPartIndex].number 
+            : '';
+    }
     var msg = 'Iyi ' + type + ' ' + title +
-              ' igice ' + partNumber +
+              ' igice ' + partDesc +
               ' bisaba kuba waguze abonoma (subscription) kugira ngo uyi downloadinge cg uyirebe. ' +
               'Iyandikishe none aha ukomeze kuryoherwa na movies.';
     
@@ -789,6 +795,10 @@ function revealMoreParts(){revealedPartsCount=Math.min(revealedPartsCount+2,curr
 function selectPart(i) {
     var item = currentPartsItems[i];
     if (!item) return;
+    // Build part label for the prompt (e.g. "S1 E19")
+    var partLabel = item.number || '';
+    if (item.seasonTitle) partLabel += ' (' + item.seasonTitle + ')';
+    
     // Check access for streaming
     checkPartAccess(item.accessLevel || 'free', function(allowed) {
         if (!allowed) return;
@@ -818,18 +828,22 @@ function selectPart(i) {
             videoPlayer.src = '';
             videoPlayer.style.display = 'none';
         }
-    });
+    }, partLabel);   // <-- pass the label here
 }
 function downloadPartItem(i) {
     var item = currentPartsItems[i];
     if (!item) return;
+    // Build part label for the prompt
+    var partLabel = item.number || '';
+    if (item.seasonTitle) partLabel += ' (' + item.seasonTitle + ')';
+    
     checkPartAccess(item.accessLevel || 'free', function(allowed) {
         if (!allowed) return;
         if (item.videoUrl) {
             incrementDownload(currentContentId);
             window.open(getDownloadUrl(item.videoUrl), '_blank');
         }
-    });
+    }, partLabel);
 }
 function watchCurrentContent(){var videoPlayer=document.getElementById('videoPlayer');if(videoPlayer.src&&videoPlayer.style.display!=='none'){videoPlayer.play().catch(function(e){});return;}if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){var url=getStreamUrl(currentContentData.parts[0].videoUrl);videoPlayer.src=url;videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}}
 function downloadCurrentContent(){if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){incrementDownload(currentContentId);window.open(getDownloadUrl(item.videoUrl),'_blank');return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){incrementDownload(currentContentId);window.open(getDownloadUrl(currentContentData.parts[0].videoUrl),'_blank');}}
