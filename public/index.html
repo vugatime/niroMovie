@@ -611,31 +611,54 @@ function toggleDescription(){var desc=document.getElementById('modalDesc');var l
 function toggleTrailer(){var tc=document.getElementById('trailerContainer');var tv=document.getElementById('trailerVideo');if(tc.style.display==='block'){tc.style.display='none';tv.pause()}else{tc.style.display='block';tv.play().catch(function(){})}}
 function getUserPlan(){return currentUser&&currentUser.subscription&&currentUser.subscription.plan?currentUser.subscription.plan:'free'}
 function checkPartAccess(partAccessLevel, callback) {
-    // If the part is free, allow immediately
+    // Free content is always allowed
     if (!partAccessLevel || partAccessLevel === 'free') {
         callback(true);
         return;
     }
-    // Check login
+    // Not logged in
     if (!currentUser) {
-        showSubscriptionPrompt('iyi', 'movie', partAccessLevel, callback);
+        showSubscriptionPrompt(partAccessLevel, callback);
         return;
     }
-    // Check subscription status
-    var plan = getUserPlan();
+    // Not subscribed or expired
     var status = (currentUser.subscription && currentUser.subscription.status) || 'none';
     if (status !== 'active') {
-        showSubscriptionPrompt('iyi', 'movie', partAccessLevel, callback);
+        showSubscriptionPrompt(partAccessLevel, callback);
         return;
     }
+    // Plan level insufficient
+    var plan = getUserPlan();
     var planLevels = { free:0, basic:1, standard:2, premium:3, ultimate:4 };
     if ((planLevels[plan] || 0) < (planLevels[partAccessLevel] || 0)) {
-        showSubscriptionPrompt('iyi', 'movie', partAccessLevel, callback);
+        showSubscriptionPrompt(partAccessLevel, callback);
         return;
     }
     callback(true);
 }
 
+function showSubscriptionPrompt(requiredPlan, callback) {
+    var msg = 'Iyi ' + (currentContentData && currentContentData.type || 'movie') + ' ' +
+              (currentContentData ? currentContentData.title : '') +
+              ' igice ' + (currentPartsItems[selectedPartIndex] ? currentPartsItems[selectedPartIndex].number : '') +
+              ' bisaba kuba waguze abonoma (subscription) kugira ngo uyi downloadinge cg uyirebe. ' +
+              'Iyandikishe none aha ukomeze kuryoherwa na movies.';
+    if (confirm(msg)) {
+        if (!currentUser) {
+            selectedPlan = requiredPlan;
+            closeMovieModal();
+            showLoginDiv();
+            openModal('authModal');
+        } else {
+            selectedPlan = requiredPlan;
+            closeMovieModal();
+            showPlans();
+        }
+        callback(false);
+    } else {
+        callback(false);
+    }
+}
 function showSubscriptionPrompt(prefix, type, requiredPlan, callback) {
     var msg = prefix + ' ' + type + ' bisaba kuba waguze abonoma (subscription) kugira ngo uyi downloadinge cg uyirebe. Iyandikishe none aha ukomeze kuryoherwa na movies.';
     // Simple confirm dialog with agree button
