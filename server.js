@@ -643,11 +643,12 @@ app.post('/api/admin/movies/:id/part', authMiddleware, adminMiddleware, upload.s
             return res.status(400).json({ error: 'Video file or link required!' });
         }
         c.parts.push({ partNumber: partNumber || String(c.parts.length + 1), title: partTitle || 'Part ' + (c.parts.length + 1), videoUrl, videoSource: videoSource || 'external', accessLevel: accessLevel || 'free' });
-        c.updatedAt = new Date(); await c.save();
+        c.updatedAt = new Date();
+        c.uploadedAt = new Date();   // ⬅️ refresh so it appears in Latest Added + hero
+        await c.save();
         res.json({ success: true, content: c, message: 'Part added!' });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.post('/api/admin/series/:id/episode', authMiddleware, adminMiddleware, upload.single('video'), async (req, res) => {
     try {
         const c = await Content.findById(req.params.id);
@@ -664,11 +665,12 @@ app.post('/api/admin/series/:id/episode', authMiddleware, adminMiddleware, uploa
         let season = c.seasons.find(s => s.seasonNumber === parseInt(seasonNumber));
         if (!season) { season = { seasonNumber: parseInt(seasonNumber), title: 'Season ' + seasonNumber, episodes: [] }; c.seasons.push(season); }
         season.episodes.push({ episodeNumber: parseInt(episodeNumber) || season.episodes.length + 1, title: episodeTitle || 'Episode ' + (season.episodes.length + 1), videoUrl, videoSource: videoSource || 'external', accessLevel: accessLevel || 'free' });
-        c.updatedAt = new Date(); await c.save();
+        c.updatedAt = new Date();
+        c.uploadedAt = new Date();   // ⬅️ refresh so it appears in Latest Added + hero
+        await c.save();
         res.json({ success: true, content: c, message: 'Episode added!' });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 // ========== SUBSCRIPTIONS (HEAD ADMIN ONLY) (unchanged) ==========
 app.get('/api/admin/subscriptions', authMiddleware, headAdminMiddleware, async (req, res) => {
     const { status } = req.query; let query = {}; if (status) query.status = status;
