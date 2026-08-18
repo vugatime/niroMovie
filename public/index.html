@@ -466,7 +466,7 @@ if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().t
     }
 })();
 var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],rightCount=18,bottomCount=12,allAds=[],adCarouselTimer=null,adCarouselIndex=0,revealedPartsCount=1;
-
+let currentComments = [];
 function isAdminLoggedIn(){ return currentUser && currentUser.role === 'admin'; }
 function isPlayableUrl(url){
     if(!url)return false;
@@ -857,24 +857,9 @@ async function loadComments(id){
     var cl=document.getElementById('commentsList');
     try{
         var comments=await fetch(API+'/comments/'+id).then(function(r){return r.json()});
-        if(!comments||!comments.length){cl.innerHTML='<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';return}
-        cl.innerHTML=comments.map(function(x){
-            var rawName = x.userName || 'Anon';
-            var isVer = isVerifiedName(rawName);
-            var displayName = cleanVerifiedName(rawName);
-            var verifiedBadge = isVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
-            var repliesHtml='';
-            if(x.replies&&x.replies.length>0){
-                repliesHtml='<div class="replies">'+x.replies.map(function(r){
-                    var rRaw = r.userName || 'Anon';
-                    var rIsVer = isVerifiedName(rRaw);
-                    var rName = cleanVerifiedName(rRaw);
-                    var rBadge = rIsVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
-                    return'<div class="reply-item"><span class="comment-user">'+escHtml(rName)+'</span>'+rBadge+'<span class="comment-date">'+new Date(r.createdAt).toLocaleString()+'</span><div class="comment-text">'+escHtml(r.text)+'</div></div>';
-                }).join('')+'</div>';
-            }
-            return'<div class="comment-item" id="comment-'+x._id+'"><div><span class="comment-user">'+escHtml(displayName)+'</span>'+verifiedBadge+'<span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div><div class="comment-text">'+escHtml(x.text)+'</div><span class="comment-like" onclick="likeComment(\''+id+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span><span class="comment-reply-btn" onclick="showReplyForm(\''+x._id+'\')">↩ Reply</span><div class="reply-form" id="replyForm-'+x._id+'" style="display:none"><input type="text" id="replyName-'+x._id+'" placeholder="Name" style="flex:1;min-width:60px"><input type="text" id="replyText-'+x._id+'" placeholder="Reply..." style="flex:2;min-width:80px"><button class="cta-btn cta-download cta-sm" onclick="addReply(\''+id+'\',\''+x._id+'\')">Reply</button></div>'+repliesHtml+'</div>';
-        }).join('');
+        currentComments = comments || [];
+        renderComments(currentComments, false);
+        // Admin name input handling (unchanged)
         if(isAdminLoggedIn()){
             var nameInput = document.getElementById('commentName');
             if(nameInput){
@@ -885,7 +870,60 @@ async function loadComments(id){
             var nameInput = document.getElementById('commentName');
             if(nameInput) nameInput.style.display = '';
         }
-    }catch(e){cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'}
+    }catch(e){
+        cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'
+    }
+}
+
+function renderComments(comments, showAll) {
+    var cl = document.getElementById('commentsList');
+    if (!comments || !comments.length) {
+        cl.innerHTML = '<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';
+        return;
+    }
+
+    // Show only the first 2 comments unless showAll is true
+    var displayedComments = showAll ? comments : comments.slice(0, 2);
+
+    // Build the HTML for displayed comments
+    var html = displayedComments.map(function(x) {
+        var rawName = x.userName || 'Anon';
+        var isVer = isVerifiedName(rawName);
+        var displayName = cleanVerifiedName(rawName);
+        var verifiedBadge = isVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
+
+        var repliesHtml='';
+        if(x.replies && x.replies.length > 0){
+            repliesHtml='<div class="replies">'+x.replies.map(function(r){
+                var rRaw = r.userName || 'Anon';
+                var rIsVer = isVerifiedName(rRaw);
+                var rName = cleanVerifiedName(rRaw);
+                var rBadge = rIsVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
+                return '<div class="reply-item"><span class="comment-user">'+escHtml(rName)+'</span>'+rBadge+'<span class="comment-date">'+new Date(r.createdAt).toLocaleString()+'</span><div class="comment-text">'+escHtml(r.text)+'</div></div>';
+            }).join('')+'</div>';
+        }
+
+        return '<div class="comment-item" id="comment-'+x._id+'">'+
+            '<div><span class="comment-user">'+escHtml(displayName)+'</span>'+verifiedBadge+'<span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div>'+
+            '<div class="comment-text">'+escHtml(x.text)+'</div>'+
+            '<span class="comment-like" onclick="likeComment(\''+currentContentId+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span>'+
+            '<span class="comment-reply-btn" onclick="showReplyForm(\''+x._id+'\')">↩ Reply</span>'+
+            '<div class="reply-form" id="replyForm-'+x._id+'" style="display:none">'+
+                '<input type="text" id="replyName-'+x._id+'" placeholder="Name" style="flex:1;min-width:60px">'+
+                '<input type="text" id="replyText-'+x._id+'" placeholder="Reply..." style="flex:2;min-width:80px">'+
+                '<button class="cta-btn cta-download cta-sm" onclick="addReply(\''+currentContentId+'\',\''+x._id+'\')">Reply</button>'+
+            '</div>'+
+            repliesHtml+
+        '</div>';
+    }).join('');
+
+    // Add "View more comments" button if needed
+    if (!showAll && comments.length > 2) {
+        var remaining = comments.length - 2;
+        html += '<div style="text-align:center;margin-top:0.5rem;"><button class="cta-btn cta-outline cta-sm" onclick="renderComments(currentComments, true)">View more comments (' + remaining + ' more)</button></div>';
+    }
+
+    cl.innerHTML = html;
 }
 function showReplyForm(cid){
     var f=document.getElementById('replyForm-'+cid);
