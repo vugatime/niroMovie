@@ -1,4 +1,4 @@
-<!-- cache bust 2026-08-27-3 -->
+<!-- cache bust 2026-08-27-4 -->
 <!DOCTYPE html>
 <html lang="rw">
 <head>
@@ -380,8 +380,6 @@
         </div>
         <div class="detail-right" id="detailRight"></div>
       </div>
-      <div class="detail-bottom-grid" id="detailBottomGrid"></div>
-      <button class="load-more-btn" id="relatedLoadMore" onclick="loadMoreRelated()" style="display:none">See More ▼</button>
     </div>
   </div>
 </div>
@@ -421,7 +419,7 @@ if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().t
         window.history.replaceState({}, '', url.toString());
     }
 })();
-var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],rightCount=5,bottomCount=5,allAds=[],adCarouselTimer=null,adCarouselIndex=0,revealedPartsCount=1;
+var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),selectedPlan=null,selectedDuration='monthly',heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],rightCount=5,bottomCount=0,allAds=[],adCarouselTimer=null,adCarouselIndex=0,revealedPartsCount=1;
 let currentComments = [];
 function isAdminLoggedIn(){ return currentUser && currentUser.role === 'admin'; }
 function isPlayableUrl(url){
@@ -921,7 +919,7 @@ async function addComment(){
 }
 async function likeComment(cid,cmid){await fetch(API+'/comments/'+cid+'/'+cmid+'/like',{method:'POST'});loadComments(cid)}
 
-// ============ ADS & RELATED ============
+// ============ ADS & RELATED (simplified) ============
 var modalAdList=[],modalAdIndex=0,modalAdTimer=null;
 function startModalAdRotation(){
     if(modalAdTimer)clearInterval(modalAdTimer);
@@ -981,67 +979,22 @@ function buildAdCardInner(ad) {
 }
 async function loadRelated(id,c){
     relatedAll=allContents.filter(function(x){return x._id!==id});
-    rightCount=5;bottomCount=5;
+    rightCount=5;bottomCount=0;
     if(allAds.length===0){await loadAds();}
     renderRelatedGrids();
-    requestAnimationFrame(function(){adjustRelatedRightCount()});
-}
-function adjustRelatedRightCount(){
-    if(window.innerWidth<=900)return;
-    var leftEl=document.getElementById('detailLeft');
-    var rightEl=document.getElementById('detailRight');
-    if(!leftEl||!rightEl)return;
-    var sampleCard = rightEl.querySelector('.movie-card');
-    if(!sampleCard) sampleCard = rightEl.querySelector('#adCardWrapper');
-    if(!sampleCard) sampleCard = rightEl.firstElementChild;
-    if(!sampleCard) return;
-    var leftH=leftEl.offsetHeight;
-    var cardH=sampleCard.offsetHeight;
-    if(!cardH) return;
-    var gapPx=0.7*16;
-    var cols=3;
-    var maxRows=Math.ceil(5/cols);
-    var rows=Math.max(1, Math.min(maxRows, Math.round((leftH+gapPx)/(cardH+gapPx))));
-    var newRightCount=rows*cols;
-    if(newRightCount!==rightCount){
-        var diff=rightCount-newRightCount;
-        rightCount=newRightCount;
-        bottomCount=Math.max(0,bottomCount+diff);
-        renderRelatedGrids();
-    }
 }
 function renderRelatedGrids(){
     var rightEl=document.getElementById('detailRight');
-    modalAdList=getMediaAdsForUser();
-    modalAdIndex=0;
-    var hasAd=modalAdList.length>0;
-    if(hasAd){
-        rightEl.style.gridTemplateColumns='repeat(3,1fr)';
-        var html='';
-        var col1Items=relatedAll.slice(0,1);
-        for(var j=0;j<1;j++){if(col1Items[j])html+=relatedCardHTML(col1Items[j],'grid-column:1;grid-row:'+(j+1));}
-        html+='<div class="ad-card" style="grid-column:2 / span 2;grid-row:1 / span 1" id="adCardWrapper"><div class="ad-card-inner" id="adCardMount">'+buildAdCardInner(modalAdList[0])+'</div></div>';
-        var restCards=relatedAll.slice(1,rightCount-1);
-        for(var k=0;k<restCards.length;k++){if(restCards[k]){var row=2+Math.floor(k/3);var col=1+(k%3);html+=relatedCardHTML(restCards[k],'grid-column:'+col+';grid-row:'+row);}}
-        rightEl.innerHTML=html;
-        var wrapper=document.getElementById('adCardWrapper');
-        if(wrapper){wrapper.onmouseenter=function(){if(modalAdTimer)clearInterval(modalAdTimer)};wrapper.onmouseleave=function(){startModalAdRotation()};}
-        startModalAdRotation();
-    }else{
-        if(modalAdTimer)clearInterval(modalAdTimer);
-        rightEl.style.gridTemplateColumns='repeat(3,1fr)';
-        rightEl.innerHTML=relatedAll.slice(0,rightCount).map(function(m){return relatedCardHTML(m)}).join('');
-    }
-    var bottomStart=rightCount;
-    var bottomItems=relatedAll.slice(bottomStart,bottomStart+bottomCount);
-    document.getElementById('detailBottomGrid').innerHTML=bottomItems.map(function(m){return relatedCardHTML(m)}).join('');
-    var totalShown=bottomStart+bottomCount;
+    rightEl.style.gridTemplateColumns='repeat(3,1fr)';
+    rightEl.innerHTML=relatedAll.slice(0,5).map(function(m){return relatedCardHTML(m)}).join('');
+    // Hide load more and bottom grid (not present in HTML anyway)
     var btn=document.getElementById('relatedLoadMore');
-    if(totalShown>=relatedAll.length){btn.style.display='none'}else{btn.style.display='block';btn.textContent='See More ▼';btn.disabled=false;btn.style.opacity='1'}
+    if(btn) btn.style.display='none';
 }
-function loadMoreRelated(){bottomCount+=5;renderRelatedGrids();document.getElementById('modalBodyContent').scrollTop+=400}
 window.addEventListener('resize',function(){if(document.getElementById('movieModal').classList.contains('active'))adjustRelatedRightCount()});
-    
+function adjustRelatedRightCount(){} // no-op
+
+// Plans functions unchanged ...
 async function showPlans(){
     // Update URL to reflect the subscription page
     history.pushState({modal:'plans'}, '', '/?plans');
