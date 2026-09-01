@@ -971,6 +971,71 @@ app.get('/sitemap.xml', async (req, res) => {
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain').send('User-agent: *\nAllow: /\nSitemap: https://www.niromovie.site/sitemap.xml');
 });
+
+// Serve SEO‑friendly pages for individual movies/series
+app.get('/movie/:id', async (req, res) => {
+    try {
+        const content = await Content.findById(req.params.id);
+        if (!content || content.type !== 'movie') return res.status(404).send('Not found');
+        const baseUrl = 'https://www.niromovie.site';
+        const html = `<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${content.title} | niroMovie</title>
+<meta name="description" content="${(content.description || '').replace(/<[^>]*>/g, '').substring(0, 155)}">
+<meta property="og:title" content="${content.title} | niroMovie">
+<meta property="og:description" content="${(content.description || '').replace(/<[^>]*>/g, '').substring(0, 155)}">
+<meta property="og:image" content="${content.thumbnailUrl || ''}">
+<meta property="og:url" content="${baseUrl}/movie/${content._id}">
+<meta property="og:type" content="video.movie">
+<link rel="canonical" href="${baseUrl}/movie/${content._id}">
+</head>
+<body style="background:#0d0d0d;color:#f0f0f0;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+<p>Redirecting to ${content.title}…</p>
+<script>
+window.location.href = '${baseUrl}/?movie=${content._id}';
+</script>
+</body>
+</html>`;
+        res.send(html);
+    } catch (err) {
+        res.status(500).send('Error loading content');
+    }
+});
+
+app.get('/series/:id', async (req, res) => {
+    try {
+        const content = await Content.findById(req.params.id);
+        if (!content || content.type !== 'series') return res.status(404).send('Not found');
+        const baseUrl = 'https://www.niromovie.site';
+        const html = `<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${content.title} | niroMovie</title>
+<meta name="description" content="${(content.description || '').replace(/<[^>]*>/g, '').substring(0, 155)}">
+<meta property="og:title" content="${content.title} | niroMovie">
+<meta property="og:description" content="${(content.description || '').replace(/<[^>]*>/g, '').substring(0, 155)}">
+<meta property="og:image" content="${content.thumbnailUrl || ''}">
+<meta property="og:url" content="${baseUrl}/series/${content._id}">
+<meta property="og:type" content="video.tv_show">
+<link rel="canonical" href="${baseUrl}/series/${content._id}">
+</head>
+<body style="background:#0d0d0d;color:#f0f0f0;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+<p>Redirecting to ${content.title}…</p>
+<script>
+window.location.href = '${baseUrl}/?movie=${content._id}';
+</script>
+</body>
+</html>`;
+        res.send(html);
+    } catch (err) {
+        res.status(500).send('Error loading content');
+    }
+});
 // ========== START ==========
 if (require.main === module) {
     createAdmins().then(() => {
