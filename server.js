@@ -948,7 +948,29 @@ app.get('/admin-login', (req, res) => { res.sendFile(path.join(publicPath, 'admi
 app.get('/admin.html', (req, res) => { res.redirect('/admin-login'); });
 app.get('/news', (req, res) => { res.sendFile(path.join(publicPath, 'news.html')); });
 app.get('/index.html', (req, res) => { res.redirect('/'); });
+// Sitemap route – dynamic from DB
+app.get('/sitemap.xml', async (req, res) => {
+    try {
+        const contents = await Content.find({}, '_id type uploadedAt').lean();
+        const baseUrl = 'https://www.niromovie.site';
+        let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+        xml += `<url><loc>${baseUrl}/</loc><lastmod>${new Date().toISOString()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>\n`;
+        contents.forEach(c => {
+            const url = c.type === 'movie' ? `${baseUrl}/movie/${c._id}` : `${baseUrl}/series/${c._id}`;
+            const lastmod = c.uploadedAt ? new Date(c.uploadedAt).toISOString() : new Date().toISOString();
+            xml += `<url><loc>${url}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
+        });
+        xml += '</urlset>';
+        res.type('application/xml').send(xml);
+    } catch (e) {
+        res.status(500).send('Error generating sitemap');
+    }
+});
 
+// Robots.txt route
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain').send('User-agent: *\nAllow: /\nSitemap: https://www.niromovie.site/sitemap.xml');
+});
 // ========== START ==========
 if (require.main === module) {
     createAdmins().then(() => {
