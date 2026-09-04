@@ -575,6 +575,9 @@
         function closeRulesModal(agreed){
             closeModal('rulesModal');
             if(agreed){
+                // the movie modal is still open on top (z-index 3000) and was hiding
+                // the subscription/login page behind it — close it first
+                closeMovieModal();
                 showSubscriptionView();
                 if(requiredPlan && plansData) selectPlan(requiredPlan);
             }
