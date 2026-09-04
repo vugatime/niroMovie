@@ -30,8 +30,17 @@
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}body.body-no-scroll{overflow:hidden}body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:40px 40px;animation:bgDrift 30s linear infinite}@keyframes bgDrift{0%{background-position:0 0}100%{background-position:40px 40px}}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--text3);border-radius:10px}html{scroll-behavior:smooth}
 .navbar{position:sticky;top:0;width:100%;z-index:1000;background:rgba(13,13,13,0.94);backdrop-filter:blur(20px);padding:0.6rem 1.5rem;border-bottom:1px solid var(--border)}.nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}.logo{display:flex;align-items:center;gap:0.4rem;cursor:pointer}.logo-icon{font-size:1.8rem;color:var(--accent)}.logo-text{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.5px}.logo-text span{color:var(--accent)}.hamburger{cursor:pointer;padding:0.4rem;border-radius:var(--radius);display:flex;align-items:center;color:var(--text2)}.hamburger:hover{background:var(--bg3)}.nav-links{display:flex;gap:0.2rem;align-items:center;flex-wrap:wrap}.nav-link{color:var(--text2);text-decoration:none;font-weight:500;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:0.25rem;padding:0.4rem 0.8rem;border-radius:30px}.nav-link:hover{color:var(--accent);background:rgba(245,197,24,0.06)}.nav-link.active{color:var(--accent);background:rgba(245,197,24,0.08);font-weight:600}.search-box{display:flex;align-items:center;background:var(--bg3);border:1.5px solid transparent;border-radius:30px;padding:0.4rem 1rem;gap:0.4rem;width:260px}.search-box:focus-within{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px rgba(245,197,24,0.06)}.search-box input{background:transparent;border:none;color:var(--text);padding:0.35rem;outline:none;width:100%;font-family:inherit;font-size:0.82rem}.search-box input::placeholder{color:var(--text3)}.profile-icon{width:35px;height:35px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:0.75rem;color:#000}.profile-icon:hover{transform:scale(1.06);box-shadow:0 4px 15px rgba(245,197,24,0.25)}
 .side-menu{position:fixed;top:0;left:-310px;width:290px;height:100%;background:var(--bg2);z-index:2000;transition:var(--trans);padding:2rem 1.5rem;box-shadow:var(--shadowLg);overflow-y:auto}.side-menu.open{left:0}.side-menu-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1999;display:none}.side-menu-overlay.show{display:block}.side-menu-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}.side-menu-header h3{color:var(--accent);font-weight:800;font-size:1.2rem}.side-menu-item{padding:0.8rem 1rem;margin:0.25rem 0;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:0.7rem;font-weight:500;font-size:0.88rem;color:var(--text2)}.side-menu-item:hover{background:var(--bg3);color:var(--accent)}
-.welcome-bar{background:linear-gradient(135deg,#1a1a0a,#0d1a0d);color:var(--accent);text-align:center;padding:0.5rem 1rem;font-weight:500;font-size:0.82rem}@media(max-width:768px){.welcome-bar{padding:0.5rem 0.8rem}}
-.hero-section{padding:1rem 1.5rem;max-width:1400px;margin:0 auto}.hero-row{display:flex;gap:1.2rem;align-items:stretch}.hero-slider{flex:0 0 60%;max-width:60%;min-width:0;position:relative;overflow:hidden;border-radius:var(--radiusLg);aspect-ratio:21/9;background:var(--bg3);cursor:pointer}.hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;display:flex;align-items:flex-end;padding:1.5rem;background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#000}.hero-slide.active{opacity:1;z-index:1}.hero-slide-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.05) 55%)}.hero-slide-info{position:relative;z-index:2;max-width:55%}.hero-slide-info h2{color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:0.2rem;text-shadow:0 2px 10px rgba(0,0,0,0.6)}.hero-slide-info p{color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.hero-dots{display:flex;gap:0.4rem;justify-content:center;margin-top:0.6rem}.hero-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer}.hero-dot.active{background:var(--accent);width:20px;border-radius:4px}.hero-cta{display:flex;flex-direction:column;gap:0.6rem;min-width:175px;justify-content:center}
+.welcome-bar{background:linear-gradient(135deg,#1a1a0a,#0d1a0d);color:var(--accent);text-align:center;padding:0.5rem 1rem;font-weight:500;font-size:0.82rem}@media(max-width:768px){.welcome-bar{padding:0.5rem 0.8rem}.hero-row{grid-template-columns:1fr}.hero-vip-mini{max-height:200px}}
+.hero-section{padding:1rem 1.5rem;max-width:1400px;margin:0 auto}.hero-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,280px) auto;gap:1.2rem;align-items:stretch}.hero-slider{flex:0 0 60%;max-width:60%;min-width:0;position:relative;overflow:hidden;border-radius:var(--radiusLg);aspect-ratio:21/9;background:var(--bg3);cursor:pointer}.hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;display:flex;align-items:flex-end;padding:1.5rem;background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#000}.hero-slide.active{opacity:1;z-index:1}.hero-slide-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.05) 55%)}.hero-slide-info{position:relative;z-index:2;max-width:55%}.hero-slide-info h2{color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:0.2rem;text-shadow:0 2px 10px rgba(0,0,0,0.6)}.hero-slide-info p{color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.hero-dots{display:flex;gap:0.4rem;justify-content:center;margin-top:0.6rem}.hero-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer}.hero-dot.active{background:var(--accent);width:20px;border-radius:4px}.hero-cta{display:flex;flex-direction:column;gap:0.6rem;min-width:175px;justify-content:center}
+.hero-vip-mini{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radiusLg);padding:0.8rem;display:flex;flex-direction:column;gap:0.6rem;overflow:hidden}
+.vip-mini-head{font-size:0.8rem;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:0.3rem;margin-bottom:0.3rem}
+.vip-mini-row{display:flex;flex-direction:column;gap:0.4rem;overflow-y:auto;max-height:260px;padding-right:0.2rem}
+.vip-mini-card{display:flex;align-items:center;gap:0.5rem;background:var(--bg3);border-radius:var(--radius);padding:0.3rem;cursor:pointer;transition:var(--trans)}
+.vip-mini-card:hover{background:var(--bgH);border-color:var(--accent)}
+.vip-mini-thumb{width:40px;height:55px;object-fit:cover;border-radius:4px;background:var(--bg)}
+.vip-mini-info{flex:1;min-width:0}
+.vip-mini-title{font-size:0.7rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vip-mini-meta{font-size:0.6rem;color:var(--text2);display:flex;gap:0.3rem}
 .cta-btn{display:flex;align-items:center;gap:0.4rem;padding:0.7rem 1.1rem;border-radius:var(--radiusLg);font-weight:600;font-size:0.84rem;cursor:pointer;border:none;font-family:inherit;justify-content:center}.cta-download{background:var(--accent);color:#000;box-shadow:0 4px 15px rgba(245,197,24,0.2)}.cta-download:hover{background:var(--accentD);transform:translateY(-2px)}.cta-stream{background:transparent;color:var(--accent);border:2px solid var(--accent)!important}.cta-stream:hover{background:rgba(245,197,24,0.06);transform:translateY(-2px)}.cta-outline{background:transparent;color:var(--text);border:2px solid var(--border)!important}.cta-outline:hover{border-color:var(--accent)!important;color:var(--accent)}.cta-sm{padding:0.35rem 0.7rem;font-size:0.7rem;border-radius:20px}
 .wb-slide{display:flex;align-items:center;justify-content:center;gap:0.7rem;flex-wrap:wrap;padding:0.15rem 0}
 .wb-title{font-size:1rem;font-weight:700;color:var(--accent);white-space:normal}
@@ -324,20 +333,16 @@
       <div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div>
       <div class="hero-slide" id="heroSlide2"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle2"></h2><p id="heroDesc2"></p></div></div>
     </div>
+        <div class="hero-vip-mini" id="heroVipMini">
+        <div class="vip-mini-head"><span class="material-symbols-outlined" style="font-size:1rem">workspace_premium</span> VIP Premium</div>
+        <div class="vip-mini-row" id="vipMiniRow"></div>
+    </div>
     <div class="hero-cta">
       <button class="cta-btn cta-download" onclick="installApp()"><span class="material-symbols-outlined">download</span> Download App</button>
       <a href="https://plan.niromovie.site" class="cta-btn cta-stream"><span class="material-symbols-outlined">workspace_premium</span> Join VIP</a>
     </div>
   </div>
   <div class="hero-dots" id="heroDots"><div class="hero-dot active" onclick="goToSlide(0)"></div><div class="hero-dot" onclick="goToSlide(1)"></div><div class="hero-dot" onclick="goToSlide(2)"></div></div>
-</div>
-<!-- VIP PREMIUM SHOWCASE -->
-<div class="section" id="vipSection" style="margin-top:0.8rem;">
-  <div class="section-head">
-    <h2><span class="material-symbols-outlined" style="color:var(--accent)">workspace_premium</span> VIP Premium</h2>
-    <a href="https://plan.niromovie.site" style="color:var(--accent);font-size:0.8rem;font-weight:600;text-decoration:none;">View all VIP →</a>
-  </div>
-  <div class="movies-row" id="vipRow"></div>
 </div>
 <div class="ad-banner" id="adBanner" style="display:none"><div class="ad-banner-inner" id="adBannerInner"></div></div>
 <div class="section"><div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">new_releases</span> Latest Added</h2></div><div class="movies-row" id="rowLatest"></div></div>
@@ -554,29 +559,25 @@ async function loadAllContent(){
     }catch(e){ console.error(e); }
 }
 function loadVipMovies() {
-    var vipRow = document.getElementById('vipRow');
-    if (!vipRow) return;
-    // Sort premium by upload date descending
+    var vipMiniRow = document.getElementById('vipMiniRow');
+    if (!vipMiniRow) return;
     var latestPremium = premiumContents
         .sort(function(a,b){ return new Date(b.uploadedAt) - new Date(a.uploadedAt); })
-        .slice(0, 5);  // show 5
+        .slice(0, 5);
     if (latestPremium.length === 0) {
-        vipRow.innerHTML = '<p style="color:var(--text3);font-size:0.85rem;">No VIP content yet.</p>';
+        vipMiniRow.innerHTML = '<p style="color:var(--text3);font-size:0.7rem;text-align:center;">No VIP content yet.</p>';
         return;
     }
-    // Reuse movieCardRowHTML but modify link to plan subdomain
-    vipRow.innerHTML = latestPremium.map(function(m) {
+    vipMiniRow.innerHTML = latestPremium.map(function(m) {
         var bc = {'basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};
-        var ep = getEpCount(m);
-        var epBadge = ep>1 ? '<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>' : '';
         var planUrl = 'https://plan.niromovie.site/?movie=' + encodeURIComponent(m._id) + '&plan=' + encodeURIComponent(m.accessLevel);
-        return '<div class="movie-card-row" onclick="window.location.href=\'' + planUrl + '\'">' +
-            '<img class="movie-thumb" src="' + (m.thumbnailUrl||'') + '" onerror="this.style.background=\'var(--bg3)\'">' +
-            '<div class="quality-badge">' + (m.quality||'HD') + '</div>' +
-            epBadge +
-            '<div class="movie-badge ' + (bc[m.accessLevel]||'badge-basic') + '">' + (m.accessLevel||'basic').toUpperCase() + '</div>' +
-            '<div class="movie-info"><div class="movie-title">' + escHtml(m.title) + '</div>' +
-            '<div class="movie-meta">' + (m.views>0?'<span>👁 '+((m.views||0)).toLocaleString()+'</span>':'') + (m.downloads>0?'<span>⬇ '+((m.downloads||0)).toLocaleString()+'</span>':'') + '</div></div></div>';
+        return '<div class="vip-mini-card" onclick="window.location.href=\'' + planUrl + '\'">' +
+            '<img class="vip-mini-thumb" src="' + (m.thumbnailUrl||'') + '" onerror="this.style.background=\'var(--bg)\'">' +
+            '<div class="vip-mini-info">' +
+                '<div class="vip-mini-title">' + escHtml(m.title) + '</div>' +
+                '<div class="vip-mini-meta"><span>' + (m.quality||'HD') + '</span><span>' + (m.accessLevel||'').toUpperCase() + '</span></div>' +
+            '</div>' +
+        '</div>';
     }).join('');
 }
 function movieCardRowHTML(m){var bc={'free':'badge-free','basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};var ep=getEpCount(m);var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';return'<div class="movie-card-row" onclick="openContent(\''+m._id+'\')"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta">'+(m.views>0?'<span>👁 '+((m.views||0)).toLocaleString()+'</span>':'')+(m.downloads>0?'<span>⬇ '+((m.downloads||0)).toLocaleString()+'</span>':'')+'</div></div></div>';}
