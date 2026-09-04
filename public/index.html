@@ -515,7 +515,24 @@ function checkPartAccess(partAccessLevel, callback, partLabel) {
 function adMatchesPlan(ad){var plan=getUserPlan();if(!ad.targetPlans||ad.targetPlans.length===0)return true;var targets=Array.isArray(ad.targetPlans)?ad.targetPlans:ad.targetPlans.split(',').map(function(s){return s.trim().toLowerCase()});return targets.indexOf(plan.toLowerCase())!==-1}
 async function incrementView(id){try{var r=await fetch(API+'/contents/'+id+'/view',{method:'POST'});var d=await r.json();if(d&&d.views!==undefined){var c=allContents.find(function(x){return x._id===id});if(c)c.views=d.views}else{var c=allContents.find(function(x){return x._id===id});if(c)c.views=(c.views||0)+1}}catch(e){var c=allContents.find(function(x){return x._id===id});if(c)c.views=(c.views||0)+1}}
 async function incrementDownload(id){try{var r=await fetch(API+'/contents/'+id+'/download',{method:'POST'});var d=await r.json();if(d&&d.downloads!==undefined){var c=allContents.find(function(x){return x._id===id});if(c)c.downloads=d.downloads}else{var c=allContents.find(function(x){return x._id===id});if(c)c.downloads=(c.downloads||0)+1}}catch(e){var c=allContents.find(function(x){return x._id===id});if(c)c.downloads=(c.downloads||0)+1}}
-async function loadAllContent(){try{var res=await fetch(API+'/contents');var data=await res.json();if(Array.isArray(data)){var seen={};allContents=data.filter(function(c){if(seen[c._id])return false;seen[c._id]=true;return true});renderAll();loadAds()}}catch(e){console.error(e)}}
+async function loadAllContent(){
+    try{
+        var res = await fetch(API+'/contents');
+        var data = await res.json();
+        if(Array.isArray(data)){
+            // Filter: only free content on main site
+            var seen = {};
+            allContents = data.filter(function(c){
+                if (c.accessLevel !== 'free') return false; // skip non-free
+                if (seen[c._id]) return false;
+                seen[c._id] = true;
+                return true;
+            });
+            renderAll();
+            loadAds();
+        }
+    }catch(e){ console.error(e); }
+}
 function movieCardRowHTML(m){var bc={'free':'badge-free','basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};var ep=getEpCount(m);var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';return'<div class="movie-card-row" onclick="openContent(\''+m._id+'\')"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta">'+(m.views>0?'<span>👁 '+((m.views||0)).toLocaleString()+'</span>':'')+(m.downloads>0?'<span>⬇ '+((m.downloads||0)).toLocaleString()+'</span>':'')+'</div></div></div>';}
 function movieCardHTML(m,thumbH,clickHandler,extraAttr){var h=thumbH||'225px';var bc={'free':'badge-free','basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};var ep=getEpCount(m);var epBadge=ep>1?'<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">'+ep+'</div>':'';var onclick=clickHandler||("openContent('"+m._id+"')");return'<div class="movie-card"'+(extraAttr||'')+' onclick="'+onclick+'"><img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'" style="height:'+h+'"><div class="quality-badge">'+(m.quality||'HD')+'</div>'+epBadge+'<div class="movie-badge '+(bc[m.accessLevel]||'badge-free')+'">'+(m.accessLevel==='free'?'FREE':(m.accessLevel||'free').toUpperCase())+'</div><div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div><div class="movie-meta">'+(m.views>0?'<span>👁 '+((m.views||0)).toLocaleString()+'</span>':'')+(m.downloads>0?'<span>⬇ '+((m.downloads||0)).toLocaleString()+'</span>':'')+'</div></div></div>';}
 function relatedCardHTML(m,gridStyle){var attr=gridStyle?(' style="'+gridStyle+'"'):'';return movieCardHTML(m,'180px',"closeMovieModal();setTimeout(function(){openContent('"+m._id+"')},350)",attr);}
