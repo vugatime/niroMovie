@@ -929,21 +929,30 @@
         function closeStaticModal(id){ document.getElementById(id).classList.remove('active'); }
         function openStaticModal(id){ document.getElementById(id).classList.add('active'); }
 
-        (function(){
+                (async function(){
             const urlParams = new URLSearchParams(window.location.search);
             const urlToken = urlParams.get('token');
-            if(urlToken){ localStorage.setItem('token', urlToken); token = urlToken; history.replaceState({}, '', window.location.pathname + (urlParams.get('movie') ? ('?movie='+urlParams.get('movie')) : '')); }
-            if(token){
-                fetch(API+'/me', {headers:{'Authorization':'Bearer '+token}})
-                .then(r=>r.json())
-                .then(user=>{ if(user && user.email){ currentUser = user; updateProfileIcon(); } })
-                .catch(()=>{});
+            if(urlToken){ 
+                localStorage.setItem('token', urlToken); 
+                token = urlToken; 
+                history.replaceState({}, '', window.location.pathname + (urlParams.get('movie') ? ('?movie='+urlParams.get('movie')) : '')); 
             }
-            loadAllContent();
+            // Wait for user data to load if token exists
+            if(token){
+                try{
+                    const res = await fetch(API+'/me', {headers:{'Authorization':'Bearer '+token}});
+                    const user = await res.json();
+                    if(user && user.email){ 
+                        currentUser = user; 
+                        updateProfileIcon(); 
+                    }
+                }catch(e){ /* ignore */ }
+            }
+            await loadAllContent();
             const movieId = urlParams.get('movie');
             const plan = urlParams.get('plan');
             if(movieId){
-                setTimeout(()=> openContent(movieId), 800);
+                setTimeout(()=> openContent(movieId), 300); // reduced delay since user already loaded
                 if(plan) requiredPlan = plan;
             }
         })();
