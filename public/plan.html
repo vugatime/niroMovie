@@ -22,13 +22,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1" />
     <style>
-        :root{--bg:#0d0d0d;--bg2:#161616;--bg3:#1e1e1e;--text:#f0f0f0;--text2:#a0a0a0;--text3:#666;--accent:#F5C518;--accentD:#d4a810;--orange:#FF6B35;--green:#4CAF50;--border:#2a2a2a;--radius:12px;--radiusLg:18px;--trans:all 0.25s cubic-bezier(0.4,0,0.2,1)}
+        /* ========== REUSE EXACT VARIABLES FROM INDEX ========== */
+        :root{--bg:#0d0d0d;--bg2:#161616;--bg3:#1e1e1e;--text:#f0f0f0;--text2:#a0a0a0;--text3:#666;--accent:#F5C518;--accentD:#d4a810;--orange:#FF6B35;--green:#4CAF50;--border:#2a2a2a;--shadow:0 8px 30px rgba(0,0,0,0.5);--shadowLg:0 16px 50px rgba(0,0,0,0.7);--radius:12px;--radiusLg:18px;--trans:all 0.25s cubic-bezier(0.4,0,0.2,1)}
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
         body.body-no-scroll{overflow:hidden}
         body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:40px 40px;animation:bgDrift 30s linear infinite}
         @keyframes bgDrift{0%{background-position:0 0}100%{background-position:40px 40px}}
         ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--text3);border-radius:10px}
+        /* ========== NAVBAR ========== */
         .navbar{position:sticky;top:0;width:100%;z-index:1000;background:rgba(13,13,13,0.94);backdrop-filter:blur(20px);padding:0.6rem 1.5rem;border-bottom:1px solid var(--border)}
         .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
         .logo{display:flex;align-items:center;gap:0.4rem;cursor:pointer}
@@ -47,6 +49,7 @@
         .search-box input::placeholder{color:var(--text3)}
         .profile-icon{width:35px;height:35px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:0.75rem;color:#000}
         .profile-icon:hover{transform:scale(1.06);box-shadow:0 4px 15px rgba(245,197,24,0.25)}
+        /* ========== SIDE MENU ========== */
         .side-menu{position:fixed;top:0;left:-310px;width:290px;height:100%;background:var(--bg2);z-index:2000;transition:var(--trans);padding:2rem 1.5rem;box-shadow:var(--shadowLg);overflow-y:auto}
         .side-menu.open{left:0}
         .side-menu-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1999;display:none}
@@ -55,6 +58,7 @@
         .side-menu-header h3{color:var(--accent);font-weight:800;font-size:1.2rem}
         .side-menu-item{padding:0.8rem 1rem;margin:0.25rem 0;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:0.7rem;font-weight:500;font-size:0.88rem;color:var(--text2)}
         .side-menu-item:hover{background:var(--bg3);color:var(--accent)}
+        /* ========== MOVIE GRID ========== */
         .section{margin:0.4rem 0;padding:0 1.5rem;max-width:1400px;margin-left:auto;margin-right:auto;position:relative;z-index:1}
         .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7rem}
         .section-head h2{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:0.4rem}
@@ -87,7 +91,7 @@
         .footer-social a{width:34px;height:34px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);text-decoration:none;font-size:0.95rem;transition:var(--trans)}
         .footer-social a:hover{background:var(--accent);color:#000;transform:translateY(-3px)}
         .footer-bottom{text-align:center;padding-top:1.2rem;margin-top:1.5rem;border-top:1px solid var(--border);color:var(--text3);font-size:0.73rem;max-width:1400px;margin-left:auto;margin-right:auto}
-        /* Modal general */
+        /* ========== MODALS ========== */
         .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:3000;justify-content:center;align-items:center;backdrop-filter:blur(6px)}
         .modal-overlay.active{display:flex}
         .modal-full{max-width:100%;width:100%;height:100vh;max-height:100vh;border-radius:0;display:flex;flex-direction:column;background:var(--bg2)}
@@ -99,10 +103,10 @@
         .close-btn{font-size:22px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--text2);transition:var(--trans)}
         .close-btn:hover{background:var(--bg3);color:var(--accent)}
         .modal-box-sm{max-width:440px;width:100%;background:var(--bg2);border-radius:var(--radiusLg);overflow-y:auto;max-height:92vh;border:1px solid var(--border);box-shadow:var(--shadowLg);margin:auto}
-        /* Movie detail layout */
+        /* ========== DETAIL LAYOUT ========== */
         .detail-container{display:flex;flex-direction:column;gap:1.2rem}
         .detail-main{display:flex;flex-wrap:wrap;gap:1.2rem}
-        .detail-left{flex:1 1 60%;min-width:0}
+        .detail-left{flex:1 1 65%;min-width:0}
         .detail-right{flex:0 0 30%;min-width:250px}
         .trailer-video{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem}
         .trailer-video video{width:100%;height:100%;object-fit:cover}
@@ -113,6 +117,11 @@
         .btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
         .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
         .btn-sm{padding:0.4rem 0.9rem;font-size:0.75rem}
+        .desc-text{font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:0.6rem}
+        .desc-truncated{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .desc-expanded{display:block}
+        .view-more-link{color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.4rem}
+        .view-more-link:hover{text-decoration:underline}
         .parts-list{margin-top:1rem}
         .part-row{display:flex;justify-content:space-between;align-items:center;padding:0.45rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;gap:0.5rem;cursor:pointer;transition:var(--trans)}
         .part-row:hover{color:var(--accent)}
@@ -135,7 +144,7 @@
         .verified-badge{display:inline-flex;align-items:center;gap:0.2rem;color:var(--accent);font-weight:600;font-size:0.65rem;margin-left:0.3rem;background:rgba(245,197,24,0.1);padding:0.15rem 0.4rem;border-radius:12px}
         .show-more-parts-btn{display:block;margin:0.5rem 0;padding:0.4rem 1rem;border-radius:20px;font-weight:600;font-size:0.75rem;cursor:pointer;background:transparent;border:1.5px solid var(--accent);color:var(--accent);font-family:inherit;transition:var(--trans)}
         .show-more-parts-btn:hover{background:rgba(245,197,24,0.08)}
-        /* Subscription View */
+        /* ========== SUBSCRIPTION ========== */
         #subscriptionView{display:none;padding:2rem 1.5rem;max-width:800px;margin:0 auto}
         .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
         .plan-card{background:var(--bg);border:2px solid var(--border);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;cursor:pointer;transition:var(--trans)}
@@ -159,7 +168,6 @@
         .momo-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;margin:1rem 0}
         .momo-code{font-size:1.4rem;font-weight:700;color:var(--accent);margin:0.3rem 0;font-family:monospace}
         .payment-note{font-size:0.75rem;color:var(--text2);margin-top:0.5rem}
-        /* Rules modal */
         .rules-content{max-height:60vh;overflow-y:auto;margin:1rem 0}
         .rules-content p{margin-bottom:0.5rem;font-size:0.9rem;line-height:1.5}
         .rules-content strong{color:var(--accent)}
@@ -234,29 +242,23 @@
                 <div class="detail-container">
                     <div class="detail-main">
                         <div class="detail-left">
-                            <!-- Trailer (if exists) -->
                             <div class="trailer-video" id="trailerContainer" style="display:none;">
                                 <video id="trailerVideo" controls playsinline></video>
                             </div>
-                            <!-- Stream player (if streamable) -->
                             <div id="playerWrapper" style="display:none;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem;position:relative;">
                                 <video id="videoPlayer" controls style="display:none;width:100%;height:100%" playsinline></video>
                                 <div class="video-watermark">niromovie.site</div>
                             </div>
-                            <!-- Action buttons -->
                             <div class="action-buttons">
                                 <button class="btn btn-primary" id="watchBtn" onclick="watchCurrentContent()" style="display:none;"><span class="material-symbols-outlined">play_circle</span> Watch</button>
                                 <button class="btn btn-outline" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Download</button>
                             </div>
-                            <!-- Description -->
                             <div class="desc-text desc-truncated" id="modalDesc"></div><span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:none">... View more</span>
                             <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin:0.5rem 0;font-size:0.75rem;color:var(--text2)" id="modalMeta"></div>
                             <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.5rem" id="modalTags"></div>
-                            <!-- Parts list -->
                             <h4 style="margin-bottom:0.3rem;font-size:0.9rem">Parts / Episodes</h4>
                             <div id="partsList"></div>
                             <div id="showMorePartsContainer"></div>
-                            <!-- Comments -->
                             <h4 style="margin:1rem 0 0.3rem;font-size:0.9rem">Comments</h4>
                             <div id="commentsList"></div>
                             <div style="display:flex;gap:0.4rem;margin-top:0.4rem;flex-wrap:wrap">
@@ -310,7 +312,6 @@
         const API = 'https://niromovie-api.onrender.com/api';
         let token = localStorage.getItem('token') || null;
         let currentUser = null;
-        let allContents = [];
         let premiumContents = [];
         let currentContentId = null;
         let currentContentData = null;
@@ -318,7 +319,7 @@
         let selectedPartIndex = 0;
         let revealedPartsCount = 1;
         let visibleRows = 2;
-        let moviesPerRow = 6;
+        const moviesPerRow = 6;
         let selectedPlan = null;
         let requiredPlan = null;
         let pendingMovieId = null;
@@ -328,7 +329,7 @@
         let relatedStart = 0;
         const relatedPageSize = 8;
 
-        // Utility
+        // Utility functions
         function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
         function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
         function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
@@ -362,7 +363,6 @@
                 const data = await res.json();
                 if(Array.isArray(data)){
                     premiumContents = data.filter(c => c.accessLevel !== 'free');
-                    allContents = premiumContents;
                     renderAll();
                 }
             }catch(e){ console.error(e); }
@@ -437,16 +437,13 @@
             document.getElementById('modalMeta').innerHTML = `<span>${c.year||'N/A'}</span> · <span>${c.quality||'HD'}</span> · <span>${(c.accessLevel||'basic').toUpperCase()}</span> · <span>${c.country||''}</span>`;
             document.getElementById('modalTags').innerHTML = [c.category,c.country,c.translator,c.director].filter(Boolean).map(t=>`<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">${escHtml(t)}</span>`).join('');
             // Trailer
-            const trailerBtn = document.getElementById('trailerBtn');
             const trailerContainer = document.getElementById('trailerContainer');
             const trailerVideo = document.getElementById('trailerVideo');
             if(c.trailerUrl){
-                trailerBtn.style.display='inline-flex';
                 trailerContainer.style.display='block';
                 trailerVideo.src = c.trailerUrl;
                 trailerVideo.load();
             } else {
-                trailerBtn.style.display='none';
                 trailerContainer.style.display='none';
                 trailerVideo.src='';
             }
@@ -553,7 +550,7 @@
                     <li>Do not share your account.</li>
                     <li>Maximum devices: 6.</li>
                     <li>Violation leads to suspension.</li>
-                    <li>Payment via MTN MoMo screenshot; admin verifies within 24h.</li>
+                    <li>Payment via MTN MoMo or bank; admin verifies within 24h.</li>
                 </ul>
                 <p>Click "Agree and Continue" to proceed.</p>
             `;
@@ -798,9 +795,22 @@
                     <div class="message" id="msg"></div>
                     <p style="margin:1rem 0"><strong>Selected Plan:</strong> ${plansData[selectedPlan].name} - ${plansData[selectedPlan].monthly} RWF / month</p>
                     <div class="momo-box">
-                        <div>Pay to:</div>
-                        <div class="momo-code">+250 795 064 502</div>
-                        <div>Name: niroMovie</div>
+                        <div style="font-weight:700;margin-bottom:0.5rem;">Payment Options</div>
+                        <div style="margin:0.5rem 0;">
+                            <strong>MTN Mobile Money</strong><br>
+                            Number: <span class="momo-code">0795064502</span><br>
+                            Name: ROBERT NIYONKURU
+                        </div>
+                        <div style="margin:0.5rem 0;">
+                            <strong>Momo Pay Code</strong><br>
+                            Code: <span class="momo-code">1294634</span><br>
+                            Name: ROBERT NIYONKURU
+                        </div>
+                        <div style="margin:0.5rem 0;">
+                            <strong>I&M Bank</strong><br>
+                            Account: <span class="momo-code">21168124001</span><br>
+                            Name: ROBERT NIYONKURU
+                        </div>
                     </div>
                     <div class="form-group"><label>Your Phone Number (MoMo)</label><input type="text" id="phone" placeholder="07XXXXXXXX"></div>
                     <div class="form-group"><label>Sender Name</label><input type="text" id="senderName" placeholder="Your name"></div>
