@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>niroMovie VIP Plans</title>
+    <meta name="description" content="Choose your niroMovie VIP plan and pay with MTN Mobile Money.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg:#0d0d0d;--bg2:#161616;--bg3:#1e1e1e;--text:#f0f0f0;--text2:#a0a0a0;--text3:#666;--accent:#F5C518;--accentD:#d4a810;--orange:#FF6B35;--green:#4CAF50;--border:#2a2a2a;--radius:12px;--radiusLg:18px;--shadow:0 8px 30px rgba(0,0,0,0.5);--trans:all 0.25s cubic-bezier(0.4,0,0.2,1)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
+        .container{max-width:1000px;width:100%}
+        .logo{text-align:center;margin-bottom:1.5rem}
+        .logo-text{font-size:2rem;font-weight:800;color:var(--text);letter-spacing:-1px}
+        .logo-text span{color:var(--accent)}
+        .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radiusLg);padding:2rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
+        h1{font-size:1.8rem;font-weight:800;margin-bottom:0.5rem}
+        p.subtitle{color:var(--text2);margin-bottom:1.5rem}
+        .plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+        .plan-card{background:var(--bg);border:2px solid var(--border);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;cursor:pointer;transition:var(--trans)}
+        .plan-card:hover,.plan-card.selected{border-color:var(--accent);box-shadow:0 0 15px rgba(245,197,24,0.2)}
+        .plan-card.featured{border-color:var(--orange)}
+        .plan-name{font-weight:700;font-size:1rem}
+        .plan-price{font-size:1.5rem;font-weight:800;color:var(--accent);margin:0.4rem 0}
+        .plan-price span{font-size:0.7rem;color:var(--text2)}
+        .plan-features{font-size:0.75rem;color:var(--text2);margin-top:0.5rem;text-align:left}
+        .selected-badge{display:none;background:var(--accent);color:#000;border-radius:20px;padding:0.2rem 0.6rem;font-size:0.7rem;font-weight:700;margin-top:0.5rem}
+        .plan-card.selected .selected-badge{display:inline-block}
+        .form-group{margin-bottom:1rem}
+        .form-group label{display:block;margin-bottom:0.4rem;font-weight:600;font-size:0.85rem;color:var(--text2)}
+        .form-group input,.form-group select{width:100%;padding:0.7rem 1rem;background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);font-family:inherit;font-size:0.9rem;transition:var(--trans)}
+        .form-group input:focus,.form-group select:focus{border-color:var(--accent);outline:none}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.8rem 1.5rem;border:none;border-radius:30px;font-weight:700;cursor:pointer;transition:var(--trans);font-family:inherit;font-size:0.9rem}
+        .btn-primary{background:var(--accent);color:#000;width:100%;box-shadow:0 4px 15px rgba(245,197,24,0.25)}
+        .btn-primary:hover{background:var(--accentD);transform:translateY(-2px)}
+        .btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
+        .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+        .auth-toggle{text-align:center;margin-top:1rem;font-size:0.85rem}
+        .auth-toggle a{color:var(--accent);cursor:pointer;font-weight:600}
+        .message{padding:0.8rem 1rem;border-radius:var(--radius);margin-bottom:1rem;display:none;font-size:0.85rem}
+        .message.success{background:rgba(76,175,80,0.1);border:1px solid var(--green);color:var(--green)}
+        .message.error{background:rgba(229,57,53,0.1);border:1px solid #E53935;color:#E53935}
+        .momo-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;margin:1rem 0}
+        .momo-code{font-size:1.4rem;font-weight:700;color:var(--accent);margin:0.3rem 0;font-family:monospace}
+        .payment-note{font-size:0.75rem;color:var(--text2);margin-top:0.5rem}
+        .hidden{display:none}
+        @media(max-width:600px){.card{padding:1.2rem}.plans-grid{grid-template-columns:1fr 1fr}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo"><div class="logo-text"><span>niro</span>Movie</div></div>
+
+        <!-- Step 1: Plan Selection & Auth (combined) -->
+        <div class="card" id="step1">
+            <h1>Join VIP</h1>
+            <p class="subtitle">Choose your plan and sign in to continue.</p>
+            <div id="plansContainer" class="plans-grid"></div>
+            <div id="authContainer">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Enter password">
+                </div>
+                <div class="form-group" id="nameGroup" style="display:none">
+                    <label>Full Name</label>
+                    <input type="text" id="fullName" placeholder="Your full name">
+                </div>
+                <button class="btn btn-primary" id="authBtn" onclick="handleAuth()">Sign In & Continue</button>
+                <div class="auth-toggle">
+                    <a id="toggleAuth" onclick="toggleAuthMode()">No account? Create one</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Payment -->
+        <div class="card hidden" id="step2">
+            <h1>Complete Payment</h1>
+            <p class="subtitle">Pay with MTN Mobile Money and upload screenshot.</p>
+            <div id="selectedPlanSummary" style="margin-bottom:1rem"></div>
+            <div class="momo-box">
+                <div>Pay to:</div>
+                <div class="momo-code">+250 795 064 502</div>
+                <div>Name: niroMovie</div>
+            </div>
+            <div class="form-group">
+                <label>Your Phone Number (MoMo)</label>
+                <input type="text" id="phone" placeholder="07XXXXXXXX">
+            </div>
+            <div class="form-group">
+                <label>Sender Name (as shown on MoMo)</label>
+                <input type="text" id="senderName" placeholder="Your name">
+            </div>
+            <div class="form-group">
+                <label>Payment Screenshot *</label>
+                <input type="file" id="screenshot" accept="image/*" required>
+            </div>
+            <button class="btn btn-primary" id="submitPaymentBtn" onclick="submitPayment()">Submit Payment</button>
+            <div class="payment-note">Admin will verify within 24 hours. You will be notified.</div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div class="card hidden" id="step3">
+            <h1>Payment Submitted!</h1>
+            <p class="subtitle">Thank you! Your subscription will be activated shortly.</p>
+            <button class="btn btn-primary" onclick="redirectToMain()">Back to niroMovie</button>
+        </div>
+
+        <div class="message" id="msg"></div>
+    </div>
+
+    <script>
+        const API = 'https://niromovie-api.onrender.com/api';
+        let plans = null;
+        let selectedPlan = null;
+        let selectedDuration = 'monthly'; // default duration, will be chosen by user? We'll let user pick duration.
+        let isRegisterMode = false;
+        let token = null;
+        let currentUser = null;
+        let movieId = new URLSearchParams(window.location.search).get('movie') || '';
+        let requiredPlan = new URLSearchParams(window.location.search).get('plan') || '';
+
+        // Fetch plans
+        async function loadPlans() {
+            try {
+                const res = await fetch(API + '/plans');
+                plans = await res.json();
+                renderPlans();
+                // If requiredPlan from URL, auto-select it
+                if (requiredPlan && plans[requiredPlan]) {
+                    selectedPlan = requiredPlan;
+                    highlightSelectedPlan();
+                }
+            } catch (err) { showMsg('Failed to load plans. Check connection.', true); }
+        }
+
+        function renderPlans() {
+            const container = document.getElementById('plansContainer');
+            container.innerHTML = '';
+            const planKeys = ['basic', 'standard', 'premium', 'ultimate'];
+            planKeys.forEach(key => {
+                const plan = plans[key];
+                const card = document.createElement('div');
+                card.className = 'plan-card' + (key === selectedPlan ? ' selected' : '');
+                if (key === 'premium') card.classList.add('featured');
+                card.innerHTML = `
+                    <div class="plan-name">${plan.name}</div>
+                    <div class="plan-price">${plan.monthly} RWF <span>/month</span></div>
+                    <div class="plan-features">${plan.features.join('<br>')}</div>
+                    <div class="selected-badge">Selected</div>
+                `;
+                card.onclick = () => { selectedPlan = key; highlightSelectedPlan(); };
+                container.appendChild(card);
+            });
+        }
+
+        function highlightSelectedPlan() {
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            const cards = document.querySelectorAll('.plan-card');
+            const idx = ['basic','standard','premium','ultimate'].indexOf(selectedPlan);
+            if (idx >= 0) cards[idx].classList.add('selected');
+            // Show duration selector if not present
+            // We'll just use monthly for simplicity, but you can extend
+        }
+
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            document.getElementById('nameGroup').style.display = isRegisterMode ? 'block' : 'none';
+            document.getElementById('authBtn').textContent = isRegisterMode ? 'Create Account & Continue' : 'Sign In & Continue';
+            document.getElementById('toggleAuth').textContent = isRegisterMode ? 'Already have account? Sign In' : 'No account? Create one';
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            if (!email || !password) { showMsg('Email and password required.', true); return; }
+            if (!selectedPlan) { showMsg('Please select a plan.', true); return; }
+            const btn = document.getElementById('authBtn');
+            btn.disabled = true; btn.textContent = 'Processing...';
+            try {
+                if (isRegisterMode) {
+                    const fullName = document.getElementById('fullName').value.trim();
+                    if (!fullName) { showMsg('Full name required.', true); btn.disabled = false; btn.textContent = 'Create Account & Continue'; return; }
+                    const res = await fetch(API + '/register', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password, fullName })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        token = data.token;
+                        currentUser = data.user;
+                        showStep2();
+                    } else {
+                        showMsg(data.error || 'Registration failed', true);
+                    }
+                } else {
+                    const res = await fetch(API + '/login', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        token = data.token;
+                        currentUser = data.user;
+                        // If already subscribed to required plan or higher, redirect immediately
+                        if (currentUser.subscription && currentUser.subscription.status === 'active') {
+                            const planLevels = { free:0, basic:1, standard:2, premium:3, ultimate:4 };
+                            if ((planLevels[currentUser.subscription.plan] || 0) >= (planLevels[selectedPlan] || 0)) {
+                                // Already has access, redirect back
+                                redirectToMain();
+                                return;
+                            }
+                        }
+                        showStep2();
+                    } else {
+                        showMsg(data.error || 'Login failed', true);
+                    }
+                }
+            } catch (err) { showMsg('Network error. Try again.', true); }
+            finally {
+                btn.disabled = false;
+                btn.textContent = isRegisterMode ? 'Create Account & Continue' : 'Sign In & Continue';
+            }
+        }
+
+        function showStep2() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            // Show summary of selected plan
+            const plan = plans[selectedPlan];
+            document.getElementById('selectedPlanSummary').innerHTML = `<strong>${plan.name}</strong> - ${plan.monthly} RWF / month`;
+        }
+
+        async function submitPayment() {
+            const phone = document.getElementById('phone').value.trim();
+            const senderName = document.getElementById('senderName').value.trim();
+            const screenshot = document.getElementById('screenshot').files[0];
+            if (!phone || !senderName) { showMsg('Phone and sender name required.', true); return; }
+            if (!screenshot) { showMsg('Payment screenshot required.', true); return; }
+            const fd = new FormData();
+            fd.append('plan', selectedPlan);
+            fd.append('duration', 'monthly'); // default monthly, but you can add a selector
+            fd.append('phone', phone);
+            fd.append('senderName', senderName);
+            fd.append('paymentMethod', 'momo');
+            fd.append('paymentScreenshot', screenshot);
+
+            const btn = document.getElementById('submitPaymentBtn');
+            btn.disabled = true; btn.textContent = 'Submitting...';
+            try {
+                const res = await fetch(API + '/subscribe', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: fd
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    document.getElementById('step2').classList.add('hidden');
+                    document.getElementById('step3').classList.remove('hidden');
+                } else {
+                    showMsg(data.error || 'Payment submission failed', true);
+                }
+            } catch (err) { showMsg('Network error.', true); }
+            finally {
+                btn.disabled = false; btn.textContent = 'Submit Payment';
+            }
+        }
+
+        function redirectToMain() {
+            let url = 'https://niromovie.site/?movie=' + encodeURIComponent(movieId);
+            if (token) url += '&token=' + encodeURIComponent(token);
+            window.location.href = url;
+        }
+
+        function showMsg(msg, isError) {
+            const el = document.getElementById('msg');
+            el.textContent = msg;
+            el.className = 'message ' + (isError ? 'error' : 'success');
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        // Init
+        loadPlans();
+    </script>
+</body>
+</html>
