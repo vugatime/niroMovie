@@ -104,28 +104,35 @@
         .detail-right{flex:0 0 30%;min-width:250px}
         .trailer-video{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem}
         .trailer-video video{width:100%;height:100%;object-fit:cover}
-        .player-wrapper{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem;position:relative;display:flex;align-items:center;justify-content:center}
+        .player-wrapper{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radiusLg);overflow:hidden;margin-bottom:0.8rem;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--border),var(--shadowLg)}
         .player-wrapper video{width:100%;height:100%;display:none}
         .player-message{color:var(--text2);text-align:center;padding:1rem;font-size:0.9rem}
-        .action-buttons{display:flex;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap}
+        .action-buttons{display:flex;gap:0.9rem;margin-bottom:1rem;flex-wrap:wrap}
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.7rem 1.3rem;border:none;border-radius:30px;font-weight:700;cursor:pointer;transition:var(--trans);font-family:inherit;font-size:0.9rem}
         .btn-primary{background:var(--accent);color:#000;box-shadow:0 4px 15px rgba(245,197,24,0.25)}
         .btn-primary:hover{background:var(--accentD);transform:translateY(-2px)}
         .btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
         .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
         .btn-sm{padding:0.4rem 0.9rem;font-size:0.75rem}
+        /* Big, prominent watch / download buttons */
+        .btn-hero{flex:1 1 220px;padding:1.05rem 1.6rem;font-size:1.05rem;border-radius:40px;letter-spacing:0.2px}
+        .btn-hero .material-symbols-outlined{font-size:1.4rem}
+        #watchBtn.btn-hero{animation:pulseGlow 2.2s ease-in-out infinite}
+        @keyframes pulseGlow{0%,100%{box-shadow:0 4px 15px rgba(245,197,24,0.25)}50%{box-shadow:0 4px 28px rgba(245,197,24,0.6)}}
         .desc-text{font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:0.6rem}
         .desc-truncated{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
         .desc-expanded{display:block}
         .view-more-link{color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.4rem}
         .view-more-link:hover{text-decoration:underline}
         .parts-list{margin-top:1rem}
-        .part-row{display:flex;justify-content:space-between;align-items:center;padding:0.45rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;gap:0.5rem;cursor:pointer;transition:var(--trans)}
-        .part-row:hover{color:var(--accent)}
+        .part-row{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.5rem;border-bottom:1px solid var(--border);font-size:0.82rem;gap:0.5rem;cursor:pointer;transition:var(--trans);border-radius:var(--radius)}
+        .part-row:hover{color:var(--accent);background:var(--bg3)}
         .part-row:last-child{border-bottom:none}
-        .part-row.active{color:var(--accent);font-weight:600}
-        .part-name{flex:1}
-        .part-badge{font-size:0.65rem;font-weight:600;white-space:nowrap}
+        .part-row.active{color:var(--accent);font-weight:600;background:rgba(245,197,24,0.06)}
+        .part-name{flex:1;display:flex;align-items:center}
+        .part-badge{font-size:0.65rem;font-weight:600;white-space:nowrap;padding:0.1rem 0.5rem;border-radius:20px;background:var(--bg3)}
+        .part-dl{font-size:1.1rem;cursor:pointer;color:var(--text2);transition:var(--trans)}
+        .part-dl:hover{color:var(--accent)}
         .comment-item{background:var(--bg3);padding:0.6rem;border-radius:var(--radius);margin:0.25rem 0;border-left:3px solid var(--accent);font-size:0.8rem}
         .comment-user{font-weight:600;color:var(--accent)}
         .comment-date{font-size:0.65rem;color:var(--text3);margin-left:0.3rem}
@@ -169,12 +176,14 @@
         .rules-content{max-height:60vh;overflow-y:auto;margin:1rem 0}
         .rules-content p{margin-bottom:0.5rem;font-size:0.9rem;line-height:1.5}
         .rules-content strong{color:var(--accent)}
+        .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg3);color:var(--text);border:1px solid var(--border);padding:0.7rem 1.2rem;border-radius:30px;font-size:0.82rem;z-index:5000;box-shadow:var(--shadowLg)}
         @media(max-width:768px){
             .navbar{padding:0.5rem 1rem}.search-box{width:100%;order:3;margin-top:0.4rem}
             .detail-main{flex-direction:column}.detail-right{flex:1 1 100%}
             .movie-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.movie-thumb{height:180px}
             .footer-grid{grid-template-columns:repeat(2,1fr)}
             .modal-body{padding:0.8rem}
+            .btn-hero{flex:1 1 100%}
         }
     </style>
 </head>
@@ -247,14 +256,14 @@
                                 <div class="player-message" id="playerMessage" style="display:none;"></div>
                             </div>
                             <div class="action-buttons">
-                                <button class="btn btn-primary" id="watchBtn" onclick="watchCurrentContent()" style="display:none;"><span class="material-symbols-outlined">play_circle</span> Reba</button>
-                                <button class="btn btn-outline" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Kuramo</button>
+                                <button class="btn btn-primary btn-hero" id="watchBtn" onclick="watchCurrentContent()" style="display:none;"><span class="material-symbols-outlined">play_circle</span> Reba Ubu</button>
+                                <button class="btn btn-outline btn-hero" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Kuramo</button>
                             </div>
                             <div class="desc-text desc-truncated" id="modalDesc"></div><span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:none">... soma byinshi</span>
                             <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin:0.5rem 0;font-size:0.75rem;color:var(--text2)" id="modalMeta"></div>
                             <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.5rem" id="modalTags"></div>
                             <h4 style="margin-bottom:0.3rem;font-size:0.9rem">Ibyiciro / Episode</h4>
-                            <div id="partsList"></div>
+                            <div id="partsList" class="parts-list"></div>
                             <div id="showMorePartsContainer"></div>
                             <h4 style="margin:1rem 0 0.3rem;font-size:0.9rem">Ibitekerezo</h4>
                             <div id="commentsList"></div>
@@ -311,7 +320,8 @@
         let currentContentData = null;
         let currentPartsItems = [];
         let selectedPartIndex = 0;
-        let revealedPartsCount = 1;
+        let revealedPartsCount = 5;
+        const partsRevealStep = 10;
         let visibleRows = 2;
         const moviesPerRow = 6;
         let selectedPlan = null;
@@ -322,6 +332,7 @@
         let relatedAll = [];
         let relatedStart = 0;
         const relatedPageSize = 8;
+        const MIN_ACCESS = 'basic'; // no free tier anywhere on this site
 
         function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
         function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
@@ -338,6 +349,10 @@
             document.getElementById('footer').style.display = 'block';
             document.querySelectorAll('.nav-link').forEach(el=>el.classList.remove('active'));
             document.querySelector('.nav-link[onclick="showMoviesView()"]').classList.add('active');
+            // reset any active category/access/search filter back to the full catalogue
+            document.getElementById('searchInput').value = '';
+            document.getElementById('loadMoreBtn').style.display = 'block';
+            if(premiumContents.length) renderAll();
         }
         function showSubscriptionView(){
             document.getElementById('moviesView').style.display = 'none';
@@ -354,22 +369,24 @@
                 const res = await fetch(API+'/contents');
                 const data = await res.json();
                 if(Array.isArray(data)){
-                    premiumContents = data.filter(c => c.accessLevel !== 'free');
+                    // this site is subscription-only: never show free content
+                    premiumContents = data.filter(c => c.accessLevel && c.accessLevel !== 'free');
                     renderAll();
                 }
-            }catch(e){ console.error(e); }
+            }catch(e){ console.error(e); toast('Ntibishoboka kubona sinema. Gerageza nanone.'); }
         }
         function renderAll(){
             const cats = [...new Set(premiumContents.map(c=>c.category).filter(Boolean))];
             document.getElementById('catRow').innerHTML = cats.map(cat=>`<button class="cat-pill" onclick="filterByCategory('${escHtml(cat)}')">${escHtml(cat)}</button>`).join('');
             visibleRows = 2;
+            document.getElementById('loadMoreBtn').style.display = 'block';
             renderGrid();
         }
         function renderGrid(filteredList){
             const list = filteredList || premiumContents;
             const total = visibleRows * moviesPerRow;
             const shown = list.slice(0,total);
-            document.getElementById('movieGrid').innerHTML = shown.map(m=>movieCardHTML(m,'240px')).join('');
+            document.getElementById('movieGrid').innerHTML = shown.length ? shown.map(m=>movieCardHTML(m,'240px')).join('') : '<p style="color:var(--text3)">Nta sinema zibonetse.</p>';
             const btn = document.getElementById('loadMoreBtn');
             if(total >= list.length){
                 btn.textContent = 'Zose zerekanwe ✓';
@@ -401,7 +418,10 @@
         }
         function searchMovies(){
             const t = document.getElementById('searchInput').value.toLowerCase().trim();
-            if(!t){ showMoviesView(); loadAllContent(); return; }
+            if(!t){ showMoviesView(); return; }
+            document.getElementById('moviesView').style.display = 'block';
+            document.getElementById('subscriptionView').style.display = 'none';
+            document.getElementById('footer').style.display = 'block';
             const f = premiumContents.filter(c=>c.title.toLowerCase().includes(t) || (c.category||'').toLowerCase().includes(t));
             renderGrid(f);
             document.getElementById('loadMoreBtn').style.display='none';
@@ -428,7 +448,7 @@
         async function openContent(id){
             currentContentId = id;
             selectedPartIndex = 0;
-            revealedPartsCount = 1;
+            revealedPartsCount = 5;
             const c = premiumContents.find(x=>x._id===id);
             if(!c) return;
             currentContentData = c;
@@ -438,6 +458,7 @@
             document.getElementById('modalDesc').classList.add('desc-truncated');
             document.getElementById('modalDesc').classList.remove('desc-expanded');
             document.getElementById('viewMoreLink').style.display = (c.description && c.description.length>80)?'inline-block':'none';
+            document.getElementById('viewMoreLink').textContent = '... soma byinshi';
             document.getElementById('modalMeta').innerHTML = `<span>${c.year||'N/A'}</span> · <span>${c.quality||'HD'}</span> · <span>${(c.accessLevel||'basic').toUpperCase()}</span> · <span>${c.country||''}</span>`;
             document.getElementById('modalTags').innerHTML = [c.category,c.country,c.translator,c.director].filter(Boolean).map(t=>`<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">${escHtml(t)}</span>`).join('');
             const trailerContainer = document.getElementById('trailerContainer');
@@ -458,8 +479,41 @@
             renderPartsList();
             loadComments(id);
             loadRelated(id);
-            updatePlayerAccess(); // critical: set player/message based on access
+            updatePlayerAccess();
             openModal('movieModal');
+        }
+
+        // Renders the episode/part list into #partsList (previously missing -> this was breaking the whole modal)
+        function renderPartsList(){
+            const container = document.getElementById('partsList');
+            const moreContainer = document.getElementById('showMorePartsContainer');
+            if(!container) return;
+            if(!currentPartsItems.length){
+                container.innerHTML = '<p style="color:var(--text3);font-size:0.8rem">Nta bice bihari.</p>';
+                if(moreContainer) moreContainer.innerHTML = '';
+                return;
+            }
+            const toShow = currentPartsItems.slice(0, revealedPartsCount);
+            container.innerHTML = toShow.map((item,i)=>{
+                const isMovie = currentContentData && currentContentData.type === 'movie';
+                const label = item.title || item.name || (isMovie ? `Ubuziranenge ${i+1}` : `Episode ${item.episodeNumber || (i+1)}`);
+                const lvl = (item.accessLevel || MIN_ACCESS).toUpperCase();
+                const activeClass = i===selectedPartIndex ? ' active' : '';
+                return `<div class="part-row${activeClass}" onclick="selectPart(${i})">
+                    <span class="part-name"><span class="material-symbols-outlined" style="font-size:1.05rem;margin-right:0.4rem;color:var(--accent)">play_circle</span>${escHtml(label)}</span>
+                    <span class="part-badge">${lvl}</span>
+                    <span class="material-symbols-outlined part-dl" title="Kuramo" onclick="event.stopPropagation();downloadPartItem(${i})">download</span>
+                </div>`;
+            }).join('');
+            if(currentPartsItems.length > revealedPartsCount){
+                moreContainer.innerHTML = `<button class="show-more-parts-btn" onclick="revealMoreParts()">Erekana ibindi bice (${currentPartsItems.length - revealedPartsCount})</button>`;
+            } else {
+                moreContainer.innerHTML = '';
+            }
+        }
+        function revealMoreParts(){
+            revealedPartsCount += partsRevealStep;
+            renderPartsList();
         }
 
         function updatePlayerAccess(){
@@ -475,10 +529,9 @@
                 downloadBtn.style.display = 'none';
                 return;
             }
-            // Show player wrapper always if video exists, but content depends on access
             playerWrapper.style.display = 'flex';
             const canStream = isPlayableUrl(item.videoUrl);
-            const hasAccess = checkAccessForPart(item.accessLevel || 'free');
+            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
             if(hasAccess && canStream){
                 videoPlayer.src = getStreamUrl(item.videoUrl);
                 videoPlayer.style.display = 'block';
@@ -490,7 +543,6 @@
                 playerMessage.textContent = hasAccess ? 'Iyi video ntabwo ishobora kurebwa hano, ikurure.' : 'Iyandikishe kugirango urebe iyi sinema.';
                 watchBtn.style.display = hasAccess && canStream ? 'inline-flex' : 'none';
             }
-            // Download button always shown if video exists
             downloadBtn.style.display = 'inline-flex';
         }
 
@@ -499,11 +551,11 @@
             const status = currentUser.subscription?.status;
             if(status !== 'active') return false;
             const plan = getUserPlan();
-            const planLevels = { free:0, basic:1, standard:2, premium:3, ultimate:4 };
-            return (planLevels[plan]||0) >= (planLevels[partLevel]||0);
+            const planLevels = { basic:1, standard:2, premium:3, ultimate:4 };
+            return (planLevels[plan]||0) >= (planLevels[partLevel]||1);
         }
 
-        function getUserPlan(){ return currentUser && currentUser.subscription && currentUser.subscription.plan ? currentUser.subscription.plan : 'free'; }
+        function getUserPlan(){ return currentUser && currentUser.subscription && currentUser.subscription.plan ? currentUser.subscription.plan : null; }
 
         function showRulesModal(requiredPlan){
             const content = document.getElementById('rulesContent');
@@ -543,9 +595,9 @@
         function watchCurrentContent(){
             const item = currentPartsItems[selectedPartIndex];
             if(!item || !item.videoUrl) return;
-            const hasAccess = checkAccessForPart(item.accessLevel || 'free');
+            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
             if(!hasAccess){
-                requiredPlan = item.accessLevel || 'free';
+                requiredPlan = item.accessLevel || MIN_ACCESS;
                 pendingMovieId = currentContentId;
                 showRulesModal(requiredPlan);
                 return;
@@ -564,9 +616,9 @@
         function downloadCurrentContent(){
             const item = currentPartsItems[selectedPartIndex];
             if(!item || !item.videoUrl) return;
-            const hasAccess = checkAccessForPart(item.accessLevel || 'free');
+            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
             if(!hasAccess){
-                requiredPlan = item.accessLevel || 'free';
+                requiredPlan = item.accessLevel || MIN_ACCESS;
                 pendingMovieId = currentContentId;
                 showRulesModal(requiredPlan);
                 return;
@@ -582,18 +634,7 @@
                 const comments = await fetch(API+'/comments/'+id).then(r=>r.json());
                 let html = '';
                 if(comments.length){
-                    html = comments.slice(0,2).map(c=>{
-                        const rawName = c.userName || 'Anon';
-                        const isVer = rawName.startsWith('🔵 ');
-                        const displayName = isVer ? rawName.substring(3) : rawName;
-                        const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Byemewe</span>' : '';
-                        return `<div class="comment-item">
-                            <span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}
-                            <span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span>
-                            <div class="comment-text">${escHtml(c.text)}</div>
-                            <span class="comment-like" onclick="likeComment('${c._id}')">👍 ${c.likes||0}</span>
-                        </div>`;
-                    }).join('');
+                    html = comments.slice(0,2).map(commentHTML).join('');
                     if(comments.length>2){
                         html += `<button class="show-more-parts-btn" onclick="showAllComments()">Reba ibindi (${comments.length-2})</button>`;
                     }
@@ -604,29 +645,29 @@
                 window._allComments = comments;
             }catch(e){ cl.innerHTML='<p>Ntibishoboka kubona ibitekerezo</p>'; }
         }
+        function commentHTML(c){
+            const rawName = c.userName || 'Anon';
+            const isVer = rawName.startsWith('🔵 ');
+            const displayName = isVer ? rawName.substring(3) : rawName;
+            const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Byemewe</span>' : '';
+            return `<div class="comment-item">
+                <span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}
+                <span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span>
+                <div class="comment-text">${escHtml(c.text)}</div>
+                <span class="comment-like" onclick="likeComment('${c._id}')">👍 ${c.likes||0}</span>
+            </div>`;
+        }
         function showAllComments(){
             const comments = window._allComments;
             if(!comments) return;
-            const cl = document.getElementById('commentsList');
-            cl.innerHTML = comments.map(c=>{
-                const rawName = c.userName || 'Anon';
-                const isVer = rawName.startsWith('🔵 ');
-                const displayName = isVer ? rawName.substring(3) : rawName;
-                const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Byemewe</span>' : '';
-                return `<div class="comment-item">
-                    <span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}
-                    <span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span>
-                    <div class="comment-text">${escHtml(c.text)}</div>
-                    <span class="comment-like" onclick="likeComment('${c._id}')">👍 ${c.likes||0}</span>
-                </div>`;
-            }).join('');
+            document.getElementById('commentsList').innerHTML = comments.map(commentHTML).join('');
         }
         async function addComment(){
             const nameInput = document.getElementById('commentName');
             const textInput = document.getElementById('newComment');
             const name = nameInput.value.trim();
             const text = textInput.value.trim();
-            if(!name || !text){ toast('Izina n\'igitekerezo birakenewe'); return; }
+            if(!name || !text){ toast("Izina n'igitekerezo birakenewe"); return; }
             try{
                 const r = await fetch(API+'/comments/'+currentContentId, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userName: name, text: text})});
                 const d = await r.json();
@@ -656,11 +697,7 @@
             const items = relatedAll.slice(relatedStart, relatedStart+relatedPageSize);
             grid.innerHTML = items.map(m=>movieCardHTML(m,'120px')).join('');
             const btn = document.getElementById('relatedLoadMore');
-            if(relatedStart+relatedPageSize < relatedAll.length){
-                btn.style.display='block';
-            } else {
-                btn.style.display='none';
-            }
+            btn.style.display = (relatedStart+relatedPageSize < relatedAll.length) ? 'block' : 'none';
         }
         function loadMoreRelated(){
             relatedStart += relatedPageSize;
@@ -674,7 +711,7 @@
                 plansData = await res.json();
                 renderPlans();
                 if(requiredPlan && plansData[requiredPlan]) selectPlan(requiredPlan);
-            }catch(e){ console.error(e); }
+            }catch(e){ console.error(e); toast('Ntibishoboka kubona gahunda.'); }
         }
         function renderPlans(){
             const container = document.getElementById('plansContainer');
@@ -682,6 +719,7 @@
             const planKeys = ['basic','standard','premium','ultimate'];
             planKeys.forEach(key=>{
                 const plan = plansData[key];
+                if(!plan) return;
                 const card = document.createElement('div');
                 card.className = 'plan-card' + (selectedPlan===key?' selected':'') + (key==='premium'?' featured':'');
                 card.innerHTML = `
@@ -699,7 +737,7 @@
             document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
             const cards = document.querySelectorAll('.plan-card');
             const idx = ['basic','standard','premium','ultimate'].indexOf(key);
-            if(idx>=0) cards[idx].classList.add('selected');
+            if(idx>=0 && cards[idx]) cards[idx].classList.add('selected');
             renderAuthPaymentArea();
         }
 
@@ -808,8 +846,8 @@
             const phone = document.getElementById('phone').value.trim();
             const senderName = document.getElementById('senderName').value.trim();
             const screenshot = document.getElementById('screenshot').files[0];
-            if(!phone || !senderName){ toast('Telefoni n\'izina rirakenewe'); return; }
-            if(!screenshot){ toast('Ifoto y\'ubwishyu irakenewe'); return; }
+            if(!phone || !senderName){ toast("Telefoni n'izina rirakenewe"); return; }
+            if(!screenshot){ toast("Ifoto y'ubwishyu irakenewe"); return; }
             const fd = new FormData();
             fd.append('plan', selectedPlan);
             fd.append('duration', 'monthly');
@@ -822,7 +860,8 @@
                 const data = await res.json();
                 if(res.ok){
                     toast('Ubwishyu bwoherejwe!');
-                    let redirectUrl = 'https://niromovie.site/?movie=' + encodeURIComponent(pendingMovieId || '');
+                    // stay on THIS site (was previously redirecting off to a different domain)
+                    let redirectUrl = window.location.origin + '/?movie=' + encodeURIComponent(pendingMovieId || '');
                     redirectUrl += '&token=' + encodeURIComponent(token);
                     window.location.href = redirectUrl;
                 } else {
@@ -890,7 +929,7 @@
         (function(){
             const urlParams = new URLSearchParams(window.location.search);
             const urlToken = urlParams.get('token');
-            if(urlToken){ localStorage.setItem('token', urlToken); token = urlToken; history.replaceState({}, '', '/'); }
+            if(urlToken){ localStorage.setItem('token', urlToken); token = urlToken; history.replaceState({}, '', window.location.pathname + (urlParams.get('movie') ? ('?movie='+urlParams.get('movie')) : '')); }
             if(token){
                 fetch(API+'/me', {headers:{'Authorization':'Bearer '+token}})
                 .then(r=>r.json())
@@ -935,6 +974,7 @@
         window.showAllComments = showAllComments;
         window.renderPartsList = renderPartsList;
         window.updatePlayerAccess = updatePlayerAccess;
+        window.closeMovieModal = closeMovieModal;
     </script>
 </body>
 </html>
