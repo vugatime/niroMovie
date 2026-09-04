@@ -87,6 +87,7 @@
         .footer-social a{width:34px;height:34px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);text-decoration:none;font-size:0.95rem;transition:var(--trans)}
         .footer-social a:hover{background:var(--accent);color:#000;transform:translateY(-3px)}
         .footer-bottom{text-align:center;padding-top:1.2rem;margin-top:1.5rem;border-top:1px solid var(--border);color:var(--text3);font-size:0.73rem;max-width:1400px;margin-left:auto;margin-right:auto}
+        /* Modal general */
         .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:3000;justify-content:center;align-items:center;backdrop-filter:blur(6px)}
         .modal-overlay.active{display:flex}
         .modal-full{max-width:100%;width:100%;height:100vh;max-height:100vh;border-radius:0;display:flex;flex-direction:column;background:var(--bg2)}
@@ -98,15 +99,21 @@
         .close-btn{font-size:22px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--text2);transition:var(--trans)}
         .close-btn:hover{background:var(--bg3);color:var(--accent)}
         .modal-box-sm{max-width:440px;width:100%;background:var(--bg2);border-radius:var(--radiusLg);overflow-y:auto;max-height:92vh;border:1px solid var(--border);box-shadow:var(--shadowLg);margin:auto}
-        .detail-top-row{display:flex;gap:0.7rem;align-items:flex-start}
-        .detail-left{flex:0 0 50%;min-width:0}
-        .detail-right{flex:0 0 50%;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0.7rem;align-content:start}
-        .desc-text{font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:0.6rem}
-        .desc-truncated{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-        .desc-expanded{display:block}
-        .view-more-link{color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.4rem}
-        .view-more-link:hover{text-decoration:underline}
-        .parts-list{margin-top:0.8rem}
+        /* Movie detail layout */
+        .detail-container{display:flex;flex-direction:column;gap:1.2rem}
+        .detail-main{display:flex;flex-wrap:wrap;gap:1.2rem}
+        .detail-left{flex:1 1 60%;min-width:0}
+        .detail-right{flex:0 0 30%;min-width:250px}
+        .trailer-video{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem}
+        .trailer-video video{width:100%;height:100%;object-fit:cover}
+        .action-buttons{display:flex;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.7rem 1.3rem;border:none;border-radius:30px;font-weight:700;cursor:pointer;transition:var(--trans);font-family:inherit;font-size:0.9rem}
+        .btn-primary{background:var(--accent);color:#000;box-shadow:0 4px 15px rgba(245,197,24,0.25)}
+        .btn-primary:hover{background:var(--accentD);transform:translateY(-2px)}
+        .btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
+        .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+        .btn-sm{padding:0.4rem 0.9rem;font-size:0.75rem}
+        .parts-list{margin-top:1rem}
         .part-row{display:flex;justify-content:space-between;align-items:center;padding:0.45rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;gap:0.5rem;cursor:pointer;transition:var(--trans)}
         .part-row:hover{color:var(--accent)}
         .part-row:last-child{border-bottom:none}
@@ -126,29 +133,42 @@
         .reply-form button{padding:0.3rem 0.6rem;border-radius:20px;font-size:0.65rem}
         .reply-item{margin-left:1rem;border-left:2px solid var(--border);padding-left:0.5rem;margin-top:0.2rem;font-size:0.75rem}
         .verified-badge{display:inline-flex;align-items:center;gap:0.2rem;color:var(--accent);font-weight:600;font-size:0.65rem;margin-left:0.3rem;background:rgba(245,197,24,0.1);padding:0.15rem 0.4rem;border-radius:12px}
-        .trailer-btn{margin-bottom:0.4rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;color:var(--accent);font-weight:600;font-size:0.78rem;background:transparent;border:1.5px solid var(--accent);padding:0.3rem 0.8rem;border-radius:20px;transition:var(--trans)}
-        .trailer-btn:hover{background:rgba(245,197,24,0.08)}
-        .trailer-container{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.6rem;display:none}
-        .trailer-container video{width:100%;height:100%}
         .show-more-parts-btn{display:block;margin:0.5rem 0;padding:0.4rem 1rem;border-radius:20px;font-weight:600;font-size:0.75rem;cursor:pointer;background:transparent;border:1.5px solid var(--accent);color:var(--accent);font-family:inherit;transition:var(--trans)}
         .show-more-parts-btn:hover{background:rgba(245,197,24,0.08)}
-        .plan-card{background:var(--bg);padding:1rem;border-radius:var(--radiusLg);text-align:center;cursor:pointer;border:2px solid transparent;transition:var(--trans)}
+        /* Subscription View */
+        #subscriptionView{display:none;padding:2rem 1.5rem;max-width:800px;margin:0 auto}
+        .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+        .plan-card{background:var(--bg);border:2px solid var(--border);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;cursor:pointer;transition:var(--trans)}
         .plan-card:hover,.plan-card.selected{border-color:var(--accent);box-shadow:0 0 15px rgba(245,197,24,0.2)}
         .plan-card.featured{border-color:var(--orange)}
-        .plan-name{font-weight:700;font-size:0.85rem}
-        .plan-price{font-size:1.2rem;font-weight:800;color:var(--accent);margin:0.2rem 0}
-        .plan-price span{font-size:0.65rem;color:var(--text2)}
-        .payment-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1rem;text-align:center;margin:0.7rem 0}
-        .momo-code{font-size:1rem;font-weight:700;color:var(--accent);margin:0.3rem 0;font-family:monospace}
-        .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:0.6rem 1.5rem;border-radius:30px;z-index:9999;font-weight:600;font-size:0.85rem;animation:toastIn 0.3s ease;pointer-events:none}
-        @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-        @media(max-width:900px){.detail-top-row{flex-direction:column}.detail-left,.detail-right{flex:1 1 100%}.detail-right{grid-template-columns:repeat(2,1fr)}}
+        .plan-name{font-weight:700;font-size:1rem}
+        .plan-price{font-size:1.5rem;font-weight:800;color:var(--accent);margin:0.4rem 0}
+        .plan-price span{font-size:0.7rem;color:var(--text2)}
+        .plan-features{font-size:0.75rem;color:var(--text2);margin-top:0.5rem;text-align:left}
+        .selected-badge{display:none;background:var(--accent);color:#000;border-radius:20px;padding:0.2rem 0.6rem;font-size:0.7rem;font-weight:700;margin-top:0.5rem}
+        .plan-card.selected .selected-badge{display:inline-block}
+        .form-group{margin-bottom:1rem}
+        .form-group label{display:block;margin-bottom:0.4rem;font-weight:600;font-size:0.85rem;color:var(--text2)}
+        .form-group input,.form-group select{width:100%;padding:0.7rem 1rem;background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);font-family:inherit;font-size:0.9rem;transition:var(--trans)}
+        .form-group input:focus,.form-group select:focus{border-color:var(--accent);outline:none}
+        .auth-toggle{text-align:center;margin-top:1rem;font-size:0.85rem}
+        .auth-toggle a{color:var(--accent);cursor:pointer;font-weight:600}
+        .message{padding:0.8rem 1rem;border-radius:var(--radius);margin-bottom:1rem;display:none;font-size:0.85rem}
+        .message.success{background:rgba(76,175,80,0.1);border:1px solid var(--green);color:var(--green)}
+        .message.error{background:rgba(229,57,53,0.1);border:1px solid #E53935;color:#E53935}
+        .momo-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;margin:1rem 0}
+        .momo-code{font-size:1.4rem;font-weight:700;color:var(--accent);margin:0.3rem 0;font-family:monospace}
+        .payment-note{font-size:0.75rem;color:var(--text2);margin-top:0.5rem}
+        /* Rules modal */
+        .rules-content{max-height:60vh;overflow-y:auto;margin:1rem 0}
+        .rules-content p{margin-bottom:0.5rem;font-size:0.9rem;line-height:1.5}
+        .rules-content strong{color:var(--accent)}
         @media(max-width:768px){
             .navbar{padding:0.5rem 1rem}.search-box{width:100%;order:3;margin-top:0.4rem}
-            .movie-card{min-width:0}.movie-thumb{height:190px}
+            .detail-main{flex-direction:column}.detail-right{flex:1 1 100%}
+            .movie-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.movie-thumb{height:180px}
             .footer-grid{grid-template-columns:repeat(2,1fr)}
             .modal-body{padding:0.8rem}
-            .detail-right{grid-template-columns:repeat(2,1fr)}
         }
     </style>
 </head>
@@ -194,47 +214,64 @@
         </div>
     </div>
 
-    <!-- SUBSCRIPTION VIEW (hidden by default) -->
-    <div id="subscriptionView" style="display:none;padding:2rem 1.5rem;max-width:800px;margin:0 auto;">
+    <!-- SUBSCRIPTION VIEW -->
+    <div id="subscriptionView">
         <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:1rem;">Subscribe to Watch</h1>
         <p style="color:var(--text2);margin-bottom:1.5rem;">Select a plan and complete payment to unlock premium content.</p>
-        <div class="plan-grid" id="plansContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;"></div>
+        <div class="plan-grid" id="plansContainer"></div>
         <div id="authPaymentArea"></div>
     </div>
 
-    <!-- MOVIE DETAIL MODAL (simplified) -->
+    <!-- MOVIE DETAIL MODAL -->
     <div class="modal-overlay" id="movieModal" onclick="if(event.target===this)closeMovieModal()">
         <div class="modal-full">
-            <div class="modal-header"><span class="back-btn" onclick="closeMovieModal()"><span class="material-symbols-outlined">arrow_back</span> Back</span><h2 id="modalTitle"></h2><span class="close-btn" onclick="closeMovieModal()">&times;</span></div>
+            <div class="modal-header">
+                <span class="back-btn" onclick="closeMovieModal()"><span class="material-symbols-outlined">arrow_back</span> Back</span>
+                <h2 id="modalTitle"></h2>
+                <span class="close-btn" onclick="closeMovieModal()">&times;</span>
+            </div>
             <div class="modal-body" id="modalBodyContent">
-                <div class="detail-top-row" id="detailTopRow">
-                    <div class="detail-left" id="detailLeft">
-                        <div class="desc-text desc-truncated" id="modalDesc"></div><span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:none">... View more</span>
-                        <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin:0.5rem 0;font-size:0.75rem;color:var(--text2)" id="modalMeta"></div>
-                        <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.5rem" id="modalTags"></div>
-                        <button class="trailer-btn" id="trailerBtn" style="display:none" onclick="toggleTrailer()"><span class="material-symbols-outlined">play_circle</span> Watch Trailer</button>
-                        <div class="trailer-container" id="trailerContainer"><video id="trailerVideo" controls playsinline></video></div>
-                        <div id="playerWrapper" style="display:none;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.6rem;position:relative;">
-                            <video id="videoPlayer" controls style="display:none;width:100%;height:100%" playsinline></video>
-                            <div class="video-watermark">niromovie.site</div>
+                <div class="detail-container">
+                    <div class="detail-main">
+                        <div class="detail-left">
+                            <!-- Trailer (if exists) -->
+                            <div class="trailer-video" id="trailerContainer" style="display:none;">
+                                <video id="trailerVideo" controls playsinline></video>
+                            </div>
+                            <!-- Stream player (if streamable) -->
+                            <div id="playerWrapper" style="display:none;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem;position:relative;">
+                                <video id="videoPlayer" controls style="display:none;width:100%;height:100%" playsinline></video>
+                                <div class="video-watermark">niromovie.site</div>
+                            </div>
+                            <!-- Action buttons -->
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" id="watchBtn" onclick="watchCurrentContent()" style="display:none;"><span class="material-symbols-outlined">play_circle</span> Watch</button>
+                                <button class="btn btn-outline" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Download</button>
+                            </div>
+                            <!-- Description -->
+                            <div class="desc-text desc-truncated" id="modalDesc"></div><span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:none">... View more</span>
+                            <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin:0.5rem 0;font-size:0.75rem;color:var(--text2)" id="modalMeta"></div>
+                            <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.5rem" id="modalTags"></div>
+                            <!-- Parts list -->
+                            <h4 style="margin-bottom:0.3rem;font-size:0.9rem">Parts / Episodes</h4>
+                            <div id="partsList"></div>
+                            <div id="showMorePartsContainer"></div>
+                            <!-- Comments -->
+                            <h4 style="margin:1rem 0 0.3rem;font-size:0.9rem">Comments</h4>
+                            <div id="commentsList"></div>
+                            <div style="display:flex;gap:0.4rem;margin-top:0.4rem;flex-wrap:wrap">
+                                <input type="text" id="commentName" placeholder="Name" style="flex:1;min-width:70px;padding:0.4rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.76rem;background:var(--bg);color:var(--text)">
+                                <input type="text" id="newComment" placeholder="Comment..." style="flex:2;min-width:100px;padding:0.4rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.76rem;background:var(--bg);color:var(--text)">
+                                <button class="btn btn-primary btn-sm" onclick="addComment()">Post</button>
+                            </div>
                         </div>
-                        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.6rem">
-                            <button class="cta-btn cta-download" id="watchBtn" onclick="watchCurrentContent()" style="flex:1;display:none"><span class="material-symbols-outlined">play_circle</span> Watch</button>
-                            <button class="cta-btn cta-outline" id="downloadMainBtn" onclick="downloadCurrentContent()" style="flex:1"><span class="material-symbols-outlined">download</span> Download</button>
-                        </div>
-                        <h4 style="margin-bottom:0.3rem;font-size:0.9rem">Parts / Episodes</h4><div id="partsList"></div>
-                        <div id="showMorePartsContainer"></div>
-                        <h4 style="margin:1rem 0 0.3rem;font-size:0.9rem">Comments</h4><div id="commentsList"></div>
-                        <div style="display:flex;gap:0.4rem;margin-top:0.4rem;flex-wrap:wrap">
-                            <input type="text" id="commentName" placeholder="Name" style="flex:1;min-width:70px;padding:0.4rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.76rem;background:var(--bg);color:var(--text)">
-                            <input type="text" id="newComment" placeholder="Comment..." style="flex:2;min-width:100px;padding:0.4rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.76rem;background:var(--bg);color:var(--text)">
-                            <button class="cta-btn cta-download cta-sm" onclick="addComment()">Post</button>
+                        <div class="detail-right">
+                            <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">Watch More</h4>
+                            <div class="movie-grid" id="relatedGrid" style="grid-template-columns:repeat(2,1fr);gap:0.7rem;"></div>
+                            <button class="load-more-btn" id="relatedLoadMore" onclick="loadMoreRelated()" style="display:none">See More ▼</button>
                         </div>
                     </div>
-                    <div class="detail-right" id="detailRight"></div>
                 </div>
-                <div class="detail-bottom-grid" id="detailBottomGrid"></div>
-                <button class="load-more-btn" id="relatedLoadMore" onclick="loadMoreRelated()" style="display:none">See More ▼</button>
             </div>
         </div>
     </div>
@@ -253,6 +290,12 @@
         </div>
     </div>
 
+    <!-- STATIC MODALS -->
+    <div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeStaticModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p>niroMovie is your gateway to unlimited entertainment. Byose ukeneye ni ibyishimo.</p></div></div></div>
+    <div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Contact Us</h2><span class="close-btn" onclick="closeStaticModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p>Email: info@niromovie.site<br>Phone: +250 795 064 502</p></div></div></div>
+    <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Privacy Policy</h2><span class="close-btn" onclick="closeStaticModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p>Your privacy is important. We do not share your personal information.</p></div></div></div>
+    <div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Terms</h2><span class="close-btn" onclick="closeStaticModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p>By using niroMovie, you agree to these terms.</p></div></div></div>
+
     <!-- FOOTER -->
     <div class="footer" id="footer">
         <div class="footer-grid">
@@ -263,17 +306,12 @@
         <div class="footer-bottom">© 2026 — powered by <strong>niroflixx</strong></div>
     </div>
 
-    <!-- STATIC MODALS -->
-    <div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeStaticModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p>niroMovie is your gateway to unlimited entertainment. Byose ukeneye ni ibyishimo.</p></div></div></div>
-    <div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Contact Us</h2><span class="close-btn" onclick="closeStaticModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p>Email: info@niromovie.site<br>Phone: +250 795 064 502</p></div></div></div>
-    <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Privacy Policy</h2><span class="close-btn" onclick="closeStaticModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p>Your privacy is important. We do not share your personal information.</p></div></div></div>
-    <div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Terms</h2><span class="close-btn" onclick="closeStaticModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p>By using niroMovie, you agree to these terms.</p></div></div></div>
-
     <script>
         const API = 'https://niromovie-api.onrender.com/api';
         let token = localStorage.getItem('token') || null;
         let currentUser = null;
         let allContents = [];
+        let premiumContents = [];
         let currentContentId = null;
         let currentContentData = null;
         let currentPartsItems = [];
@@ -286,7 +324,11 @@
         let pendingMovieId = null;
         let isRegisterMode = false;
         let plansData = null;
+        let relatedAll = [];
+        let relatedStart = 0;
+        const relatedPageSize = 8;
 
+        // Utility
         function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
         function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
         function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
@@ -313,28 +355,30 @@
             renderAuthPaymentArea();
         }
 
+        // Fetch content (premium only)
         async function loadAllContent(){
             try{
                 const res = await fetch(API+'/contents');
                 const data = await res.json();
                 if(Array.isArray(data)){
-                    allContents = data.filter(c => c.accessLevel !== 'free');
+                    premiumContents = data.filter(c => c.accessLevel !== 'free');
+                    allContents = premiumContents;
                     renderAll();
                 }
             }catch(e){ console.error(e); }
         }
         function renderAll(){
-            const cats = [...new Set(allContents.map(c=>c.category).filter(Boolean))];
+            const cats = [...new Set(premiumContents.map(c=>c.category).filter(Boolean))];
             document.getElementById('catRow').innerHTML = cats.map(cat=>`<button class="cat-pill" onclick="filterByCategory('${escHtml(cat)}')">${escHtml(cat)}</button>`).join('');
             visibleRows = 2;
             renderGrid();
         }
         function renderGrid(){
             const total = visibleRows * moviesPerRow;
-            const shown = allContents.slice(0,total);
+            const shown = premiumContents.slice(0,total);
             document.getElementById('movieGrid').innerHTML = shown.map(m=>movieCardHTML(m,'240px')).join('');
             const btn = document.getElementById('loadMoreBtn');
-            if(total >= allContents.length){
+            if(total >= premiumContents.length){
                 btn.textContent = 'All loaded ✓';
                 btn.disabled = true;
                 btn.style.opacity = '0.5';
@@ -346,14 +390,14 @@
         }
         function loadMoreMovies(){ visibleRows += 2; renderGrid(); }
         function filterByCategory(cat){
-            const f = allContents.filter(c=>c.category===cat);
+            const f = premiumContents.filter(c=>c.category===cat);
             document.getElementById('movieGrid').innerHTML = f.map(m=>movieCardHTML(m,'240px')).join('');
             document.getElementById('loadMoreBtn').style.display='none';
         }
         function searchMovies(){
             const t = document.getElementById('searchInput').value.toLowerCase().trim();
             if(!t){ loadAllContent(); return; }
-            const f = allContents.filter(c=>c.title.toLowerCase().includes(t) || (c.category||'').toLowerCase().includes(t));
+            const f = premiumContents.filter(c=>c.title.toLowerCase().includes(t) || (c.category||'').toLowerCase().includes(t));
             document.getElementById('movieGrid').innerHTML = f.map(m=>movieCardHTML(m,'240px')).join('');
             document.getElementById('loadMoreBtn').style.display='none';
         }
@@ -376,11 +420,12 @@
             return count;
         }
 
+        // Open movie details
         async function openContent(id){
             currentContentId = id;
             selectedPartIndex = 0;
             revealedPartsCount = 1;
-            const c = allContents.find(x=>x._id===id);
+            const c = premiumContents.find(x=>x._id===id);
             if(!c) return;
             currentContentData = c;
             history.pushState(null,'','/?movie='+id);
@@ -391,23 +436,27 @@
             document.getElementById('viewMoreLink').style.display = (c.description && c.description.length>80)?'inline-block':'none';
             document.getElementById('modalMeta').innerHTML = `<span>${c.year||'N/A'}</span> · <span>${c.quality||'HD'}</span> · <span>${(c.accessLevel||'basic').toUpperCase()}</span> · <span>${c.country||''}</span>`;
             document.getElementById('modalTags').innerHTML = [c.category,c.country,c.translator,c.director].filter(Boolean).map(t=>`<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">${escHtml(t)}</span>`).join('');
+            // Trailer
             const trailerBtn = document.getElementById('trailerBtn');
             const trailerContainer = document.getElementById('trailerContainer');
             const trailerVideo = document.getElementById('trailerVideo');
             if(c.trailerUrl){
                 trailerBtn.style.display='inline-flex';
-                trailerContainer.style.display='none';
+                trailerContainer.style.display='block';
                 trailerVideo.src = c.trailerUrl;
+                trailerVideo.load();
             } else {
                 trailerBtn.style.display='none';
                 trailerContainer.style.display='none';
                 trailerVideo.src='';
             }
+            // Fetch parts
             try{
                 const partsRes = await fetch(API+'/contents/'+id+'/parts');
                 const partsData = await partsRes.json();
                 currentPartsItems = partsData.items || [];
             }catch(e){ currentPartsItems = []; }
+            // Determine streamability of first part
             let canPlay = false;
             if(currentPartsItems.length>0 && currentPartsItems[0].videoUrl){
                 canPlay = isPlayableUrl(currentPartsItems[0].videoUrl);
@@ -417,7 +466,7 @@
             const videoPlayer = document.getElementById('videoPlayer');
             if(canPlay){
                 playerWrapper.style.display='block';
-                watchBtn.style.display='flex';
+                watchBtn.style.display='inline-flex';
                 videoPlayer.src = getStreamUrl(currentPartsItems[0].videoUrl);
                 videoPlayer.style.display='block';
                 videoPlayer.load();
@@ -444,7 +493,7 @@
                     html += `<div class="part-row ${i===selectedPartIndex?'active':''}" onclick="selectPart(${i})">
                         <span class="part-name">${escHtml(ep.number)} - ${escHtml(ep.title)}${ep.seasonTitle?' ('+escHtml(ep.seasonTitle)+')':''}</span>
                         <span class="part-badge">${(ep.accessLevel||'free').toUpperCase()}</span>
-                        ${ep.videoUrl?`<button class="cta-btn cta-outline cta-sm" onclick="event.stopPropagation();downloadPartItem(${i})"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>`:''}
+                        ${ep.videoUrl?`<button class="btn btn-outline btn-sm" onclick="event.stopPropagation();downloadPartItem(${i})"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>`:''}
                     </div>`;
                 }
                 pl.innerHTML = html;
@@ -466,7 +515,6 @@
                 callback(true);
                 return;
             }
-            // If not logged in or not active or insufficient plan
             if(!currentUser){
                 requiredPlan = partAccessLevel;
                 pendingMovieId = currentContentId;
@@ -534,7 +582,7 @@
                     const canPlay = isPlayableUrl(item.videoUrl);
                     if(canPlay){
                         playerWrapper.style.display='block';
-                        watchBtn.style.display='flex';
+                        watchBtn.style.display='inline-flex';
                         videoPlayer.src = getStreamUrl(item.videoUrl);
                         videoPlayer.style.display='block';
                         videoPlayer.load();
@@ -559,7 +607,131 @@
                 }
             });
         }
+        function watchCurrentContent(){
+            const videoPlayer = document.getElementById('videoPlayer');
+            if(videoPlayer.src && videoPlayer.style.display!=='none'){
+                videoPlayer.play().catch(e=>{});
+                return;
+            }
+            if(currentPartsItems.length>0){
+                const item = currentPartsItems[selectedPartIndex];
+                if(item && item.videoUrl){
+                    checkPartAccess(item.accessLevel||'free', function(allowed){
+                        if(!allowed) return;
+                        videoPlayer.src = getStreamUrl(item.videoUrl);
+                        videoPlayer.style.display='block';
+                        videoPlayer.load();
+                        videoPlayer.play().catch(()=>{});
+                    });
+                }
+            }
+        }
+        function downloadCurrentContent(){
+            if(currentPartsItems.length>0){
+                const item = currentPartsItems[selectedPartIndex];
+                if(item && item.videoUrl){
+                    checkPartAccess(item.accessLevel||'free', function(allowed){
+                        if(!allowed) return;
+                        incrementDownload(currentContentId);
+                        window.open(getDownloadUrl(item.videoUrl),'_blank');
+                    });
+                }
+            }
+        }
 
+        // Comments
+        async function loadComments(id){
+            const cl = document.getElementById('commentsList');
+            try{
+                const comments = await fetch(API+'/comments/'+id).then(r=>r.json());
+                let html = '';
+                if(comments.length){
+                    html = comments.slice(0,2).map(c=>{
+                        const rawName = c.userName || 'Anon';
+                        const isVer = rawName.startsWith('🔵 ');
+                        const displayName = isVer ? rawName.substring(3) : rawName;
+                        const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
+                        return `<div class="comment-item">
+                            <span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}
+                            <span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span>
+                            <div class="comment-text">${escHtml(c.text)}</div>
+                            <span class="comment-like" onclick="likeComment('${c._id}')">👍 ${c.likes||0}</span>
+                        </div>`;
+                    }).join('');
+                    if(comments.length>2){
+                        html += `<button class="show-more-parts-btn" onclick="showAllComments()">View more (${comments.length-2})</button>`;
+                    }
+                } else {
+                    html = '<p style="color:var(--text3)">No comments yet.</p>';
+                }
+                cl.innerHTML = html;
+                window._allComments = comments;
+            }catch(e){ cl.innerHTML='<p>Comments unavailable</p>'; }
+        }
+        function showAllComments(){
+            const comments = window._allComments;
+            if(!comments) return;
+            const cl = document.getElementById('commentsList');
+            cl.innerHTML = comments.map(c=>{
+                const rawName = c.userName || 'Anon';
+                const isVer = rawName.startsWith('🔵 ');
+                const displayName = isVer ? rawName.substring(3) : rawName;
+                const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
+                return `<div class="comment-item">
+                    <span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}
+                    <span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span>
+                    <div class="comment-text">${escHtml(c.text)}</div>
+                    <span class="comment-like" onclick="likeComment('${c._id}')">👍 ${c.likes||0}</span>
+                </div>`;
+            }).join('');
+        }
+        async function addComment(){
+            const nameInput = document.getElementById('commentName');
+            const textInput = document.getElementById('newComment');
+            const name = nameInput.value.trim();
+            const text = textInput.value.trim();
+            if(!name || !text){ toast('Name and comment required'); return; }
+            try{
+                const r = await fetch(API+'/comments/'+currentContentId, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userName: name, text: text})});
+                const d = await r.json();
+                if(d.success){
+                    toast('Comment posted!');
+                    textInput.value='';
+                    if(!currentUser) nameInput.value='';
+                    loadComments(currentContentId);
+                } else {
+                    toast(d.error || 'Failed');
+                }
+            }catch(e){ toast('Network error'); }
+        }
+        async function likeComment(cid){
+            await fetch(API+'/comments/'+currentContentId+'/'+cid+'/like', {method:'POST'});
+            loadComments(currentContentId);
+        }
+
+        // Related movies
+        function loadRelated(id){
+            relatedAll = premiumContents.filter(c=>c._id!==id);
+            relatedStart = 0;
+            renderRelated();
+        }
+        function renderRelated(){
+            const grid = document.getElementById('relatedGrid');
+            const items = relatedAll.slice(relatedStart, relatedStart+relatedPageSize);
+            grid.innerHTML = items.map(m=>movieCardHTML(m,'120px')).join('');
+            const btn = document.getElementById('relatedLoadMore');
+            if(relatedStart+relatedPageSize < relatedAll.length){
+                btn.style.display='block';
+            } else {
+                btn.style.display='none';
+            }
+        }
+        function loadMoreRelated(){
+            relatedStart += relatedPageSize;
+            renderRelated();
+        }
+
+        // Plans & Subscription
         async function loadPlans(){
             try{
                 const res = await fetch(API+'/plans');
@@ -579,8 +751,8 @@
                 card.innerHTML = `
                     <div class="plan-name">${plan.name}</div>
                     <div class="plan-price">${plan.monthly} RWF <span>/month</span></div>
-                    <div class="plan-features" style="font-size:0.75rem;color:var(--text2);margin-top:0.5rem;text-align:left;">${plan.features.join('<br>')}</div>
-                    <div class="selected-badge" style="display:none;background:var(--accent);color:#000;border-radius:20px;padding:0.2rem 0.6rem;font-size:0.7rem;font-weight:700;margin-top:0.5rem;">Selected</div>
+                    <div class="plan-features">${plan.features.join('<br>')}</div>
+                    <div class="selected-badge">Selected</div>
                 `;
                 card.onclick = ()=> selectPlan(key);
                 container.appendChild(card);
@@ -608,14 +780,14 @@
                         <div id="loginDiv">
                             <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"></div>
                             <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Enter password"></div>
-                            <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
+                            <button class="btn btn-primary" onclick="handleLogin()" style="width:100%">Sign In</button>
                             <p class="auth-toggle">No account? <a onclick="toggleAuthMode()">Create one</a></p>
                         </div>
                         <div id="registerDiv" style="display:none">
                             <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="Your full name"></div>
                             <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"></div>
                             <div class="form-group"><label>Password</label><input type="password" id="regPassword" placeholder="Min 6 characters"></div>
-                            <button class="btn btn-primary" onclick="handleRegister()">Create Account</button>
+                            <button class="btn btn-primary" onclick="handleRegister()" style="width:100%">Create Account</button>
                             <p class="auth-toggle">Already have account? <a onclick="toggleAuthMode()">Sign In</a></p>
                         </div>
                     </div>
@@ -633,7 +805,7 @@
                     <div class="form-group"><label>Your Phone Number (MoMo)</label><input type="text" id="phone" placeholder="07XXXXXXXX"></div>
                     <div class="form-group"><label>Sender Name</label><input type="text" id="senderName" placeholder="Your name"></div>
                     <div class="form-group"><label>Payment Screenshot *</label><input type="file" id="screenshot" accept="image/*"></div>
-                    <button class="btn btn-primary" onclick="submitPayment()">Submit Payment</button>
+                    <button class="btn btn-primary" onclick="submitPayment()" style="width:100%">Submit Payment</button>
                     <p class="payment-note">Admin will verify within 24 hours.</p>
                 `;
             }
@@ -731,40 +903,43 @@
             }
         }
 
-        // Comments, likes, related – simplified but functional
-        async function loadComments(id){
-            const cl = document.getElementById('commentsList');
-            try{
-                const comments = await fetch(API+'/comments/'+id).then(r=>r.json());
-                let html = '';
-                if(comments.length){
-                    html = comments.slice(0,2).map(c=>{
-                        return `<div class="comment-item"><span class="comment-user">${escHtml(c.userName||'Anon')}</span><span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span><div class="comment-text">${escHtml(c.text)}</div></div>`;
-                    }).join('');
-                    if(comments.length>2){
-                        html += `<button class="show-more-parts-btn" onclick="renderAllComments(${JSON.stringify(comments)})">View more (${comments.length-2})</button>`;
-                    }
-                } else {
-                    html = '<p style="color:var(--text3)">No comments yet.</p>';
-                }
-                cl.innerHTML = html;
-            }catch(e){ cl.innerHTML='<p>Comments unavailable</p>'; }
+        // Utility functions for streaming/downloads
+        function isPlayableUrl(url){
+            if(!url)return false;
+            var lower=url.toLowerCase();
+            if(lower.includes('isatafilez.my'))return false;
+            if(lower.includes('drive.google.com'))return false;
+            if(lower.includes('dropbox.com'))return false;
+            if(lower.includes('mega.nz'))return false;
+            if(lower.includes('mediafire.com'))return false;
+            if(lower.includes('pixeldrain.com'))return false;
+            return(lower.endsWith('.mp4')||lower.endsWith('.webm')||lower.endsWith('.ogg')||
+                   lower.endsWith('.mov')||lower.endsWith('.mkv')||lower.endsWith('.m3u8')||
+                   lower.includes('archive.org/download/')||lower.includes('cdn.')||
+                   lower.includes('stream.')||lower.includes('video.')||lower.includes('media.'));
         }
-        function renderAllComments(comments){ /* implement if needed */ }
-        function addComment(){ toast('Comment feature not available here'); }
-        function likeComment(cid,cmid){}
-
-        function loadRelated(id){ /* optional */ }
-        function loadMoreRelated(){}
-
-        function isPlayableUrl(url){ return false; } // we don't stream here; just downloads
-        function getStreamUrl(url){ return url; }
-        function getDownloadUrl(url){ return url; }
-        function incrementDownload(id){}
-        function toggleDescription(){}
-        function toggleTrailer(){}
-        function watchCurrentContent(){}
-        function downloadCurrentContent(){}
+        function getStreamUrl(url){return url;}
+        function getDownloadUrl(url){return url;}
+        async function incrementDownload(id){
+            try{
+                await fetch(API+'/contents/'+id+'/download',{method:'POST'});
+            }catch(e){}
+        }
+        function toggleDescription(){
+            const desc = document.getElementById('modalDesc');
+            const link = document.getElementById('viewMoreLink');
+            if(desc.classList.contains('desc-truncated')){
+                desc.classList.remove('desc-truncated');
+                desc.classList.add('desc-expanded');
+                link.textContent='Show less';
+            } else {
+                desc.classList.add('desc-truncated');
+                desc.classList.remove('desc-expanded');
+                link.textContent='... View more';
+            }
+        }
+        function closeStaticModal(id){ document.getElementById(id).classList.remove('active'); }
+        function openStaticModal(id){ document.getElementById(id).classList.add('active'); }
 
         // Init
         (function(){
@@ -786,6 +961,7 @@
             }
         })();
 
+        // Expose functions
         window.showMoviesView = showMoviesView;
         window.showSubscriptionView = showSubscriptionView;
         window.openContent = openContent;
@@ -802,16 +978,16 @@
         window.handleProfileClick = handleProfileClick;
         window.closeRulesModal = closeRulesModal;
         window.agreeAndContinue = agreeAndContinue;
-        window.openStaticModal = function(id){ document.getElementById(id).classList.add('active'); };
-        window.closeStaticModal = function(id){ document.getElementById(id).classList.remove('active'); };
+        window.openStaticModal = openStaticModal;
+        window.closeStaticModal = closeStaticModal;
         window.toggleDescription = toggleDescription;
-        window.toggleTrailer = toggleTrailer;
         window.watchCurrentContent = watchCurrentContent;
         window.downloadCurrentContent = downloadCurrentContent;
         window.addComment = addComment;
         window.likeComment = likeComment;
         window.loadMoreRelated = loadMoreRelated;
         window.revealMoreParts = revealMoreParts;
+        window.showAllComments = showAllComments;
     </script>
 </body>
 </html>
