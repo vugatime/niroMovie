@@ -615,11 +615,11 @@ function downloadPartItem(i) {
 function watchCurrentContent(){var videoPlayer=document.getElementById('videoPlayer');if(videoPlayer.src&&videoPlayer.style.display!=='none'){videoPlayer.play().catch(function(e){});return;}if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){videoPlayer.src=getStreamUrl(item.videoUrl);videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){var url=getStreamUrl(currentContentData.parts[0].videoUrl);videoPlayer.src=url;videoPlayer.style.display='block';videoPlayer.load();videoPlayer.play().catch(function(){});}}
 function downloadCurrentContent(){if(currentPartsItems.length>0){var item=currentPartsItems[selectedPartIndex];if(item&&item.videoUrl){incrementDownload(currentContentId);window.open(getDownloadUrl(item.videoUrl),'_blank');return;}}if(currentContentData&&currentContentData.parts&&currentContentData.parts[0]&&currentContentData.parts[0].videoUrl){incrementDownload(currentContentId);window.open(getDownloadUrl(currentContentData.parts[0].videoUrl),'_blank');}}
 function shareMovie(p){var u=window.location.origin+'/?movie='+currentContentId;if(p==='copy'){navigator.clipboard.writeText(u).then(function(){toast('Link copied!')})}else if(p==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent('Watch on niroMovie! '+u),'_blank')}}
-
 // ============ COMMENTS with ADMIN VERIFIED support ============
 function adminPrefixName(name){ return '🔵 ' + name; }
 function cleanVerifiedName(raw){ if(typeof raw !== 'string') return raw; if(raw.startsWith('🔵 ')) return raw.substring(3); return raw; }
 function isVerifiedName(raw){ return typeof raw === 'string' && raw.startsWith('🔵 '); }
+
 async function loadComments(id){
     var cl=document.getElementById('commentsList');
     try{
@@ -632,20 +632,408 @@ async function loadComments(id){
         } else { var nameInput=document.getElementById('commentName'); if(nameInput) nameInput.style.display=''; }
     }catch(e){ cl.innerHTML='<p style="color:var(--text2);font-size:0.8rem">Comments unavailable</p>'; }
 }
-function renderComments(comments, showAll) { ... } // same as before
-function showReplyForm(cid){ ... }
-async function addReply(contentId,commentId){ ... }
-async function addComment(){ ... }
-async function likeComment(cid,cmid){ ... }
+
+function renderComments(comments, showAll) {
+    var cl = document.getElementById('commentsList');
+    if (!comments || !comments.length) {
+        cl.innerHTML = '<p style="color:var(--text2);padding:0.5rem 0;font-size:0.8rem">No comments yet.</p>';
+        return;
+    }
+    var displayed = showAll ? comments : comments.slice(0, 2);
+    var html = displayed.map(function(x){
+        var rawName = x.userName || 'Anon';
+        var isVer = isVerifiedName(rawName);
+        var displayName = cleanVerifiedName(rawName);
+        var verifiedBadge = isVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
+        var repliesHtml = '';
+        if (x.replies && x.replies.length) {
+            repliesHtml = '<div class="replies">' + x.replies.map(function(r){
+                var rRaw = r.userName || 'Anon';
+                var rIsVer = isVerifiedName(rRaw);
+                var rName = cleanVerifiedName(rRaw);
+                var rBadge = rIsVer ? '<span class="verified-badge">🔵 Verified</span>' : '';
+                return '<div class="reply-item"><span class="comment-user">'+escHtml(rName)+'</span>'+rBadge+'<span class="comment-date">'+new Date(r.createdAt).toLocaleString()+'</span><div class="comment-text">'+escHtml(r.text)+'</div></div>';
+            }).join('') + '</div>';
+        }
+        return '<div class="comment-item" id="comment-'+x._id+'">'+
+            '<div><span class="comment-user">'+escHtml(displayName)+'</span>'+verifiedBadge+'<span class="comment-date">'+new Date(x.createdAt).toLocaleString()+'</span></div>'+
+            '<div class="comment-text">'+escHtml(x.text)+'</div>'+
+            '<span class="comment-like" onclick="likeComment(\''+currentContentId+'\',\''+x._id+'\')">♡ '+(x.likes||0)+'</span>'+
+            '<span class="comment-reply-btn" onclick="showReplyForm(\''+x._id+'\')">↩ Reply</span>'+
+            '<div class="reply-form" id="replyForm-'+x._id+'" style="display:none">'+
+                '<input type="text" id="replyName-'+x._id+'" placeholder="Name" style="flex:1;min-width:60px">'+
+                '<input type="text" id="replyText-'+x._id+'" placeholder="Reply..." style="flex:2;min-width:80px">'+
+                '<button class="cta-btn cta-download cta-sm" onclick="addReply(\''+currentContentId+'\',\''+x._id+'\')">Reply</button>'+
+            '</div>'+
+            repliesHtml+
+        '</div>';
+    }).join('');
+
+    if (!showAll && comments.length > 2) {
+        html += '<div style="text-align:center;margin-top:0.5rem;"><button class="cta-btn cta-outline cta-sm" onclick="renderComments(currentComments, true)">View more comments ('+(comments.length-2)+' more)</button></div>';
+    }
+    cl.innerHTML = html;
+}
+
+function showReplyForm(cid){
+    var f = document.getElementById('replyForm-'+cid);
+    f.style.display = f.style.display === 'none' ? 'flex' : 'none';
+    if (isAdminLoggedIn()) {
+        var rname = document.getElementById('replyName-'+cid);
+        if (rname) { rname.style.display = 'none'; rname.value = adminPrefixName(currentUser.fullName || 'Admin'); }
+    }
+}
+
+async function addReply(contentId, commentId){
+    var nInput = document.getElementById('replyName-'+commentId);
+    var t = document.getElementById('replyText-'+commentId).value.trim();
+    if (!t) return toast('Reply text required');
+    var n;
+    if (isAdminLoggedIn()) {
+        n = adminPrefixName(currentUser.fullName || 'Admin');
+    } else {
+        n = nInput.value.trim();
+        if (!n) return toast('Name required for reply');
+    }
+    var r = await fetch(API+'/comments/'+contentId, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userName:n, text:t, parentId:commentId})});
+    var d = await r.json();
+    if (d.success) {
+        document.getElementById('replyText-'+commentId).value = '';
+        loadComments(contentId);
+    }
+}
+
+async function addComment(){
+    var nInput = document.getElementById('commentName');
+    var t = document.getElementById('newComment').value.trim();
+    if (!t) return toast('Comment text required');
+    var n;
+    if (isAdminLoggedIn()) {
+        n = adminPrefixName(currentUser.fullName || 'Admin');
+    } else {
+        n = nInput.value.trim();
+        if (!n) return toast('Name required');
+    }
+    var r = await fetch(API+'/comments/'+currentContentId, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userName:n, text:t})});
+    var d = await r.json();
+    if (d.success) {
+        document.getElementById('newComment').value = '';
+        if (!isAdminLoggedIn()) document.getElementById('commentName').value = '';
+        loadComments(currentContentId);
+    }
+}
+
+async function likeComment(cid, cmid){
+    await fetch(API+'/comments/'+cid+'/'+cmid+'/like', {method:'POST'});
+    loadComments(cid);
+}
 
 // ============ ADS & RELATED ============
-... // same as before
+var modalAdList=[], modalAdIndex=0, modalAdTimer=null;
 
-(function(){var p=new URLSearchParams(window.location.search);var mid=p.get('movie');loadAllContent().then(function(){if(mid){setTimeout(function(){openContent(mid)},800)}loadLatestNews();});updateProfileIcon();if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}})();
+function startModalAdRotation(){
+    if (modalAdTimer) clearInterval(modalAdTimer);
+    if (modalAdList.length > 1) {
+        modalAdTimer = setInterval(function(){
+            modalAdIndex = (modalAdIndex + 1) % modalAdList.length;
+            refreshAdCardContent();
+        }, 15000);
+    }
+}
+
+function refreshAdCardContent(){
+    var mount = document.getElementById('adCardMount');
+    if (!mount || !modalAdList[modalAdIndex]) return;
+    mount.innerHTML = buildAdCardInner(modalAdList[modalAdIndex]);
+}
+
+function modalAdGoTo(i){
+    modalAdIndex = i;
+    refreshAdCardContent();
+    startModalAdRotation();
+}
+
+function getAdMediaUrl(ad){ return ad.mediaUrl || ad.imageUrl || ad.videoUrl || ad.image || ad.video || ad.media || ad.fileUrl || ''; }
+
+function getMediaAdsForUser(){
+    return allAds.filter(function(a){
+        var type = (a.type || '').toLowerCase().trim();
+        if (type !== 'image' && type !== 'video') return false;
+        if (a.isActive === false) return false;
+        if (!adMatchesPlan(a)) return false;
+        return !!getAdMediaUrl(a);
+    });
+}
+
+function buildAdCardInner(ad){
+    var media = '';
+    var type = (ad.type || '').toLowerCase().trim();
+    var src = getAdMediaUrl(ad);
+    if (type === 'image' && src) {
+        media = '<img src="'+src+'" onerror="this.remove()">';
+    } else if (type === 'video' && src) {
+        media = '<video src="'+src+'" autoplay muted loop playsinline onerror="this.remove()"></video>';
+    } else if (ad.description) {
+        media = '<p style="font-size:0.9rem;color:var(--text);padding:0.5rem;flex:1 1 auto;display:flex;align-items:center;justify-content:center;text-align:center;">'+escHtml(ad.description)+'</p>';
+    }
+    var contact = '';
+    if (ad.contactPhone) {
+        contact += '<a class="ad-whatsapp" href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">💬 WhatsApp</a>';
+    }
+    if (ad.link) {
+        contact += '<a class="ad-website" href="'+ad.link+'" target="_blank">🌐 Visit</a>';
+    }
+    if (ad.businessName) {
+        contact += '<span class="ad-business">'+escHtml(ad.businessName)+'</span>';
+    }
+    var dots = '';
+    if (modalAdList.length > 1) {
+        dots = '<div class="ad-dots-inline">';
+        for (var i=0; i<modalAdList.length; i++) {
+            dots += '<div class="ad-dot-sm'+(i===modalAdIndex?' active':'')+'" onclick="event.stopPropagation();modalAdGoTo('+i+')"></div>';
+        }
+        dots += '</div>';
+    }
+    return media + '<div class="ad-contact">'+contact+'</div>' + dots;
+}
+
+async function loadRelated(id, c){
+    relatedAll = allContents.filter(function(x){ return x._id !== id; });
+    rightCount = 18; bottomCount = 12;
+    if (allAds.length === 0) { await loadAds(); }
+    renderRelatedGrids();
+    requestAnimationFrame(function(){ adjustRelatedRightCount(); });
+}
+
+function adjustRelatedRightCount(){
+    if (window.innerWidth <= 900) return;
+    var leftEl = document.getElementById('detailLeft');
+    var rightEl = document.getElementById('detailRight');
+    if (!leftEl || !rightEl) return;
+    var sampleCard = rightEl.querySelector('.movie-card');
+    if (!sampleCard) sampleCard = rightEl.querySelector('#adCardWrapper');
+    if (!sampleCard) sampleCard = rightEl.firstElementChild;
+    if (!sampleCard) return;
+    var leftH = leftEl.offsetHeight;
+    var cardH = sampleCard.offsetHeight;
+    if (!cardH) return;
+    var gapPx = 0.7 * 16;
+    var cols = 3;
+    var maxRows = Math.ceil(18 / cols);
+    var rows = Math.max(1, Math.min(maxRows, Math.round((leftH + gapPx) / (cardH + gapPx))));
+    var newRightCount = rows * cols;
+    if (newRightCount !== rightCount) {
+        var diff = rightCount - newRightCount;
+        rightCount = newRightCount;
+        bottomCount = Math.max(0, bottomCount + diff);
+        renderRelatedGrids();
+    }
+}
+
+function renderRelatedGrids(){
+    var rightEl = document.getElementById('detailRight');
+    modalAdList = getMediaAdsForUser();
+    modalAdIndex = 0;
+    var hasAd = modalAdList.length > 0;
+    if (hasAd) {
+        rightEl.style.gridTemplateColumns = 'repeat(3,1fr)';
+        var html = '';
+        var col1Items = relatedAll.slice(0,3);
+        for (var j=0; j<3; j++) {
+            if (col1Items[j]) html += relatedCardHTML(col1Items[j], 'grid-column:1;grid-row:'+(j+1));
+        }
+        html += '<div class="ad-card" style="grid-column:2 / span 2;grid-row:1 / span 3" id="adCardWrapper"><div class="ad-card-inner" id="adCardMount">'+buildAdCardInner(modalAdList[0])+'</div></div>';
+        var restCards = relatedAll.slice(3, rightCount-3);
+        for (var k=0; k<restCards.length; k++) {
+            if (restCards[k]) {
+                var row = 4 + Math.floor(k/3);
+                var col = 1 + (k%3);
+                html += relatedCardHTML(restCards[k], 'grid-column:'+col+';grid-row:'+row);
+            }
+        }
+        rightEl.innerHTML = html;
+        var wrapper = document.getElementById('adCardWrapper');
+        if (wrapper) {
+            wrapper.onmouseenter = function(){ if(modalAdTimer) clearInterval(modalAdTimer); };
+            wrapper.onmouseleave = function(){ startModalAdRotation(); };
+        }
+        startModalAdRotation();
+    } else {
+        if (modalAdTimer) clearInterval(modalAdTimer);
+        rightEl.style.gridTemplateColumns = 'repeat(3,1fr)';
+        rightEl.innerHTML = relatedAll.slice(0, rightCount).map(function(m){ return relatedCardHTML(m); }).join('');
+    }
+    var bottomStart = hasAd ? rightCount-3 : rightCount;
+    var bottomItems = relatedAll.slice(bottomStart, bottomStart+bottomCount);
+    document.getElementById('detailBottomGrid').innerHTML = bottomItems.map(function(m){ return relatedCardHTML(m); }).join('');
+    var totalShown = bottomStart + bottomCount;
+    var btn = document.getElementById('relatedLoadMore');
+    if (totalShown >= relatedAll.length) {
+        btn.style.display = 'none';
+    } else {
+        btn.style.display = 'block';
+        btn.textContent = 'See More ▼';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    }
+}
+
+function loadMoreRelated(){
+    bottomCount += 12;
+    renderRelatedGrids();
+    document.getElementById('modalBodyContent').scrollTop += 400;
+}
+
+window.addEventListener('resize', function(){
+    if (document.getElementById('movieModal').classList.contains('active')) adjustRelatedRightCount();
+});
+
+async function loadAds(){
+    try {
+        var r = await fetch(API+'/ads');
+        var ads = await r.json();
+        if (ads && ads.length) {
+            allAds = ads.filter(function(a){ return a.isActive !== false; });
+        } else {
+            allAds = [];
+        }
+        var textAds = allAds.filter(function(a){ return (a.type||'').toLowerCase()==='text' && adMatchesPlan(a); });
+        var bar = document.getElementById('welcomeBar');
+        var inner = document.getElementById('welcomeBarInner');
+        if (textAds.length > 0) {
+            bar.style.display = 'block';
+            renderTextAdCarousel(textAds, inner);
+        } else {
+            bar.style.display = 'none';
+            if (adCarouselTimer) clearInterval(adCarouselTimer);
+        }
+    } catch(e) { allAds = []; }
+}
+
+var currentTextAds = [];
+function renderTextAdCarousel(ads, container){
+    currentTextAds = ads;
+    if (adCarouselTimer) clearInterval(adCarouselTimer);
+    adCarouselIndex = 0;
+    function showSlide(idx){
+        adCarouselIndex = idx;
+        var ad = ads[idx];
+        var html = '<div class="wb-slide"><span class="wb-title">'+escHtml(ad.title||'')+'</span>'+
+                   (ad.description ? '<span class="wb-desc">'+escHtml(ad.description)+'</span>' : '');
+        if (ad.contactPhone) {
+            html += '<a class="wb-cta" href="https://wa.me/'+ad.contactPhone.replace(/[^0-9]/g,'')+'" target="_blank">💬 Talk to Us</a>';
+        }
+        html += '</div>';
+        if (ads.length > 1) {
+            html += '<div class="wb-dots">';
+            for (var i=0; i<ads.length; i++) {
+                html += '<div class="wb-dot'+(i===idx?' active':'')+'" onclick="adCarouselGoTo('+i+')"></div>';
+            }
+            html += '</div>';
+        }
+        container.innerHTML = html;
+    }
+    container._showSlide = showSlide;
+    showSlide(0);
+    function startTimer(){
+        if (adCarouselTimer) clearInterval(adCarouselTimer);
+        if (ads.length > 1) {
+            adCarouselTimer = setInterval(function(){ showSlide((adCarouselIndex+1)%ads.length); }, 15000);
+        }
+    }
+    startTimer();
+    container.onmouseenter = function(){ if(adCarouselTimer) clearInterval(adCarouselTimer); };
+    container.onmouseleave = function(){ startTimer(); };
+}
+
+function adCarouselGoTo(i){
+    var container = document.getElementById('welcomeBarInner');
+    if (container && container._showSlide) container._showSlide(i);
+}
+
+// ============ PASSWORD TOGGLE (already exists but ensure) ============
+function toggleLoginPassword() {
+    var input = document.getElementById('loginPassword');
+    var icon = document.querySelector('.password-toggle');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🔒';
+    } else {
+        input.type = 'password';
+        icon.textContent = '👁️';
+    }
+}
+
+// ============ CUSTOM FULLSCREEN TOGGLE (already exists) ============
+function toggleWrapperFullscreen() {
+    var wrapper = document.getElementById('playerWrapper');
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    } else {
+        wrapper.requestFullscreen();
+    }
+}
+
+// ============ INITIAL LOAD ============
+(function(){
+    var p = new URLSearchParams(window.location.search);
+    var mid = p.get('movie');
+    var plans = p.has('plans');
+    loadAllContent().then(function(){
+        if (mid) { setTimeout(function(){ openContent(mid); }, 800); }
+        loadLatestNews();
+        if (plans) { setTimeout(function(){ showPlans(); }, 600); }
+    });
+    updateProfileIcon();
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(function(){});
+    }
+})();
+
 // ===== NEWS (homepage) =====
-async function loadLatestNews() { ... }
+async function loadLatestNews() {
+    try {
+        const res = await fetch(API + '/news/latest');
+        const data = await res.json();
+        const section = document.getElementById('newsHomeSection');
+        const grid = document.getElementById('newsHomeGrid');
+        if (!data.length) {
+            section.style.display = 'none';
+            return;
+        }
+        section.style.display = 'block';
+        grid.innerHTML = data.map(n => {
+            const snippet = (n.description || '').replace(/<[^>]*>/g, '').substring(0, 120);
+            const imgSrc = n.thumbnailUrl || (n.images && n.images[0]) || '';
+            return `<div class="news-home-card" onclick="window.location.href='https://news.niromovie.site/?id=${n._id}'">
+                ${imgSrc ? `<img class="news-home-thumb" src="${imgSrc}" onerror="this.style.display='none'">` : ''}
+                <div class="news-home-body">
+                    <div class="news-home-title">${escHtml(n.title)}</div>
+                    <div class="news-home-excerpt">${escHtml(snippet)}</div>
+                    <div class="news-home-date">📅 ${new Date(n.createdAt).toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'numeric'})}</div>
+                </div>
+            </div>`;
+        }).join('');
+    } catch (e) {
+        console.error('Failed to load latest news:', e);
+    }
+}
+
 // Rotating WhatsApp channel text
-(function(){ ... })();
+(function() {
+    const phrases = ["Join Our Channel", "Stay Updated", "Exclusive News", "Never Miss a Movie"];
+    let index = 0;
+    const el = document.getElementById('channelText');
+    if (!el) return;
+    setInterval(() => {
+        index = (index + 1) % phrases.length;
+        el.style.opacity = '0';
+        setTimeout(() => {
+            el.textContent = phrases[index];
+            el.style.opacity = '1';
+        }, 300);
+    }, 3000);
+})();
 </script>
 </body>
 </html>
