@@ -6,17 +6,6 @@
     <title>niroMovie VIP | Premium Movies</title>
     <meta name="description" content="Sinema nziza za VIP kuri niroMovie.">
     <link rel="manifest" href="/manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="niroMovie VIP">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <meta property="og:title" content="niroMovie VIP">
-    <meta property="og:description" content="Sinema nziza za VIP.">
-    <meta property="og:image" content="/icon-512.png">
-    <meta property="og:url" content="https://plan.niromovie.site">
     <meta name="theme-color" content="#0d0d0d">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -26,8 +15,6 @@
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
         body.body-no-scroll{overflow:hidden}
-        body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:40px 40px;animation:bgDrift 30s linear infinite}
-        @keyframes bgDrift{0%{background-position:0 0}100%{background-position:40px 40px}}
         ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--text3);border-radius:10px}
         .navbar{position:sticky;top:0;width:100%;z-index:1000;background:rgba(13,13,13,0.94);backdrop-filter:blur(20px);padding:0.6rem 1.5rem;border-bottom:1px solid var(--border)}
         .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
@@ -46,7 +33,7 @@
         .search-box input{background:transparent;border:none;color:var(--text);padding:0.35rem;outline:none;width:100%;font-family:inherit;font-size:0.82rem}
         .search-box input::placeholder{color:var(--text3)}
         .profile-icon{width:35px;height:35px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:0.75rem;color:#000}
-        .profile-icon:hover{transform:scale(1.06);box-shadow:0 4px 15px rgba(245,197,24,0.25)}
+        .profile-icon:hover{transform:scale(1.06)}
         .side-menu{position:fixed;top:0;left:-310px;width:290px;height:100%;background:var(--bg2);z-index:2000;transition:var(--trans);padding:2rem 1.5rem;box-shadow:var(--shadowLg);overflow-y:auto}
         .side-menu.open{left:0}
         .side-menu-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1999;display:none}
@@ -55,6 +42,17 @@
         .side-menu-header h3{color:var(--accent);font-weight:800;font-size:1.2rem}
         .side-menu-item{padding:0.8rem 1rem;margin:0.25rem 0;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:0.7rem;font-weight:500;font-size:0.88rem;color:var(--text2)}
         .side-menu-item:hover{background:var(--bg3);color:var(--accent)}
+        .hero-section{padding:1rem 1.5rem;max-width:1400px;margin:0 auto}
+        .hero-slider{position:relative;overflow:hidden;border-radius:var(--radiusLg);aspect-ratio:16/5;background:var(--bg3);cursor:pointer}
+        .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;display:flex;align-items:flex-end;padding:1.5rem;background-size:cover;background-position:center}
+        .hero-slide.active{opacity:1;z-index:1}
+        .hero-slide-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.05) 55%)}
+        .hero-slide-info{position:relative;z-index:2;max-width:60%}
+        .hero-slide-info h2{color:#fff;font-size:1.6rem;font-weight:800;margin-bottom:0.3rem;text-shadow:0 2px 10px rgba(0,0,0,0.6)}
+        .hero-slide-info p{color:rgba(255,255,255,0.8);font-size:0.9rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .hero-dots{display:flex;gap:0.4rem;justify-content:center;margin-top:0.6rem}
+        .hero-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer}
+        .hero-dot.active{background:var(--accent);width:20px;border-radius:4px}
         .section{margin:0.4rem 0;padding:0 1.5rem;max-width:1400px;margin-left:auto;margin-right:auto;position:relative;z-index:1}
         .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7rem}
         .section-head h2{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:0.4rem}
@@ -63,10 +61,7 @@
         .movie-card:hover{transform:translateY(-4px);box-shadow:var(--shadowLg);border-color:var(--accent)}
         .movie-thumb{width:100%;object-fit:cover;background:var(--bg3);display:block}
         .movie-badge{position:absolute;top:8px;right:8px;padding:0.15rem 0.5rem;border-radius:20px;font-size:0.58rem;font-weight:700;z-index:2}
-        .badge-basic{background:#2196F3;color:#fff}
-        .badge-standard{background:#9C27B0;color:#fff}
-        .badge-premium{background:var(--accent);color:#000}
-        .badge-ultimate{background:var(--orange);color:#fff}
+        .badge-basic{background:#2196F3;color:#fff}.badge-standard{background:#9C27B0;color:#fff}.badge-premium{background:var(--accent);color:#000}.badge-ultimate{background:var(--orange);color:#fff}
         .quality-badge{position:absolute;top:8px;left:8px;padding:0.12rem 0.35rem;border-radius:4px;font-size:0.55rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2}
         .movie-info{padding:0.6rem}
         .movie-title{font-weight:600;margin-bottom:0.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:0.82rem;color:var(--text)}
@@ -74,14 +69,119 @@
         .categories-scroll{display:flex;gap:0.4rem;overflow-x:auto;scroll-behavior:smooth;padding-bottom:0.3rem;-ms-overflow-style:none;scrollbar-width:none}
         .categories-scroll::-webkit-scrollbar{display:none}
         .cat-pill{padding:0.4rem 0.9rem;border-radius:30px;font-weight:500;font-size:0.8rem;cursor:pointer;background:var(--bg2);border:1.5px solid var(--border);color:var(--text2);font-family:inherit;white-space:nowrap;flex-shrink:0;transition:var(--trans)}
-        .cat-pill:hover{border-color:var(--accent);color:var(--accent)}
-        .cat-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}
+        .cat-pill:hover{border-color:var(--accent);color:var(--accent)}.cat-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}
         .load-more-btn{display:block;margin:1rem auto;padding:0.6rem 1.8rem;border-radius:30px;font-weight:600;font-size:0.82rem;cursor:pointer;background:var(--bg2);border:2px solid var(--border);color:var(--text2);font-family:inherit;transition:var(--trans)}
         .load-more-btn:hover{border-color:var(--accent);color:var(--accent)}
-        .footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.2rem 1.5rem 1.4rem;margin-top:2.5rem;position:relative;z-index:1}
-        .footer-wa-banner{max-width:900px;margin:0 auto 2.2rem;text-align:center}
-        .footer-wa-banner a{display:inline-flex;align-items:center;gap:0.6rem;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;padding:0.75rem 1.6rem;border-radius:30px;text-decoration:none;font-weight:700;font-size:0.85rem;box-shadow:0 0 15px rgba(37,211,102,0.35);transition:var(--trans);border:none}
-        .footer-wa-banner a:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(37,211,102,0.6)}
+        /* ========== MODALS ========== */
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:3000;justify-content:center;align-items:center;backdrop-filter:blur(6px);padding:1rem}
+        .modal-overlay.active{display:flex}
+        .modal-full{width:100%;height:100vh;max-height:100vh;display:flex;flex-direction:column;background:var(--bg2);border-radius:0;overflow:hidden}
+        .modal-header{padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:5;flex-shrink:0;gap:0.8rem}
+        .modal-header h2{font-size:1.05rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .back-btn{cursor:pointer;display:flex;align-items:center;gap:0.3rem;color:var(--accent);font-weight:600;font-size:0.85rem;white-space:nowrap}
+        .back-btn:hover{opacity:0.8}
+        .modal-body{padding:1.2rem;overflow-y:auto;flex:1}
+        .close-btn{font-size:22px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--text2);transition:var(--trans)}
+        .close-btn:hover{background:var(--bg3);color:var(--accent)}
+        .modal-box-sm{max-width:440px;width:100%;background:var(--bg2);border-radius:var(--radiusLg);overflow-y:auto;max-height:92vh;border:1px solid var(--border);box-shadow:var(--shadowLg);margin:auto}
+        /* ========== MOVIE DETAIL (NETFLIX STYLE) ========== */
+        .detail-hero{width:100%;aspect-ratio:16/7;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:1rem;position:relative}
+        .detail-hero video,.detail-hero img{width:100%;height:100%;object-fit:cover;display:block}
+        .detail-title{font-size:1.8rem;font-weight:800;margin-bottom:0.4rem}
+        .detail-desc{color:var(--text2);font-size:0.9rem;line-height:1.6;margin-bottom:0.5rem}
+        .detail-desc.truncated{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+        .detail-meta{display:flex;flex-wrap:wrap;gap:1rem;font-size:0.8rem;color:var(--text2);margin-bottom:1rem}
+        .detail-meta .mi{display:inline-flex;align-items:center;gap:0.3rem}
+        .detail-meta .mi .material-symbols-outlined{font-size:1rem;color:var(--accent)}
+        .detail-actions{display:flex;gap:0.8rem;flex-wrap:wrap;margin-bottom:1rem}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.7rem 1.3rem;border:none;border-radius:30px;font-weight:700;cursor:pointer;transition:var(--trans);font-family:inherit;font-size:0.9rem}
+        .btn-primary{background:var(--accent);color:#000;box-shadow:0 4px 15px rgba(245,197,24,0.25)}
+        .btn-primary:hover{background:var(--accentD);transform:translateY(-2px)}
+        .btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
+        .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+        .btn-sm{padding:0.4rem 0.9rem;font-size:0.75rem}
+        .btn-hero{flex:1 1 200px;padding:1rem 1.5rem;font-size:1rem;border-radius:40px}
+        .btn-hero .material-symbols-outlined{font-size:1.4rem}
+        /* Parts list */
+        .parts-list{margin-top:0.8rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.6rem}
+        .part-row{display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.7rem;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;transition:var(--trans)}
+        .part-row:hover{border-color:var(--accent)}
+        .part-num{width:26px;height:26px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:var(--text2);flex-shrink:0}
+        .part-name{flex:1;font-size:0.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .part-actions{display:flex;gap:0.35rem;flex-shrink:0}
+        .part-actions .btn{padding:0.3rem 0.6rem;font-size:0.66rem;gap:0.25rem}
+        /* Comments */
+        .comment-item{display:flex;gap:0.6rem;padding:0.65rem 0;border-bottom:1px solid var(--border);font-size:0.8rem}
+        .comment-item:last-child{border-bottom:none}
+        .comment-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;color:#fff;flex-shrink:0}
+        .comment-body{flex:1;min-width:0}
+        .comment-user{font-weight:600;color:var(--text)}
+        .mini-check{color:var(--accent);font-weight:700;margin-left:3px;font-size:0.85em}
+        .comment-date{font-size:0.65rem;color:var(--text3);margin-left:0.5rem}
+        .comment-text{margin-top:0.15rem;color:var(--text2);word-break:break-word;line-height:1.5}
+        .comment-like{cursor:pointer;color:var(--text3);font-size:0.7rem;margin-top:0.3rem;display:inline-flex;align-items:center;gap:0.15rem}
+        .comment-like:hover{color:var(--accent)}
+        .comment-composer{border:1px solid var(--border);border-radius:var(--radiusLg);padding:0.8rem;background:var(--bg3);margin-top:0.4rem;margin-bottom:0.8rem}
+        .comment-composer input,.comment-composer textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:0.5rem 0.7rem;font-family:inherit;font-size:0.8rem;margin-bottom:0.55rem}
+        .comment-composer textarea{resize:none;min-height:64px}
+        .composer-foot{display:flex;align-items:center;justify-content:space-between}
+        /* Related (More Like This) */
+        .more-like{margin-top:2rem}
+        .more-like-head{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.9rem}
+        .more-like-head h3{font-size:1rem;font-weight:700;white-space:nowrap}
+        .more-like-head .underline{flex:1;max-width:80px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent) 70%,var(--border) 70%)}
+        .related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.8rem}
+        .related-card{cursor:pointer;display:flex;flex-direction:column;gap:0.35rem}
+        .related-card .poster-wrap{position:relative;aspect-ratio:2/3;border-radius:var(--radius);overflow:hidden;background:var(--bg3);border:1px solid var(--border);transition:var(--trans)}
+        .related-card:hover .poster-wrap{border-color:var(--accent);transform:translateY(-2px)}
+        .related-card .poster-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+        .related-card .ep-pill{position:absolute;top:6px;right:6px;background:var(--accent);color:#000;font-size:0.56rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:20px}
+        .related-card .access-pill{position:absolute;top:6px;left:6px;font-size:0.54rem;font-weight:700;padding:0.12rem 0.4rem;border-radius:12px;color:#fff}
+        .related-card .r-title{font-size:0.78rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .related-card .r-sub{font-size:0.66rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        /* Mini footer in modal */
+        .modal-mini-footer{margin-top:2.5rem;padding-top:1.4rem;border-top:1px solid var(--border)}
+        .mmf-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:1.6rem}
+        .mmf-logo{display:flex;align-items:center;gap:0.4rem;font-weight:800;font-size:0.95rem;color:var(--text);margin-bottom:0.5rem}
+        .mmf-logo span{color:var(--accent)}
+        .mmf-col p{color:var(--text3);font-size:0.78rem;line-height:1.55;max-width:300px}
+        .mmf-col h5{font-size:0.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.3px;margin-bottom:0.7rem;font-weight:700}
+        .mmf-col a{display:block;color:var(--text2);text-decoration:none;margin:0.28rem 0;font-size:0.78rem;cursor:pointer;transition:var(--trans)}
+        .mmf-col a:hover{color:var(--accent)}
+        .mmf-social{display:flex;gap:0.5rem;margin-top:0.2rem}
+        .mmf-social a{width:32px;height:32px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);text-decoration:none;font-size:0.9rem;transition:var(--trans)}
+        .mmf-social a:hover{background:var(--accent);color:#000;transform:translateY(-2px)}
+        .mmf-bottom{margin-top:1.4rem;padding-top:1rem;border-top:1px solid var(--border);color:var(--text3);font-size:0.72rem;text-align:center}
+        @media(max-width:900px){.mmf-grid{grid-template-columns:1fr 1fr}.detail-hero{aspect-ratio:16/9}}
+        @media(max-width:600px){.mmf-grid{grid-template-columns:1fr}.parts-list{grid-template-columns:1fr}.related-grid{grid-template-columns:repeat(2,1fr)}}
+        /* Subscription view */
+        .subscription-view{display:none;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+        .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+        .plan-card{background:var(--bg);border:2px solid var(--border);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;cursor:pointer;transition:var(--trans)}
+        .plan-card:hover,.plan-card.selected{border-color:var(--accent);box-shadow:0 0 15px rgba(245,197,24,0.2)}
+        .plan-name{font-weight:700;font-size:1rem}
+        .plan-price{font-size:1.5rem;font-weight:800;color:var(--accent);margin:0.4rem 0}
+        .plan-price span{font-size:0.7rem;color:var(--text2)}
+        .plan-features{font-size:0.75rem;color:var(--text2);margin-top:0.5rem;text-align:left}
+        .selected-badge{display:none;background:var(--accent);color:#000;border-radius:20px;padding:0.2rem 0.6rem;font-size:0.7rem;font-weight:700;margin-top:0.5rem}
+        .plan-card.selected .selected-badge{display:inline-block}
+        .form-group{margin-bottom:1rem}
+        .form-group label{display:block;margin-bottom:0.4rem;font-weight:600;font-size:0.85rem;color:var(--text2)}
+        .form-group input,.form-group select{width:100%;padding:0.7rem 1rem;background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);font-family:inherit;font-size:0.9rem;transition:var(--trans)}
+        .form-group input:focus,.form-group select:focus{border-color:var(--accent);outline:none}
+        .auth-toggle{text-align:center;margin-top:1rem;font-size:0.85rem}
+        .auth-toggle a{color:var(--accent);cursor:pointer;font-weight:600}
+        .message{padding:0.8rem 1rem;border-radius:var(--radius);margin-bottom:1rem;display:none;font-size:0.85rem}
+        .message.success{background:rgba(76,175,80,0.1);border:1px solid var(--green);color:var(--green)}
+        .message.error{background:rgba(229,57,53,0.1);border:1px solid #E53935;color:#E53935}
+        .payment-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;margin:1rem 0}
+        .payment-method{margin:0.8rem 0}
+        .payment-method strong{display:block;font-size:0.9rem}
+        .payment-code{font-size:1.2rem;font-weight:700;color:var(--accent);font-family:monospace}
+        .payment-note{font-size:0.75rem;color:var(--text2);margin-top:0.5rem}
+        .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:0.6rem 1.5rem;border-radius:30px;z-index:9999;font-weight:600;font-size:0.85rem;animation:toastIn 0.3s ease;pointer-events:none}
+        @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        .footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.2rem 1.5rem 1.4rem;margin-top:2.5rem}
         .footer-grid{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1.3fr 1.3fr;gap:2rem}
         .footer-brand .f-logo{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;font-weight:800;font-size:1.05rem;color:var(--text)}
         .footer-brand .f-logo span{color:var(--accent)}
@@ -94,126 +194,13 @@
         .footer-bottom{max-width:1400px;margin:2rem auto 0;padding-top:1.2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;color:var(--text3);font-size:0.75rem}
         .footer-bottom .flinks a{color:var(--text3);text-decoration:none;margin-left:1rem;cursor:pointer}
         .footer-bottom .flinks a:hover{color:var(--accent)}
-        @media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}.detail-main{flex-direction:column}.detail-right{flex:1 1 100%}}
-        @media(max-width:600px){.footer-grid{grid-template-columns:1fr}}
-        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:3000;justify-content:center;align-items:center;backdrop-filter:blur(6px);padding:1rem}
-        .modal-overlay.active{display:flex}
-        .modal-full{max-width:100%;width:100%;height:100vh;max-height:100vh;border-radius:0;display:flex;flex-direction:column;background:var(--bg2)}
-        .modal-header{padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:5;flex-shrink:0;gap:0.8rem}
-        .modal-header h2{font-size:1.05rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .back-btn{cursor:pointer;display:flex;align-items:center;gap:0.3rem;color:var(--accent);font-weight:600;font-size:0.85rem;white-space:nowrap}
-        .back-btn:hover{opacity:0.8}
-        .modal-body{padding:1.2rem;overflow-y:auto;flex:1}
-        .close-btn{font-size:22px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--text2);transition:var(--trans)}
-        .close-btn:hover{background:var(--bg3);color:var(--accent)}
-        .modal-box-sm{max-width:440px;width:100%;background:var(--bg2);border-radius:var(--radiusLg);overflow-y:auto;max-height:92vh;border:1px solid var(--border);box-shadow:var(--shadowLg);margin:auto}
-        .detail-container{display:flex;flex-direction:column;gap:1.2rem}
-        .detail-main{display:flex;flex-wrap:wrap;gap:1.4rem}
-        .detail-left{flex:1 1 62%;min-width:0}
-        .detail-right{flex:1 1 38%;min-width:0;display:grid;grid-template-columns:repeat(2,1fr);gap:0.9rem;align-content:start}
-        .trailer-video{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem}
-        .trailer-video video{width:100%;height:100%;object-fit:cover}
-        .player-wrapper{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem;position:relative;display:flex;align-items:center;justify-content:center}
-        .player-wrapper video{width:100%;height:100%;display:none}
-        .player-message{color:var(--text2);text-align:center;padding:1rem;font-size:0.9rem}
-        .action-buttons{display:flex;gap:0.9rem;margin-bottom:1rem;flex-wrap:wrap}
-        .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.7rem 1.3rem;border:none;border-radius:30px;font-weight:700;cursor:pointer;transition:var(--trans);font-family:inherit;font-size:0.9rem}
-        .btn-primary{background:var(--accent);color:#000;box-shadow:0 4px 15px rgba(245,197,24,0.25)}
-        .btn-primary:hover{background:var(--accentD);transform:translateY(-2px)}
-        .btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
-        .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-        .btn-sm{padding:0.4rem 0.9rem;font-size:0.75rem}
-        .btn-hero{flex:1 1 220px;padding:1.05rem 1.6rem;font-size:1.05rem;border-radius:40px;letter-spacing:0.2px}
-        .btn-hero .material-symbols-outlined{font-size:1.4rem}
-        #watchBtn.btn-hero{animation:pulseGlow 2.2s ease-in-out infinite}
-        @keyframes pulseGlow{0%,100%{box-shadow:0 4px 15px rgba(245,197,24,0.25)}50%{box-shadow:0 4px 28px rgba(245,197,24,0.6)}}
-        .desc-text{font-size:0.9rem;color:var(--text2);line-height:1.6;margin-bottom:0.5rem}
-        .desc-truncated{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-        .desc-expanded{display:block}
-        .view-more-link{color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.6rem}
-        .view-more-link:hover{text-decoration:underline}
-        .modal-meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;margin:0.6rem 0 1rem;font-size:0.8rem;color:var(--text2)}
-        .modal-meta-row .mi{display:inline-flex;align-items:center;gap:0.3rem}
-        .modal-meta-row .mi .material-symbols-outlined{font-size:1rem;color:var(--accent)}
-        .parts-list{margin-top:0.8rem;display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem}
-        .part-row{display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.7rem;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);transition:var(--trans)}
-        .part-row.active{border-color:var(--accent)}
-        .part-num{width:26px;height:26px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:var(--text2);flex-shrink:0}
-        .part-row.active .part-num{background:var(--accent);color:#000;border-color:var(--accent)}
-        .part-name{flex:1;font-size:0.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .part-actions{display:flex;gap:0.35rem;flex-shrink:0}
-        .part-actions .cta-btn{padding:0.3rem 0.6rem;font-size:0.66rem;gap:0.25rem}
-        @media(max-width:768px){.parts-list{grid-template-columns:1fr}}
-        .comment-item{display:flex;gap:0.6rem;padding:0.65rem 0;border-bottom:1px solid var(--border);font-size:0.8rem}
-        .comment-item:last-child{border-bottom:none}
-        .comment-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;color:#fff;flex-shrink:0}
-        .comment-body{flex:1;min-width:0}
-        .comment-user{font-weight:600;color:var(--text)}
-        .mini-check{color:var(--accent);font-weight:700;margin-left:3px;font-size:0.85em}
-        .comment-date{font-size:0.65rem;color:var(--text3);margin-left:0.5rem}
-        .pinned-label-inline{font-size:0.65rem;color:var(--text3);margin-left:0.5rem;font-style:italic}
-        .comment-text{margin-top:0.15rem;color:var(--text2);word-break:break-word;line-height:1.5}
-        .comment-like{cursor:pointer;color:var(--text3);font-size:0.7rem;margin-top:0.3rem;display:inline-flex;align-items:center;gap:0.15rem;transition:var(--trans)}.comment-like:hover{color:var(--accent)}
-        .comment-reply-btn{cursor:pointer;color:var(--text3);font-size:0.7rem;margin-left:0.7rem;transition:var(--trans)}.comment-reply-btn:hover{color:var(--accent)}
-        .pinned-comment{padding-bottom:0.8rem;margin-bottom:0.2rem}
-        .reply-form{margin-top:0.5rem;display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center}.reply-form input{padding:0.3rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.7rem;background:var(--bg);color:var(--text);flex:1;min-width:80px}.reply-form button{padding:0.3rem 0.6rem;border-radius:20px;font-size:0.65rem}
-        .reply-item{margin-left:2.6rem;margin-top:0.5rem;font-size:0.76rem;display:flex;gap:0.5rem}
-        .reply-item .comment-avatar{width:26px;height:26px;font-size:0.7rem}
-        .comment-composer{border:1px solid var(--border);border-radius:var(--radiusLg);padding:0.8rem;background:var(--bg3);margin-top:0.4rem;margin-bottom:0.8rem}
-        .comment-composer input,.comment-composer textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:0.5rem 0.7rem;font-family:inherit;font-size:0.8rem;margin-bottom:0.55rem}
-        .comment-composer textarea{resize:none;min-height:64px}
-        .comment-composer .composer-foot{display:flex;align-items:center;justify-content:space-between}
-        .verified-badge{display:none}
-        .trailer-btn{margin-bottom:0.4rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;color:var(--accent);font-weight:600;font-size:0.78rem;background:transparent;border:1.5px solid var(--accent);padding:0.3rem 0.8rem;border-radius:20px;transition:var(--trans)}.trailer-btn:hover{background:rgba(245,197,24,0.08)}
-        .trailer-container{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.6rem;display:none}.trailer-container video{width:100%;height:100%}
-        .ad-card { grid-column: 1 / -1; display: flex; align-items: stretch; justify-content: center; overflow: hidden; min-height: 0; min-width: 0; max-width: 100%; padding: 0.2rem; background: var(--bg3); border-radius: var(--radiusLg); }
-        .ad-card-inner { display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 0.5rem; gap: 0.4rem; width: 100%; height: 100%; box-sizing: border-box; }
-        .ad-card-inner img, .ad-card-inner video { flex: 1 1 auto; width: 100%; max-width: 100%; height: auto; max-height: 220px; object-fit: contain; border-radius: var(--radius); display: block; }
-        .ad-card .ad-contact { flex-shrink: 0; font-size: 0.75rem; color: var(--text2); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem; width: 100%; text-align: center; }
-        .ad-card .ad-contact a { text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-weight: 700; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem; }
-        .ad-whatsapp { background: #25D366; color: #fff; box-shadow: 0 2px 10px rgba(37,211,102,0.3); }
-        .ad-whatsapp:hover { background: #1da851; }
-        .ad-website { background: var(--accent); color: #000; }
-        .ad-website:hover { background: var(--accentD); }
-        .ad-business { font-weight: 600; color: var(--text); font-size: 0.8rem; }
-        .ad-dots-inline { flex-shrink: 0; display: flex; gap: 0.3rem; justify-content: center; margin-top: 0.1rem; }
-        .ad-dots-inline .ad-dot-sm { width: 6px; height: 6px; border-radius: 50%; background: rgba(245,197,24,0.3); cursor: pointer; }
-        .ad-dots-inline .ad-dot-sm.active { background: var(--accent); }
-        .show-more-parts-btn{display:block;margin:0.5rem 0;padding:0.4rem 1rem;border-radius:20px;font-weight:600;font-size:0.75rem;cursor:pointer;background:transparent;border:1.5px solid var(--accent);color:var(--accent);font-family:inherit;transition:var(--trans)}.show-more-parts-btn:hover{background:rgba(245,197,24,0.08)}
-        .whatsapp-btn{position:fixed;bottom:22px;right:22px;width:46px;height:46px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 18px rgba(37,211,102,0.3);transition:var(--trans)}.whatsapp-btn:hover{transform:scale(1.1)}
-        .plan-card{background:var(--bg);padding:1rem;border-radius:var(--radiusLg);text-align:center;cursor:pointer;border:2px solid transparent;transition:var(--trans)}.plan-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}.plan-card.featured{border-color:var(--orange)}.plan-name{font-weight:700;font-size:0.85rem}.plan-price{font-size:1.2rem;font-weight:800;color:var(--accent);margin:0.2rem 0}.plan-price span{font-size:0.65rem;color:var(--text2)}
-        .payment-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1rem;text-align:center;margin:0.7rem 0}.momo-code{font-size:1rem;font-weight:700;color:var(--accent);margin:0.3rem 0;font-family:monospace}
-        .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:0.6rem 1.5rem;border-radius:30px;z-index:9999;font-weight:600;font-size:0.85rem;animation:toastIn 0.3s ease;pointer-events:none}@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-        .subscription-view{display:none;padding:2rem 1.5rem;max-width:800px;margin:0 auto}
-        .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
-        .plan-card.selected{border-color:var(--accent);box-shadow:0 0 15px rgba(245,197,24,0.2)}
-        .selected-badge{display:none;background:var(--accent);color:#000;border-radius:20px;padding:0.2rem 0.6rem;font-size:0.7rem;font-weight:700;margin-top:0.5rem}
-        .plan-card.selected .selected-badge{display:inline-block}
-        .form-group{margin-bottom:1rem}
-        .form-group label{display:block;margin-bottom:0.4rem;font-weight:600;font-size:0.85rem;color:var(--text2)}
-        .form-group input,.form-group select{width:100%;padding:0.7rem 1rem;background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);font-family:inherit;font-size:0.9rem;transition:var(--trans)}
-        .form-group input:focus,.form-group select:focus{border-color:var(--accent);outline:none}
-        .auth-toggle{text-align:center;margin-top:1rem;font-size:0.85rem}
-        .auth-toggle a{color:var(--accent);cursor:pointer;font-weight:600}
-        .message{padding:0.8rem 1rem;border-radius:var(--radius);margin-bottom:1rem;display:none;font-size:0.85rem}
-        .message.success{background:rgba(76,175,80,0.1);border:1px solid var(--green);color:var(--green)}
-        .message.error{background:rgba(229,57,53,0.1);border:1px solid #E53935;color:#E53935}
-        .payment-box .payment-method{margin:0.8rem 0}
-        .payment-box .payment-method strong{display:block;font-size:0.9rem}
-        .payment-code{font-size:1.2rem;font-weight:700;color:var(--accent);font-family:monospace}
-        .payment-note{font-size:0.75rem;color:var(--text2);margin-top:0.5rem}
-        @media(max-width:768px){
-            .navbar{padding:0.5rem 1rem}.search-box{width:100%;order:3;margin-top:0.4rem}
-            .detail-main{flex-direction:column}.detail-right{flex:1 1 100%}
-            .movie-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.movie-thumb{height:180px}
-            .footer-grid{grid-template-columns:repeat(2,1fr)}
-            .modal-body{padding:0.8rem}
-            .btn-hero{flex:1 1 100%}
-        }
+        @media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}.detail-hero{aspect-ratio:16/9}}
+        @media(max-width:600px){.footer-grid{grid-template-columns:1fr}.parts-list{grid-template-columns:1fr}.related-grid{grid-template-columns:repeat(2,1fr)}}
     </style>
 </head>
 <body>
-    <div class="navbar" id="navbar">
+    <!-- Navbar -->
+    <div class="navbar">
         <div class="nav-container">
             <div style="display:flex;align-items:center;gap:0.6rem">
                 <div class="hamburger" onclick="toggleSideMenu()"><span class="material-symbols-outlined">menu</span></div>
@@ -230,7 +217,7 @@
             <div class="profile-icon" id="profileIcon" onclick="handleProfileClick()">LI</div>
         </div>
     </div>
-
+    <!-- Side menu -->
     <div class="side-menu-overlay" id="sideMenuOverlay" onclick="toggleSideMenu()"></div>
     <div class="side-menu" id="sideMenu">
         <div class="side-menu-header"><h3>niroMovie VIP</h3><span class="material-symbols-outlined" onclick="toggleSideMenu()" style="cursor:pointer">close</span></div>
@@ -242,7 +229,16 @@
         <hr style="border-color:var(--border);margin:1rem 0">
         <div class="side-menu-item" id="sideMenuAuth" onclick="handleProfileClick()"><span class="material-symbols-outlined">login</span> Injira / Fungura Konti</div>
     </div>
-
+    <!-- Hero slider -->
+    <div class="hero-section">
+        <div class="hero-slider" id="heroSlider" onclick="heroClick()">
+            <div class="hero-slide active" id="heroSlide0"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle0"></h2><p id="heroDesc0"></p></div></div>
+            <div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div>
+            <div class="hero-slide" id="heroSlide2"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><h2 id="heroTitle2"></h2><p id="heroDesc2"></p></div></div>
+        </div>
+        <div class="hero-dots" id="heroDots"><div class="hero-dot active" onclick="goToSlide(0)"></div><div class="hero-dot" onclick="goToSlide(1)"></div><div class="hero-dot" onclick="goToSlide(2)"></div></div>
+    </div>
+    <!-- Movies view -->
     <div id="moviesView">
         <div class="section">
             <div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">category</span> Ibyiciro</h2></div>
@@ -254,14 +250,14 @@
             <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreMovies()">Erekana izindi ▼</button>
         </div>
     </div>
-
+    <!-- Subscription view (hidden) -->
     <div class="subscription-view" id="subscriptionView">
         <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:1rem;">Iyandikishe kugirango urebe</h1>
         <p style="color:var(--text2);margin-bottom:1.5rem;">Hitamo gahunda wandikireho, wishyure, ubone kwireba.</p>
         <div class="plan-grid" id="plansContainer"></div>
         <div id="authPaymentArea"></div>
     </div>
-
+    <!-- Movie Detail Modal -->
     <div class="modal-overlay" id="movieModal" onclick="if(event.target===this)closeMovieModal()">
         <div class="modal-full">
             <div class="modal-header">
@@ -270,45 +266,11 @@
                 <span class="close-btn" onclick="closeMovieModal()">&times;</span>
             </div>
             <div class="modal-body" id="modalBodyContent">
-                <div class="detail-container">
-                    <div class="detail-main">
-                        <div class="detail-left">
-                            <div class="trailer-video" id="trailerContainer" style="display:none;">
-                                <video id="trailerVideo" controls playsinline></video>
-                            </div>
-                            <div class="player-wrapper" id="playerWrapper" style="display:none;">
-                                <video id="videoPlayer" controls playsinline></video>
-                                <div class="player-message" id="playerMessage" style="display:none;"></div>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="btn btn-primary btn-hero" id="watchBtn" onclick="watchCurrentContent()" style="display:none;"><span class="material-symbols-outlined">play_circle</span> Reba Ubu</button>
-                                <button class="btn btn-outline btn-hero" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Kuramo</button>
-                            </div>
-                            <div class="desc-text desc-truncated" id="modalDesc"></div><span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:none">... soma byinshi</span>
-                            <div class="modal-meta-row" id="modalMeta"></div>
-                            <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.9rem" id="modalTags"></div>
-                            <h4 style="margin-bottom:0.3rem;font-size:0.95rem" id="episodesHeading">Ibyiciro / Episode</h4>
-                            <div id="partsList" class="parts-list"></div>
-                            <div id="showMorePartsContainer"></div>
-                            <h4 style="margin:1.2rem 0 0.5rem;font-size:0.95rem" id="commentsHeading">Ibitekerezo</h4>
-                            <div class="comment-composer">
-                                <input type="text" id="commentName" placeholder="Izina ryawe">
-                                <textarea id="newComment" placeholder="Igitekerezo cyawe…" maxlength="1000" oninput="updateCommentCounter()"></textarea>
-                                <div class="composer-foot">
-                                    <span style="font-size:0.7rem;color:var(--text3)" id="commentCounter">0/1000</span>
-                                    <button class="btn btn-primary btn-sm" onclick="addComment()"><span class="material-symbols-outlined" style="font-size:0.9rem">send</span> Ohereza</button>
-                                </div>
-                            </div>
-                            <div id="pinnedCommentBox"></div>
-                            <div id="commentsList"></div>
-                        </div>
-                        <div class="detail-right" id="detailRight"></div>
-                    </div>
-                </div>
+                <!-- Detail content will be injected here by JS -->
             </div>
         </div>
     </div>
-
+    <!-- Rules Modal -->
     <div class="modal-overlay" id="rulesModal">
         <div class="modal-box-sm" style="max-width:520px;">
             <div class="modal-header"><h2>Subscribe Ukenewe</h2><span class="close-btn" onclick="closeRulesModal(false)">&times;</span></div>
@@ -321,24 +283,26 @@
             </div>
         </div>
     </div>
-
+    <!-- Static Modals -->
+    <div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeStaticModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p>niroMovie ni urubuga rwa sinema nziza. Byose ukeneye ni ibyishimo.</p></div></div></div>
+    <div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Twandikire</h2><span class="close-btn" onclick="closeStaticModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p>Email: info@niromovie.site<br>Telefoni: +250 795 064 502</p></div></div></div>
+    <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Uburyo bwo kubika amakuru</h2><span class="close-btn" onclick="closeStaticModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p>Amakuru yawe ararenzwe. Ntidusangiza amakuru yawe n'undi.</p></div></div></div>
+    <div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Amabwiriza</h2><span class="close-btn" onclick="closeStaticModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p>Ukoresheje niroMovie, uba wemeye aya mabwiriza.</p></div></div></div>
+    <!-- Footer -->
     <div class="footer" id="footer">
-        <div class="footer-wa-banner">
-            <a href="https://wa.me/250795064502" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Ugize ikibazo? Twandikire kuri WhatsApp 0795 064 502</a>
-        </div>
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="f-logo"><span class="material-symbols-outlined logo-icon">play_circle</span> niro<span>Movie</span></div>
-                <p>Everything you need for entertainment — your destination for the latest movies, series, and entertainment content from across Africa and beyond.</p>
+                <p>Byose ukeneye ni ibyishimo — your destination for premium movies and series.</p>
                 <a class="footer-contact-item" href="https://maps.google.com/?q=Kigali,Rwanda" target="_blank"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">location_on</span></span> Kigali, Rwanda</a>
                 <a class="footer-contact-item" href="mailto:info@niromovie.site"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">mail</span></span> info@niromovie.site</a>
                 <a class="footer-contact-item" href="tel:+250795064502"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">call</span></span> +250 795 064 502</a>
             </div>
             <div class="footer-col">
                 <h4>Navigation</h4>
-                <a onclick="showMoviesView()">Sinema Premium</a>
-                <a href="https://niromovie.site">Sinema za bure</a>
-                <a href="https://news.niromovie.site">Amakuru</a>
+                <a onclick="showMoviesView()">Premium Movies</a>
+                <a href="https://niromovie.site">Free Movies</a>
+                <a href="https://news.niromovie.site">News</a>
             </div>
             <div class="footer-col">
                 <h4>Company</h4>
@@ -350,9 +314,9 @@
             <div class="footer-col">
                 <h4>Dukurikire</h4>
                 <div class="footer-social">
-                    <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://www.instagram.com/nirobwimba" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@nirobwimba" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.instagram.com/nirobwimba" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@nirobwimba" target="_blank"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
         </div>
@@ -361,13 +325,6 @@
             <div class="flinks"><a onclick="openStaticModal('privacyModal')">Privacy Policy</a><a onclick="openStaticModal('termsModal')">Terms of Service</a></div>
         </div>
     </div>
-
-    <div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeStaticModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p>niroMovie ni urubuga rwa sinema nziza. Byose ukeneye ni ibyishimo.</p></div></div></div>
-    <div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Twandikire</h2><span class="close-btn" onclick="closeStaticModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p>Email: info@niromovie.site<br>Telefoni: +250 795 064 502</p></div></div></div>
-    <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Uburyo bwo kubika amakuru</h2><span class="close-btn" onclick="closeStaticModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p>Amakuru yawe ararenzwe. Ntidusangiza amakuru yawe n'undi.</p></div></div></div>
-    <div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Amabwiriza</h2><span class="close-btn" onclick="closeStaticModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p>Ukoresheje niroMovie, uba wemeye aya mabwiriza.</p></div></div></div>
-
-    <div class="whatsapp-btn" onclick="window.open('https://wa.me/250795064502','_blank')"><i class="fab fa-whatsapp" style="font-size:22px;color:#fff"></i></div>
 
     <script>
         const API = 'https://niromovie-api.onrender.com/api';
@@ -388,9 +345,7 @@
         let isRegisterMode = false;
         let plansData = null;
         let relatedAll = [];
-        let relatedStart = 0;
         const relatedPageSize = 8;
-        const MIN_ACCESS = 'basic';
 
         function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
         function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
@@ -429,14 +384,14 @@
                     premiumContents = data.filter(c => c.accessLevel && c.accessLevel !== 'free');
                     renderAll();
                 }
-            }catch(e){ console.error(e); toast('Ntibishoboka kubona sinema. Gerageza nanone.'); }
+            }catch(e){ console.error(e); toast('Ntibishoboka kubona sinema.'); }
         }
         function renderAll(){
             const cats = [...new Set(premiumContents.map(c=>c.category).filter(Boolean))];
             document.getElementById('catRow').innerHTML = cats.map(cat=>`<button class="cat-pill" onclick="filterByCategory('${escHtml(cat)}')">${escHtml(cat)}</button>`).join('');
             visibleRows = 2;
-            document.getElementById('loadMoreBtn').style.display = 'block';
             renderGrid();
+            setupHero();
         }
         function renderGrid(filteredList){
             const list = filteredList || premiumContents;
@@ -497,7 +452,34 @@
             let count=0; if(c.seasons){c.seasons.forEach(s=>count+=(s.episodes?s.episodes.length:0));}
             return count;
         }
+        function setupHero(){
+            const heroData = premiumContents.slice().sort((a,b)=>new Date(b.uploadedAt)-new Date(a.uploadedAt)).slice(0,3);
+            for(let i=0;i<3;i++){
+                const slide = document.getElementById('heroSlide'+i);
+                const s = heroData[i];
+                if(s){
+                    slide.style.backgroundImage = `url(${s.thumbnailUrl||''})`;
+                    document.getElementById('heroTitle'+i).textContent = s.title;
+                    document.getElementById('heroDesc'+i).textContent = (s.description||'').substring(0,110);
+                } else {
+                    slide.style.display='none';
+                }
+            }
+            currentSlide = 0; showSlide(0); startHeroRotation();
+        }
+        let heroTimer = null, currentSlide = 0;
+        function startHeroRotation(){ if(heroTimer) clearInterval(heroTimer); heroTimer = setInterval(()=>{ currentSlide=(currentSlide+1)%3; showSlide(currentSlide); }, 6000); }
+        function showSlide(i){
+            currentSlide=i;
+            document.querySelectorAll('.hero-slide').forEach(s=>s.classList.remove('active'));
+            document.querySelectorAll('.hero-dot').forEach(d=>d.classList.remove('active'));
+            const slide = document.getElementById('heroSlide'+i); if(slide) slide.classList.add('active');
+            const dots = document.querySelectorAll('.hero-dot'); if(dots[i]) dots[i].classList.add('active');
+        }
+        function goToSlide(i){ showSlide(i); startHeroRotation(); }
+        function heroClick(){ const m=premiumContents.sort((a,b)=>new Date(b.uploadedAt)-new Date(a.uploadedAt))[currentSlide]; if(m) openContent(m._id); }
 
+        // Open movie detail
         async function openContent(id){
             currentContentId = id;
             selectedPartIndex = 0;
@@ -506,98 +488,116 @@
             if(!c) return;
             currentContentData = c;
             history.pushState(null,'','/?movie='+id);
-            document.getElementById('modalTitle').innerText = c.title;
-            document.getElementById('modalDesc').textContent = c.description || 'Nta bisobanuro bihari';
-            document.getElementById('modalDesc').classList.add('desc-truncated');
-            document.getElementById('modalDesc').classList.remove('desc-expanded');
-            document.getElementById('viewMoreLink').style.display = (c.description && c.description.length>80)?'inline-block':'none';
-            document.getElementById('viewMoreLink').textContent = '... soma byinshi';
-            document.getElementById('modalMeta').innerHTML = `<span class="mi"><span class="material-symbols-outlined">calendar_month</span>${c.year||'N/A'}</span><span class="mi"><span class="material-symbols-outlined">hd</span>${c.quality||'HD'}</span><span class="mi"><span class="material-symbols-outlined">workspace_premium</span>${(c.accessLevel||'basic').toUpperCase()}</span>`;
-            document.getElementById('modalTags').innerHTML = [c.category,c.country,c.translator,c.director].filter(Boolean).map(t=>`<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">${escHtml(t)}</span>`).join('');
-            const trailerContainer = document.getElementById('trailerContainer');
-            const trailerVideo = document.getElementById('trailerVideo');
-            if(c.trailerUrl){
-                trailerContainer.style.display='block';
-                trailerVideo.src = c.trailerUrl;
-                trailerVideo.load();
-            } else {
-                trailerContainer.style.display='none';
-                trailerVideo.src='';
-            }
+            // Build modal content
+            const modalBody = document.getElementById('modalBodyContent');
+            // Determine streamable
+            let firstVideoUrl = '';
             try{
                 const partsRes = await fetch(API+'/contents/'+id+'/parts');
                 const partsData = await partsRes.json();
                 currentPartsItems = partsData.items || [];
+                if(currentPartsItems.length && currentPartsItems[0].videoUrl) firstVideoUrl = currentPartsItems[0].videoUrl;
             }catch(e){ currentPartsItems = []; }
+            const canStream = isPlayableUrl(firstVideoUrl);
+            // Hero media (trailer or player)
+            let heroHTML = '';
+            if(c.trailerUrl){
+                heroHTML = `<div class="detail-hero"><video src="${c.trailerUrl}" controls poster="${c.thumbnailUrl||''}"></video></div>`;
+            } else if(canStream){
+                heroHTML = `<div class="detail-hero" id="playerWrapper"><video id="videoPlayer" controls src="${getStreamUrl(firstVideoUrl)}"></video></div>`;
+            } else {
+                heroHTML = `<div class="detail-hero"><img src="${c.thumbnailUrl||''}" onerror="this.style.background='var(--bg3)'"></div>`;
+            }
+            // Title, desc, meta
+            const metaHTML = `<span class="mi"><span class="material-symbols-outlined">calendar_month</span>${c.year||'N/A'}</span>
+                <span class="mi"><span class="material-symbols-outlined">hd</span>${c.quality||'HD'}</span>
+                <span class="mi"><span class="material-symbols-outlined">workspace_premium</span>${(c.accessLevel||'basic').toUpperCase()}</span>
+                ${c.country?`<span class="mi"><span class="material-symbols-outlined">public</span>${escHtml(c.country)}</span>`:''}`;
+            const tagsHTML = [c.category,c.country,c.translator,c.director].filter(Boolean).map(t=>`<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">${escHtml(t)}</span>`).join(' ');
+            const actionButtons = `
+                <div class="detail-actions">
+                    ${canStream ? `<button class="btn btn-primary btn-hero" id="watchBtn" onclick="watchCurrentContent()"><span class="material-symbols-outlined">play_circle</span> Reba</button>` : ''}
+                    <button class="btn btn-outline btn-hero" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Kuramo</button>
+                </div>`;
+            modalBody.innerHTML = `
+                ${heroHTML}
+                <h1 class="detail-title">${escHtml(c.title)}</h1>
+                <div class="detail-desc truncated" id="modalDesc">${escHtml(c.description||'Nta bisobanuro bihari')}</div>
+                <span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:${(c.description||'').length>140?'inline-block':'none'}">... soma byinshi</span>
+                <div class="detail-meta">${metaHTML}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem">${tagsHTML}</div>
+                ${actionButtons}
+                <h4 style="margin:1rem 0 0.5rem">Ibyiciro / Episode</h4>
+                <div id="partsList" class="parts-list"></div>
+                <div id="showMorePartsContainer"></div>
+                <h4 style="margin:1.2rem 0 0.5rem">Ibitekerezo</h4>
+                <div class="comment-composer">
+                    <input type="text" id="commentName" placeholder="Izina ryawe">
+                    <textarea id="newComment" placeholder="Igitekerezo cyawe…" maxlength="1000" oninput="updateCommentCounter()"></textarea>
+                    <div class="composer-foot">
+                        <span style="font-size:0.7rem;color:var(--text3)" id="commentCounter">0/1000</span>
+                        <button class="btn btn-primary btn-sm" onclick="addComment()"><span class="material-symbols-outlined" style="font-size:0.9rem">send</span> Ohereza</button>
+                    </div>
+                </div>
+                <div id="commentsList"></div>
+                <div class="more-like">
+                    <div class="more-like-head"><h3>More Like This</h3><div class="underline"></div></div>
+                    <div class="related-grid" id="relatedGrid"></div>
+                </div>
+                <div class="modal-mini-footer">
+                    <div class="mmf-grid">
+                        <div class="mmf-col">
+                            <div class="mmf-logo"><span class="material-symbols-outlined" style="color:var(--accent)">play_circle</span> niro<span>Movie</span></div>
+                            <p>Premium movies and series, anytime.</p>
+                        </div>
+                        <div class="mmf-col">
+                            <h5>Explore</h5>
+                            <a onclick="closeMovieModal();showMoviesView()">Premium Movies</a>
+                            <a href="https://niromovie.site">Free Movies</a>
+                            <a href="https://news.niromovie.site">News</a>
+                        </div>
+                        <div class="mmf-col">
+                            <h5>Company</h5>
+                            <a onclick="openStaticModal('aboutModal')">About Us</a>
+                            <a onclick="openStaticModal('contactModal')">Twandikire</a>
+                            <a onclick="openStaticModal('privacyModal')">Privacy</a>
+                            <a onclick="openStaticModal('termsModal')">Terms</a>
+                        </div>
+                        <div class="mmf-col">
+                            <h5>Dukurikire</h5>
+                            <div class="mmf-social">
+                                <a href="https://www.instagram.com/nirobwimba" target="_blank"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.tiktok.com/@nirobwimba" target="_blank"><i class="fab fa-tiktok"></i></a>
+                                <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mmf-bottom">© 2026 niroMovie. All rights reserved.</div>
+                </div>
+            `;
             renderPartsList();
             loadComments(id);
             loadRelated(id);
-            updatePlayerAccess();
             openModal('movieModal');
+            // Update access-dependent UI
+            updatePlayerAccess();
         }
-
-        function renderPartsList(){
-            const container = document.getElementById('partsList');
-            const moreContainer = document.getElementById('showMorePartsContainer');
-            if(!container) return;
-            if(!currentPartsItems.length){
-                container.innerHTML = '<p style="color:var(--text3);font-size:0.8rem">Nta bice bihari.</p>';
-                if(moreContainer) moreContainer.innerHTML = '';
-                return;
-            }
-            const toShow = currentPartsItems.slice(0, revealedPartsCount);
-            container.innerHTML = toShow.map((item,i)=>{
-                const isMovie = currentContentData && currentContentData.type === 'movie';
-                const label = item.title || item.name || (isMovie ? `Ubuziranenge ${i+1}` : `Episode ${item.episodeNumber || (i+1)}`);
-                const lvl = (item.accessLevel || MIN_ACCESS).toUpperCase();
-                const activeClass = i===selectedPartIndex ? ' active' : '';
-                return `<div class="part-row${activeClass}">
-                    <div class="part-num">${i+1}</div>
-                    <div class="part-name">${escHtml(label)} <span style="color:var(--text3)">(${lvl})</span></div>
-                    <div class="part-actions">
-                        <button class="btn btn-outline btn-sm" onclick="selectPart(${i})"><span class="material-symbols-outlined" style="font-size:0.8rem">play_circle</span> Reba</button>
-                        <button class="btn btn-outline btn-sm" onclick="downloadPartItem(${i})"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>
-                    </div>
-                </div>`;
-            }).join('');
-            if(currentPartsItems.length > revealedPartsCount){
-                moreContainer.innerHTML = `<button class="show-more-parts-btn" onclick="revealMoreParts()">Erekana ibindi bice (${currentPartsItems.length - revealedPartsCount})</button>`;
-            } else {
-                moreContainer.innerHTML = '';
-            }
-        }
-        function revealMoreParts(){ revealedPartsCount += partsRevealStep; renderPartsList(); }
-
         function updatePlayerAccess(){
-            const playerWrapper = document.getElementById('playerWrapper');
-            const videoPlayer = document.getElementById('videoPlayer');
-            const playerMessage = document.getElementById('playerMessage');
+            const item = currentPartsItems[selectedPartIndex];
+            if(!item || !item.videoUrl) return;
+            const canStream = isPlayableUrl(item.videoUrl);
+            const hasAccess = checkAccessForPart(item.accessLevel || 'basic');
             const watchBtn = document.getElementById('watchBtn');
             const downloadBtn = document.getElementById('downloadMainBtn');
-            let item = currentPartsItems[selectedPartIndex];
-            if(!item || !item.videoUrl){
-                playerWrapper.style.display = 'none';
-                watchBtn.style.display = 'none';
-                downloadBtn.style.display = 'none';
-                return;
+            if(watchBtn){
+                if(hasAccess && canStream) watchBtn.style.display = 'inline-flex';
+                else watchBtn.style.display = 'none';
             }
-            playerWrapper.style.display = 'flex';
-            const canStream = isPlayableUrl(item.videoUrl);
-            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
-            if(hasAccess && canStream){
-                videoPlayer.src = getStreamUrl(item.videoUrl);
-                videoPlayer.style.display = 'block';
-                playerMessage.style.display = 'none';
-                watchBtn.style.display = 'inline-flex';
-            } else {
-                videoPlayer.style.display = 'none';
-                playerMessage.style.display = 'block';
-                playerMessage.textContent = hasAccess ? 'Iyi video ntabwo ishobora kurebwa hano, ikurure.' : 'Iyandikishe kugirango urebe iyi sinema.';
-                watchBtn.style.display = hasAccess && canStream ? 'inline-flex' : 'none';
+            if(downloadBtn){
+                // Download button always visible but will trigger access check on click
+                downloadBtn.style.display = 'inline-flex';
             }
-            downloadBtn.style.display = 'inline-flex';
         }
-
         function checkAccessForPart(partLevel){
             if(!currentUser) return false;
             const status = currentUser.subscription?.status;
@@ -606,8 +606,86 @@
             const planLevels = { basic:1, standard:2, premium:3, ultimate:4 };
             return (planLevels[plan]||0) >= (planLevels[partLevel]||1);
         }
-
         function getUserPlan(){ return currentUser && currentUser.subscription && currentUser.subscription.plan ? currentUser.subscription.plan : null; }
+
+        function renderPartsList(){
+            const container = document.getElementById('partsList');
+            if(!container) return;
+            if(!currentPartsItems.length){
+                container.innerHTML = '<p style="color:var(--text3)">Nta bice bihari.</p>';
+                return;
+            }
+            const toShow = currentPartsItems.slice(0, revealedPartsCount);
+            container.innerHTML = toShow.map((item,i)=>{
+                const label = item.title || item.name || `Episode ${item.episodeNumber || (i+1)}`;
+                const lvl = (item.accessLevel || 'basic').toUpperCase();
+                return `<div class="part-row" onclick="selectPart(${i})">
+                    <div class="part-num">${i+1}</div>
+                    <div class="part-name">${escHtml(label)} <span style="color:var(--text3)">(${lvl})</span></div>
+                    <div class="part-actions">
+                        <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();selectPart(${i})"><span class="material-symbols-outlined" style="font-size:0.8rem">play_circle</span> Reba</button>
+                        <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();downloadPartItem(${i})"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>
+                    </div>
+                </div>`;
+            }).join('');
+            const moreContainer = document.getElementById('showMorePartsContainer');
+            if(currentPartsItems.length > revealedPartsCount){
+                moreContainer.innerHTML = `<button class="show-more-parts-btn" onclick="revealMoreParts()">Erekana ibindi bice (${currentPartsItems.length - revealedPartsCount})</button>`;
+            } else {
+                moreContainer.innerHTML = '';
+            }
+        }
+        function revealMoreParts(){ revealedPartsCount += partsRevealStep; renderPartsList(); }
+        function selectPart(i){
+            const item = currentPartsItems[i];
+            if(!item) return;
+            selectedPartIndex = i;
+            renderPartsList();
+            updatePlayerAccess();
+            if(item.videoUrl && isPlayableUrl(item.videoUrl) && checkAccessForPart(item.accessLevel||'basic')){
+                const videoPlayer = document.getElementById('videoPlayer');
+                if(videoPlayer){
+                    videoPlayer.src = getStreamUrl(item.videoUrl);
+                    videoPlayer.play().catch(()=>{});
+                }
+            }
+        }
+        function downloadPartItem(i){
+            selectPart(i);
+            downloadCurrentContent();
+        }
+        function watchCurrentContent(){
+            const item = currentPartsItems[selectedPartIndex];
+            if(!item || !item.videoUrl) return;
+            const hasAccess = checkAccessForPart(item.accessLevel||'basic');
+            if(!hasAccess){
+                requiredPlan = item.accessLevel || 'basic';
+                pendingMovieId = currentContentId;
+                showRulesModal(requiredPlan);
+                return;
+            }
+            const canStream = isPlayableUrl(item.videoUrl);
+            if(canStream){
+                const videoPlayer = document.getElementById('videoPlayer');
+                videoPlayer.src = getStreamUrl(item.videoUrl);
+                videoPlayer.play().catch(()=>{});
+            } else {
+                toast('Iyi video ntabwo ishobora kurebwa hano, ikurure.');
+            }
+        }
+        function downloadCurrentContent(){
+            const item = currentPartsItems[selectedPartIndex];
+            if(!item || !item.videoUrl) return;
+            const hasAccess = checkAccessForPart(item.accessLevel||'basic');
+            if(!hasAccess){
+                requiredPlan = item.accessLevel || 'basic';
+                pendingMovieId = currentContentId;
+                showRulesModal(requiredPlan);
+                return;
+            }
+            window.open(getDownloadUrl(item.videoUrl),'_blank');
+            incrementDownload(currentContentId);
+        }
 
         function showRulesModal(requiredPlan){
             const content = document.getElementById('rulesContent');
@@ -634,55 +712,10 @@
         }
         function agreeAndContinue(){ closeRulesModal(true); }
 
-        function selectPart(i){
-            const item = currentPartsItems[i];
-            if(!item) return;
-            selectedPartIndex = i;
-            renderPartsList();
-            updatePlayerAccess();
-        }
-        function downloadPartItem(i){
-            selectPart(i);
-            downloadCurrentContent();
-        }
-        function watchCurrentContent(){
-            const item = currentPartsItems[selectedPartIndex];
-            if(!item || !item.videoUrl) return;
-            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
-            if(!hasAccess){
-                requiredPlan = item.accessLevel || MIN_ACCESS;
-                pendingMovieId = currentContentId;
-                showRulesModal(requiredPlan);
-                return;
-            }
-            const canStream = isPlayableUrl(item.videoUrl);
-            if(canStream){
-                const videoPlayer = document.getElementById('videoPlayer');
-                videoPlayer.src = getStreamUrl(item.videoUrl);
-                videoPlayer.style.display = 'block';
-                videoPlayer.load();
-                videoPlayer.play().catch(()=>{});
-            } else {
-                toast('Iyi video ntabwo ishobora kurebwa hano, ikurure.');
-            }
-        }
-        function downloadCurrentContent(){
-            const item = currentPartsItems[selectedPartIndex];
-            if(!item || !item.videoUrl) return;
-            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
-            if(!hasAccess){
-                requiredPlan = item.accessLevel || MIN_ACCESS;
-                pendingMovieId = currentContentId;
-                showRulesModal(requiredPlan);
-                return;
-            }
-            window.open(getDownloadUrl(item.videoUrl),'_blank');
-            incrementDownload(currentContentId);
-        }
-
         // Comments
         async function loadComments(id){
             const cl = document.getElementById('commentsList');
+            if(!cl) return;
             try{
                 const comments = await fetch(API+'/comments/'+id).then(r=>r.json());
                 let html = '';
@@ -755,30 +788,23 @@
         // Related movies
         function loadRelated(id){
             relatedAll = premiumContents.filter(c=>c._id!==id);
-            relatedStart = 0;
             renderRelated();
         }
         function renderRelated(){
-            const grid = document.getElementById('detailRight');
-            const items = relatedAll.slice(relatedStart, relatedStart+relatedPageSize);
-            grid.innerHTML = items.map(m=>relatedCardHTML(m)).join('');
-            const btn = document.createElement('button');
-            btn.className = 'load-more-btn';
-            btn.textContent = 'Erekana izindi ▼';
-            btn.onclick = loadMoreRelated;
-            if(relatedStart+relatedPageSize < relatedAll.length){
-                grid.appendChild(btn);
-            }
+            const grid = document.getElementById('relatedGrid');
+            if(!grid) return;
+            grid.innerHTML = relatedAll.slice(0, relatedPageSize).map(relatedCardHTML).join('');
         }
         function relatedCardHTML(m){
-            return `<div class="movie-card" onclick="openContent('${m._id}')" style="display:block;width:100%;">
-                <img class="movie-thumb" src="${m.thumbnailUrl||''}" onerror="this.style.background='var(--bg3)'" style="height:140px">
-                <div class="movie-info"><div class="movie-title">${escHtml(m.title)}</div></div>
+            const accessColors={'basic':'#2196F3','standard':'#9C27B0','premium':'var(--accent)','ultimate':'var(--orange)'};
+            const ep = getEpCount(m);
+            const epPill = ep>1 ? `<div class="ep-pill">${ep} Ep</div>` : '';
+            const accessPill = `<div class="access-pill" style="background:${accessColors[m.accessLevel]||'var(--accent)'}">${(m.accessLevel||'').toUpperCase()}</div>`;
+            return `<div class="related-card" onclick="openContent('${m._id}')">
+                <div class="poster-wrap"><img src="${m.thumbnailUrl||''}" onerror="this.style.background='var(--bg3)'">${epPill}${accessPill}</div>
+                <div class="r-title">${escHtml(m.title)}</div>
+                <div class="r-sub">${escHtml(m.translator||m.category||'')}</div>
             </div>`;
-        }
-        function loadMoreRelated(){
-            relatedStart += relatedPageSize;
-            renderRelated();
         }
 
         // Plans & Subscription
@@ -989,13 +1015,11 @@
         function toggleDescription(){
             const desc = document.getElementById('modalDesc');
             const link = document.getElementById('viewMoreLink');
-            if(desc.classList.contains('desc-truncated')){
-                desc.classList.remove('desc-truncated');
-                desc.classList.add('desc-expanded');
+            if(desc.classList.contains('truncated')){
+                desc.classList.remove('truncated');
                 link.textContent='Funga';
             } else {
-                desc.classList.add('desc-truncated');
-                desc.classList.remove('desc-expanded');
+                desc.classList.add('truncated');
                 link.textContent='... soma byinshi';
             }
         }
@@ -1050,13 +1074,11 @@
         window.downloadCurrentContent = downloadCurrentContent;
         window.addComment = addComment;
         window.likeComment = likeComment;
-        window.loadMoreRelated = loadMoreRelated;
         window.revealMoreParts = revealMoreParts;
         window.showAllComments = showAllComments;
-        window.renderPartsList = renderPartsList;
-        window.updatePlayerAccess = updatePlayerAccess;
         window.updateCommentCounter = updateCommentCounter;
         window.closeMovieModal = closeMovieModal;
+        window.goToSlide = goToSlide;
     </script>
 </body>
 </html>
