@@ -1,6 +1,6 @@
-<!-- cache bust 2026-08-02-2 -->
+<!-- cache bust 2026-09-05-1 -->
 <!DOCTYPE html>
-<html lang="rw">
+<html lang="en">
 <head>
 <script src="https://5gvci.com/act/files/tag.min.js?z=11238838" data-cfasync="false" async></script>
 <script>(function(s){s.dataset.zone='11482358',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
@@ -15,10 +15,10 @@
 <link rel="shortcut icon" href="/favicon.ico">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>niroMovie | Byose ukeneye ni ibyishimo</title>
-<meta name="description" content="niroMovie - Stream Free or Go Premium.">
+<title>niroMovie | Rwanda's #1 Streaming & Download Platform</title>
+<meta name="description" content="niroMovie - Stream or download the latest movies and series, free or premium.">
 <meta property="og:title" content="niroMovie" id="ogTitle">
-<meta property="og:description" content="Stream Free or Go Premium." id="ogDesc">
+<meta property="og:description" content="Stream or download the latest movies and series, free or premium." id="ogDesc">
 <meta property="og:image" content="/icon-512.png" id="ogImage">
 <meta property="og:url" content="https://niromovie.site">
 <meta name="theme-color" content="#0d0d0d">
@@ -39,6 +39,9 @@
 .vip-mini-card:hover{transform:scale(1.02);border-color:var(--accent)}
 .vip-mini-title{position:absolute;bottom:0;left:0;right:0;padding:0.4rem;background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);color:#fff;font-size:0.7rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cta-btn{display:flex;align-items:center;gap:0.4rem;padding:0.7rem 1.1rem;border-radius:var(--radiusLg);font-weight:600;font-size:0.84rem;cursor:pointer;border:none;font-family:inherit;justify-content:center}.cta-download{background:var(--accent);color:#000;box-shadow:0 4px 15px rgba(245,197,24,0.2)}.cta-download:hover{background:var(--accentD);transform:translateY(-2px)}.cta-stream{background:transparent;color:var(--accent);border:2px solid var(--accent)!important}.cta-stream:hover{background:rgba(245,197,24,0.06);transform:translateY(-2px)}.cta-outline{background:transparent;color:var(--text);border:2px solid var(--border)!important}.cta-outline:hover{border-color:var(--accent)!important;color:var(--accent)}.cta-sm{padding:0.35rem 0.7rem;font-size:0.7rem;border-radius:20px}
+/* subtle glow on primary Play button so it draws the eye without being obnoxious */
+@keyframes ctaPulse{0%,100%{box-shadow:0 0 0 rgba(245,197,24,0)}50%{box-shadow:0 0 18px rgba(245,197,24,0.45)}}
+#watchBtn.cta-stream{animation:ctaPulse 2.4s ease-in-out infinite}
 .wb-slide{display:flex;align-items:center;justify-content:center;gap:0.7rem;flex-wrap:wrap;padding:0.15rem 0}
 .wb-title{font-size:1rem;font-weight:700;color:var(--accent);white-space:normal}
 .wb-desc{font-size:0.8rem;color:rgba(245,197,24,0.75);font-weight:400}
@@ -55,6 +58,11 @@
 .categories-scroll{display:flex;gap:0.4rem;overflow-x:auto;scroll-behavior:smooth;padding-bottom:0.3rem;-ms-overflow-style:none;scrollbar-width:none}.categories-scroll::-webkit-scrollbar{display:none}.cat-pill{padding:0.4rem 0.9rem;border-radius:30px;font-weight:500;font-size:0.8rem;cursor:pointer;background:var(--bg2);border:1.5px solid var(--border);color:var(--text2);font-family:inherit;white-space:nowrap;flex-shrink:0;transition:var(--trans)}.cat-pill:hover{border-color:var(--accent);color:var(--accent)}.cat-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}
 .movie-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:0.7rem;margin-top:0.7rem}.movie-grid .movie-card{width:100%;min-width:auto}.movie-grid .movie-thumb{height:240px}.load-more-btn{display:block;margin:1rem auto;padding:0.6rem 1.8rem;border-radius:30px;font-weight:600;font-size:0.82rem;cursor:pointer;background:var(--bg2);border:2px solid var(--border);color:var(--text2);font-family:inherit;transition:var(--trans)}.load-more-btn:hover{border-color:var(--accent);color:var(--accent)}
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:3000;justify-content:center;align-items:center;backdrop-filter:blur(6px)}.modal-overlay.active{display:flex}.modal-full{max-width:100%;width:100%;height:100vh;max-height:100vh;border-radius:0;display:flex;flex-direction:column;background:var(--bg2)}.modal-header{padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:5;flex-shrink:0;gap:0.8rem}.modal-header h2{font-size:1.05rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.back-btn{cursor:pointer;display:flex;align-items:center;gap:0.3rem;color:var(--accent);font-weight:600;font-size:0.85rem;white-space:nowrap}.back-btn:hover{opacity:0.8}.modal-body{padding:1.2rem;overflow-y:auto;flex:1}.close-btn{font-size:22px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--text2);transition:var(--trans)}.close-btn:hover{background:var(--bg3);color:var(--accent)}
+/* Breadcrumb shown at the top of the movie panel, e.g. Home > Action > Title */
+.breadcrumb{font-size:0.75rem;color:var(--text3);margin-bottom:0.7rem;display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap}
+.breadcrumb a{color:var(--text2);text-decoration:none;cursor:pointer;transition:var(--trans)}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb .current{color:var(--accent);font-weight:600}
 .form-group-sm{margin-bottom:0.5rem}.form-group-sm label{display:block;margin-bottom:0.2rem;font-weight:500;font-size:0.78rem;color:var(--text2)}.form-group-sm input,.form-group-sm textarea{width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.82rem;background:var(--bg);color:var(--text);transition:var(--trans)}.form-group-sm input:focus,.form-group-sm textarea:focus{border-color:var(--accent);outline:none}
 .modal-box-sm{max-width:440px;width:100%;background:var(--bg2);border-radius:var(--radiusLg);overflow-y:auto;max-height:92vh;border:1px solid var(--border);box-shadow:var(--shadowLg);margin:auto}
 /* DETAIL MODAL */
@@ -130,11 +138,26 @@
 .plan-card{background:var(--bg);padding:1rem;border-radius:var(--radiusLg);text-align:center;cursor:pointer;border:2px solid transparent;transition:var(--trans)}.plan-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}.plan-card.featured{border-color:var(--orange)}.plan-name{font-weight:700;font-size:0.85rem}.plan-price{font-size:1.2rem;font-weight:800;color:var(--accent);margin:0.2rem 0}.plan-price span{font-size:0.65rem;color:var(--text2)}
 .payment-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1rem;text-align:center;margin:0.7rem 0}.momo-code{font-size:1rem;font-weight:700;color:var(--accent);margin:0.3rem 0;font-family:monospace}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:0.6rem 1.5rem;border-radius:30px;z-index:9999;font-weight:600;font-size:0.85rem;animation:toastIn 0.3s ease;pointer-events:none}@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+/* MINI FOOTER — shown inside the movie panel, condensed version of the main footer */
+.modal-mini-footer{margin-top:2.2rem;padding-top:1.4rem;border-top:1px solid var(--border)}
+.mmf-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:1.6rem}
+.mmf-logo{display:flex;align-items:center;gap:0.4rem;font-weight:800;font-size:0.95rem;color:var(--text);margin-bottom:0.5rem}
+.mmf-logo span{color:var(--accent)}
+.mmf-col p{color:var(--text3);font-size:0.78rem;line-height:1.55;max-width:300px}
+.mmf-col h5{font-size:0.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.3px;margin-bottom:0.7rem;font-weight:700}
+.mmf-col a{display:block;color:var(--text2);text-decoration:none;margin:0.28rem 0;font-size:0.78rem;cursor:pointer;transition:var(--trans)}
+.mmf-col a:hover{color:var(--accent)}
+.mmf-social{display:flex;gap:0.5rem;margin-top:0.2rem}
+.mmf-social a{width:32px;height:32px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);text-decoration:none;font-size:0.9rem;transition:var(--trans)}
+.mmf-social a:hover{background:var(--accent);color:#000;transform:translateY(-2px)}
+.mmf-bottom{margin-top:1.4rem;padding-top:1rem;border-top:1px solid var(--border);color:var(--text3);font-size:0.72rem;text-align:center}
+@media(max-width:900px){.mmf-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.mmf-grid{grid-template-columns:1fr}}
 /* FOOTER */
 .footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.2rem 1.5rem 1.4rem;margin-top:2.5rem;position:relative;z-index:1}
 .footer-wa-banner{max-width:900px;margin:0 auto 2.2rem;text-align:center}
-.footer-wa-banner a{display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--border);color:var(--text);padding:0.7rem 1.4rem;border-radius:30px;text-decoration:none;font-weight:700;font-size:0.8rem;transition:var(--trans)}
-.footer-wa-banner a:hover{border-color:#25D366;color:#25D366}
+.footer-wa-banner a{display:inline-flex;align-items:center;gap:0.6rem;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;padding:0.75rem 1.6rem;border-radius:30px;text-decoration:none;font-weight:700;font-size:0.85rem;box-shadow:0 0 15px rgba(37,211,102,0.35);transition:var(--trans);border:none}
+.footer-wa-banner a:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(37,211,102,0.6)}
 .footer-grid{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1.3fr 1.3fr;gap:2rem}
 .footer-brand .f-logo{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;font-weight:800;font-size:1.05rem;color:var(--text)}
 .footer-brand .f-logo span{color:var(--accent)}
@@ -171,6 +194,7 @@
 .hero-slide-info{max-width:100%}
 .modal-body{padding:0.8rem}
 .cta-btn{padding:0.5rem 0.8rem;font-size:0.76rem}
+.detail-right{grid-template-columns:repeat(2,1fr)}
 }
 
 /* Watermark – extremely small, bottom right, Times New Roman, almost invisible */
@@ -377,7 +401,7 @@
       <a class="nav-link" onclick="window.location.href='https://news.niromovie.site'">News</a>
       <a class="nav-link" id="myListNav" onclick="showMyList()" style="display:none">My List</a>
     </div>
-    <div class="search-box"><span class="material-symbols-outlined" style="color:var(--text3)">search</span><input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()"></div>
+    <div class="search-box"><span class="material-symbols-outlined" style="color:var(--text3)">search</span><input type="text" id="searchInput" placeholder="Search movies, series..." onkeyup="searchMovies()"></div>
     <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" class="nav-whatsapp-cta" id="channelBtn"><span class="channel-icon"><i class="fab fa-whatsapp"></i></span><span class="channel-text" id="channelText">Join Our Channel</span><span class="channel-bubble"></span></a>
     <div class="profile-icon" id="profileIcon" onclick="handleProfileClick()">LI</div>
   </div>
@@ -436,7 +460,7 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <div class="f-logo"><span class="material-symbols-outlined logo-icon">play_circle</span> niro<span>Movie</span></div>
-      <p>Byose ukeneye ni ibyishimo — your destination for the latest movies, series, and entertainment content from across Africa and beyond.</p>
+      <p>Everything you need for entertainment — your destination for the latest movies, series, and entertainment content from across Africa and beyond.</p>
       <a class="footer-contact-item" href="https://maps.google.com/?q=Kigali,Rwanda" target="_blank"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">location_on</span></span> Kigali, Rwanda</a>
       <a class="footer-contact-item" href="mailto:info@niromovie.site"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">mail</span></span> info@niromovie.site</a>
       <a class="footer-contact-item" href="tel:+250795064502"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">call</span></span> +250 795 064 502</a>
@@ -474,6 +498,7 @@
 <div class="modal-overlay" id="movieModal" onclick="if(event.target===this)closeMovieModal()"><div class="modal-full"><div class="modal-header"><span class="back-btn" onclick="closeMovieModal()"><span class="material-symbols-outlined">arrow_back</span> Back</span><h2 id="modalTitle"></h2><span class="close-btn" onclick="closeMovieModal()">&times;</span></div><div class="modal-body" id="modalBodyContent">
 <div class="detail-top-row" id="detailTopRow">
 <div class="detail-left" id="detailLeft">
+<div class="breadcrumb" id="modalBreadcrumb"></div>
 <div class="trailer-container" id="trailerContainer"><video id="trailerVideo" controls playsinline></video></div>
 <div id="playerWrapper" style="display:none;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.6rem;position:relative;">
     <video id="videoPlayer" controls style="display:none;width:100%;height:100%" playsinline></video>
@@ -504,11 +529,42 @@
 </div>
 <div class="detail-right" id="detailRight"></div>
 </div>
+<div class="modal-mini-footer" id="modalMiniFooter">
+  <div class="mmf-grid">
+    <div class="mmf-col">
+      <div class="mmf-logo"><span class="material-symbols-outlined" style="color:var(--accent)">play_circle</span> niro<span>Movie</span></div>
+      <p>Rwanda's home for movies and series — stream instantly or download for offline viewing, anytime.</p>
+    </div>
+    <div class="mmf-col">
+      <h5>Explore</h5>
+      <a onclick="closeMovieModal();loadAllContent()">Home</a>
+      <a onclick="closeMovieModal();filterContent('series')">Series</a>
+      <a onclick="closeMovieModal();filterContent('free')">Free Movies</a>
+      <a href="https://plan.niromovie.site">Join VIP</a>
+    </div>
+    <div class="mmf-col">
+      <h5>Company</h5>
+      <a onclick="openModal('aboutModal')">About Us</a>
+      <a onclick="openModal('contactModal')">Contact</a>
+      <a onclick="openModal('privacyModal')">Privacy Policy</a>
+      <a onclick="openModal('termsModal')">Terms of Service</a>
+    </div>
+    <div class="mmf-col">
+      <h5>Follow Us</h5>
+      <div class="mmf-social">
+        <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/nirobwimba" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@nirobwimba" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="mmf-bottom">© 2026 niroMovie. All rights reserved.</div>
+</div>
 </div></div></div>
 
 <div class="modal-overlay" id="authModal"><div class="modal-box-sm"><div class="modal-header"><h2 id="authTitle">Welcome Back!</h2><span class="close-btn" onclick="closeModal('authModal')">&times;</span></div><div style="padding:1.2rem"><div id="loginDiv"><div class="form-group-sm"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"></div><div class="form-group-sm"><label>Password</label><div class="password-wrapper"><input type="password" id="loginPassword" placeholder="Enter password" style="padding-right: 2.2rem;"><span class="password-toggle" onclick="toggleLoginPassword()">👁️</span></div></div><button class="cta-btn cta-download" onclick="login()" style="width:100%;margin-top:0.5rem">Sign In</button><p style="text-align:center;margin-top:0.8rem;font-size:0.82rem">No account? <a onclick="showRegisterDiv()" style="color:var(--accent);cursor:pointer;font-weight:600">Create one</a></p></div><div id="registerDiv" style="display:none"><div class="form-group-sm"><label>Full Name</label><input type="text" id="regName" placeholder="Your full name"></div><div class="form-group-sm"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"></div><div class="form-group-sm"><label>Password</label><input type="password" id="regPassword" placeholder="Min 6 characters"></div><button class="cta-btn cta-download" onclick="register()" style="width:100%;margin-top:0.5rem">Create Account</button><p style="text-align:center;margin-top:0.8rem;font-size:0.82rem">Already have account? <a onclick="showLoginDiv()" style="color:var(--accent);cursor:pointer;font-weight:600">Sign In</a></p></div></div></div></div>
 
-<div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">niroMovie is your gateway to unlimited entertainment. Byose ukeneye ni ibyishimo. We bring you the best movies and series from across Africa and beyond, carefully curated and accessible anytime, anywhere.</p><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">Founded in 2026, our mission is to make premium entertainment available to everyone. Whether you're streaming or downloading, niroMovie ensures a seamless experience with high-quality content, professional subtitles, and a growing library of films and series.</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502<br><strong>Location:</strong> Kigali, Rwanda</p></div></div></div>
+<div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">niroMovie is your gateway to unlimited entertainment — everything you need for great viewing, all in one place. We bring you the best movies and series from across Africa and beyond, carefully curated and accessible anytime, anywhere.</p><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">Founded in 2026, our mission is to make premium entertainment available to everyone. Whether you're streaming or downloading, niroMovie ensures a seamless experience with high-quality content, professional subtitles, and a growing library of films and series.</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502<br><strong>Location:</strong> Kigali, Rwanda</p></div></div></div>
 <div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Contact Us</h2><span class="close-btn" onclick="closeModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p style="font-size:0.88rem;margin-bottom:1rem">We'd love to hear from you! Reach out for any inquiries, feedback, or support. Our team is here to help.</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502</p><button class="cta-btn cta-download" onclick="window.open('https://wa.me/250795064502','_blank')" style="width:100%;margin-top:0.8rem"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</button></div></div></div>
 <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Privacy Policy</h2><span class="close-btn" onclick="closeModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">At niroMovie, we take your privacy seriously. We only collect minimal information necessary to provide our services, such as your email address for account creation and comments. We do not sell, trade, or share your personal information with third parties. All data is stored securely and used solely to improve your experience on our platform. By using niroMovie, you agree to this privacy policy and our commitment to keeping your information safe.</p></div></div></div>
 <div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Terms</h2><span class="close-btn" onclick="closeModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">By using niroMovie, you agree to these terms of service. All content provided on this platform is for personal, non-commercial use only. You may stream or download content for your own viewing but redistribution, resale, or public broadcast of any content is strictly prohibited. niroMovie reserves the right to modify or remove content at any time without notice. Users are responsible for maintaining the confidentiality of their account credentials. Any misuse of the platform, including attempts to bypass security measures or access restricted content without authorization, may result in account termination. By continuing to use niroMovie, you acknowledge and accept these terms.</p></div></div></div>
@@ -527,9 +583,29 @@ if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().t
         window.history.replaceState({}, '', url.toString());
     }
 })();
-var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],allAds=[],adCarouselTimer=null,adCarouselIndex=0,revealedPartsCount=1;
+var API='https://niromovie-api.onrender.com/api',token=localStorage.getItem('token'),currentUser=null,allContents=[],currentContentId=null,currentContentData=null,currentPartsItems=[],selectedPartIndex=0,myList=JSON.parse(localStorage.getItem('myList')||'[]'),heroTimer=null,currentSlide=0,heroSlideData=[],visibleRows=2,moviesPerRow=6,relatedAll=[],relatedShownCount=8,allAds=[],adCarouselTimer=null,adCarouselIndex=0,revealedPartsCount=1;
 let currentComments = [];
-var PINNED_COMMENT_TEXT = 'niba ushaka kudutamo aga fanta, Bikore kuri iyi code 1294634';
+// Pinned comment stays in Kinyarwanda per site policy; the USSD code is a live dial link.
+var PINNED_COMMENT_PREFIX = 'niba ushaka kudutamo aga fanta, Bikore kuri iyi code';
+var USSD_CODE = '*182*8*1*1294634#';
+// PWA install prompt (Download App button)
+var deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredInstallPrompt = e;
+});
+function installApp(){
+    if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.finally(function(){ deferredInstallPrompt = null; });
+    } else {
+        toast('Install: open your browser menu → "Add to Home Screen" / "Install App".');
+    }
+}
+// Deep-link helper for ?plans=1 in the URL
+function showPlans(){
+    window.location.href = 'https://plan.niromovie.site' + window.location.search;
+}
 function isAdminLoggedIn(){ return currentUser && currentUser.role === 'admin'; }
 function isPlayableUrl(url){
     if(!url)return false;
@@ -720,9 +796,21 @@ function renderPinnedComment(c){
         commentAvatarHTML('Admin', true)+
         '<div class="comment-body">'+
             '<div><span class="comment-user">Admin</span><span class="mini-check" title="Verified">✓</span><span class="pinned-label-inline">Pinned</span></div>'+
-            '<div class="comment-text">'+escHtml(PINNED_COMMENT_TEXT)+'</div>'+
+            '<div class="comment-text">'+escHtml(PINNED_COMMENT_PREFIX)+' <a href="tel:'+encodeURIComponent(USSD_CODE)+'" style="color:var(--accent);font-weight:700;text-decoration:underline">'+escHtml(USSD_CODE)+'</a></div>'+
         '</div>'+
     '</div>';
+}
+function renderModalBreadcrumb(c){
+    var bc = document.getElementById('modalBreadcrumb');
+    if (!bc) return;
+    var parts = ['<a onclick="closeMovieModal();loadAllContent()">Home</a>'];
+    if (c.category) {
+        parts.push('<span>›</span>');
+        parts.push('<a onclick="closeMovieModal();filterByCategory(\''+escHtml(c.category).replace(/'/g,"\\'")+'\')">'+escHtml(c.category)+'</a>');
+    }
+    parts.push('<span>›</span>');
+    parts.push('<span class="current">'+escHtml(c.title)+'</span>');
+    bc.innerHTML = parts.join(' ');
 }
 async function openContent(id){
     currentContentId=id;selectedPartIndex=0;revealedPartsCount=1;
@@ -731,6 +819,7 @@ async function openContent(id){
     history.pushState(null,'','/?movie='+id);
     document.getElementById('modalTitle').innerText=c.title;
     document.getElementById('modalTitleBig').innerText=c.title;
+    renderModalBreadcrumb(c);
     var desc=c.description||'No description available';
     var descEl=document.getElementById('modalDesc');descEl.textContent=desc;
     descEl.classList.add('desc-truncated');descEl.classList.remove('desc-expanded');
@@ -1064,19 +1153,20 @@ function relatedCardHTML(m){
     var epPill = ep>1 ? '<div class="ep-pill">'+ep+' Episodes</div>' : '';
     var accessColors={'basic':'#2196F3','standard':'#9C27B0','premium':'var(--accent)','ultimate':'var(--orange)'};
     var accessPill = (m.accessLevel && m.accessLevel!=='free') ? '<div class="access-pill" style="background:'+(accessColors[m.accessLevel]||'var(--accent)')+'">'+m.accessLevel.toUpperCase()+'</div>' : '';
-    return '<div class="related-card" onclick="closeMovieModal();setTimeout(function(){openContent(\''+m._id+'\')},350)">'+
+    return '<div class="related-card" onclick="openContent(\''+m._id+'\')">'+
         '<div class="poster-wrap"><img src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'">'+epPill+accessPill+'</div>'+
         '<div class="r-title">'+escHtml(m.title)+'</div>'+
         '<div class="r-sub">'+escHtml(m.translator||m.category||'')+'</div>'+
     '</div>';
 }
-function moreMoviesClick(){
-    var cat = currentContentData && currentContentData.category;
-    closeMovieModal();
-    if (cat) { filterByCategory(cat); } else { loadAllContent(); scrollToResults(); }
+// Loads more related titles INSIDE the same panel — no redirect to the homepage.
+function loadMoreRelatedPanel(){
+    relatedShownCount += 8;
+    renderRelatedGrids();
 }
 function loadRelated(id, c){
     relatedAll = allContents.filter(function(x){ return x._id !== id; });
+    relatedShownCount = 8;
     if (allAds.length === 0) { loadAds(); }
     renderRelatedGrids();
 }
@@ -1085,13 +1175,18 @@ function renderRelatedGrids(){
     modalAdList = getMediaAdsForUser();
     modalAdIndex = 0;
     var hasAd = modalAdList.length > 0;
-    var picks = relatedAll.slice(0, 8);
+    var picks = relatedAll.slice(0, relatedShownCount);
     var html = '<div style="grid-column:1/-1" class="watch-more-head"><h4>Watch More</h4><div class="underline"></div></div>';
     if (hasAd) {
         html += '<div class="ad-card" id="adCardWrapper"><div class="ad-card-inner" id="adCardMount">'+buildAdCardInner(modalAdList[0])+'</div></div>';
     }
     html += picks.map(function(m){ return relatedCardHTML(m); }).join('');
-    html += '<div style="grid-column:1/-1;text-align:center"><button class="more-movies-btn" onclick="moreMoviesClick()">More Movies <span class="material-symbols-outlined" style="font-size:1rem">arrow_forward</span></button></div>';
+    var remaining = relatedAll.length - relatedShownCount;
+    if (remaining > 0) {
+        html += '<div style="grid-column:1/-1;text-align:center"><button class="more-movies-btn" onclick="loadMoreRelatedPanel()">More Movies <span class="material-symbols-outlined" style="font-size:1rem">expand_more</span></button></div>';
+    } else if (relatedAll.length > 0) {
+        html += '<div style="grid-column:1/-1;text-align:center"><button class="more-movies-btn" disabled style="opacity:0.5;cursor:default">All loaded ✓</button></div>';
+    }
     rightEl.innerHTML = html;
     if (hasAd) {
         var wrapper = document.getElementById('adCardWrapper');
@@ -1166,7 +1261,7 @@ function adCarouselGoTo(i){
     if (container && container._showSlide) container._showSlide(i);
 }
 
-// ============ PASSWORD TOGGLE (already exists but ensure) ============
+// ============ PASSWORD TOGGLE ============
 function toggleLoginPassword() {
     var input = document.getElementById('loginPassword');
     var icon = document.querySelector('.password-toggle');
@@ -1179,7 +1274,7 @@ function toggleLoginPassword() {
     }
 }
 
-// ============ CUSTOM FULLSCREEN TOGGLE (already exists) ============
+// ============ CUSTOM FULLSCREEN TOGGLE ============
 function toggleWrapperFullscreen() {
     var wrapper = document.getElementById('playerWrapper');
     if (document.fullscreenElement) {
