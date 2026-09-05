@@ -90,9 +90,14 @@
         .close-btn:hover{background:var(--bg3);color:var(--accent)}
         .modal-box-sm{max-width:440px;width:100%;background:var(--bg2);border-radius:var(--radiusLg);overflow-y:auto;max-height:92vh;border:1px solid var(--border);box-shadow:var(--shadowLg);margin:auto}
 
-        /* Detail hero */
+        /* Detail hero / player */
         .detail-hero{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:1rem;position:relative}
         .detail-hero video,.detail-hero img{width:100%;height:100%;object-fit:cover;display:block}
+        /* Locked overlay — no real video/src ever sits behind this until access is verified */
+        .lock-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.72);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.35rem;color:#fff;cursor:pointer;text-align:center;padding:1rem}
+        .lock-overlay .material-symbols-outlined{font-size:2.2rem;color:var(--accent)}
+        .lock-overlay .lock-title{font-weight:800;font-size:0.95rem;letter-spacing:0.5px}
+        .lock-overlay small{color:var(--text2);font-size:0.75rem;margin-top:0.1rem}
         .detail-title{font-size:2rem;font-weight:800;margin-bottom:0.4rem}
         .detail-desc{color:var(--text2);font-size:0.95rem;line-height:1.6;margin-bottom:0.5rem}
         .detail-desc.truncated{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -113,7 +118,9 @@
         .parts-list{margin-top:0.8rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.6rem}
         .part-row{display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.7rem;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;transition:var(--trans)}
         .part-row:hover{border-color:var(--accent)}
+        .part-row.active{border-color:var(--accent)}
         .part-num{width:26px;height:26px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:var(--text2);flex-shrink:0}
+        .part-row.active .part-num{background:var(--accent);color:#000;border-color:var(--accent)}
         .part-name{flex:1;font-size:0.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .part-actions{display:flex;gap:0.35rem;flex-shrink:0}
         .part-actions .btn{padding:0.3rem 0.6rem;font-size:0.66rem;gap:0.25rem}
@@ -452,7 +459,12 @@
             const dots = document.querySelectorAll('.hero-dot'); if(dots[i]) dots[i].classList.add('active');
         }
         function goToSlide(i){ showSlide(i); startHeroRotation(); }
-        function heroClick(){ const m=premiumContents.sort((a,b)=>new Date(b.uploadedAt)-new Date(a.uploadedAt))[currentSlide]; if(m) openContent(m._id); }
+        function heroClick(){
+            // FIX: .sort() mutates in place — use a copy so category/filter ordering elsewhere isn't disturbed
+            const list = premiumContents.slice().sort((a,b)=>new Date(b.uploadedAt)-new Date(a.uploadedAt));
+            const m = list[currentSlide];
+            if(m) openContent(m._id);
+        }
 
         async function openContent(id){
             currentContentId = id;
@@ -463,34 +475,26 @@
             currentContentData = c;
             history.pushState(null,'','/?movie='+id);
             const modalBody = document.getElementById('modalBodyContent');
-            let firstVideoUrl = '';
             try{
                 const partsRes = await fetch(API+'/contents/'+id+'/parts');
                 const partsData = await partsRes.json();
                 currentPartsItems = partsData.items || [];
-                if(currentPartsItems.length && currentPartsItems[0].videoUrl) firstVideoUrl = currentPartsItems[0].videoUrl;
             }catch(e){ currentPartsItems = []; }
-            const canStream = isPlayableUrl(firstVideoUrl);
-            let heroHTML = '';
-            if(c.trailerUrl){
-                heroHTML = `<div class="detail-hero"><video src="${c.trailerUrl}" controls poster="${c.thumbnailUrl||''}"></video></div>`;
-            } else if(canStream){
-                heroHTML = `<div class="detail-hero" id="playerWrapper"><video id="videoPlayer" controls src="${getStreamUrl(firstVideoUrl)}"></video></div>`;
-            } else {
-                heroHTML = `<div class="detail-hero"><img src="${c.thumbnailUrl||''}" onerror="this.style.background='var(--bg3)'"></div>`;
-            }
+
             const metaHTML = `<span class="mi"><span class="material-symbols-outlined">calendar_month</span>${c.year||'N/A'}</span>
                 <span class="mi"><span class="material-symbols-outlined">hd</span>${c.quality||'HD'}</span>
                 <span class="mi"><span class="material-symbols-outlined">workspace_premium</span>${(c.accessLevel||'basic').toUpperCase()}</span>
                 ${c.country?`<span class="mi"><span class="material-symbols-outlined">public</span>${escHtml(c.country)}</span>`:''}`;
             const tagsHTML = [c.category,c.country,c.translator,c.director].filter(Boolean).map(t=>`<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">${escHtml(t)}</span>`).join(' ');
+            // NOTE: both action buttons are always rendered in the DOM; visibility per current part
+            // is decided by updatePlayerAccess() so switching episodes never leaves a stale button.
             const actionButtons = `
                 <div class="detail-actions">
-                    ${canStream ? `<button class="btn btn-primary btn-hero" id="watchBtn" onclick="watchCurrentContent()"><span class="material-symbols-outlined">play_circle</span> Reba</button>` : ''}
+                    <button class="btn btn-primary btn-hero" id="watchBtn" onclick="watchCurrentContent()"><span class="material-symbols-outlined">play_circle</span> Reba</button>
                     <button class="btn btn-outline btn-hero" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Kuramo</button>
                 </div>`;
             modalBody.innerHTML = `
-                ${heroHTML}
+                <div class="detail-hero" id="playerWrapper"></div>
                 <h1 class="detail-title">${escHtml(c.title)}</h1>
                 <div class="detail-desc truncated" id="modalDesc">${escHtml(c.description||'Nta bisobanuro bihari')}</div>
                 <span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:${(c.description||'').length>140?'inline-block':'none'}">... soma byinshi</span>
@@ -514,22 +518,82 @@
             renderPartsList();
             loadComments(id);
             openModal('movieModal');
+            mountPlayer();
+        }
+
+        /* ================================================================
+           ACCESS CONTROL — this is the piece that was missing before.
+           mountPlayer() is the ONLY place that ever puts a real <video src>
+           into the DOM. It always re-checks checkAccessForPart() first.
+           If access fails (not logged in, no active subscription, or wrong
+           plan tier) it renders the poster + a lock overlay instead — the
+           real file URL is never attached to a playable element.
+           Call this after: opening a movie, switching episodes, attempting
+           to watch, and after login/registration (in case a plan is
+           already active).
+           IMPORTANT CAVEAT: currentPartsItems (with the raw videoUrl) is
+           still fetched into the browser for every visitor regardless of
+           plan, because /contents/:id/parts returns it unconditionally.
+           This fixes the UI/player hole, but someone reading network
+           traffic or JS memory could still find the raw URL. Closing that
+           fully requires your backend to withhold or mask videoUrl for
+           parts the requester's token isn't entitled to (or serve a
+           short-lived signed URL only after a server-side check) — that
+           part is outside this HTML file and needs a backend change.
+        ================================================================ */
+        function mountPlayer(){
+            const wrapper = document.getElementById('playerWrapper');
+            if(!wrapper) return;
+            const c = currentContentData;
+            // Trailers are a public preview clip, not the full title — always fine to show.
+            if(c && c.trailerUrl && !currentPartsItems.length){
+                wrapper.innerHTML = `<video src="${c.trailerUrl}" controls poster="${c.thumbnailUrl||''}"></video>`;
+                updatePlayerAccess();
+                return;
+            }
+            const item = currentPartsItems[selectedPartIndex];
+            if(!item || !item.videoUrl){
+                wrapper.innerHTML = `<img src="${(c&&c.thumbnailUrl)||''}" onerror="this.style.background='var(--bg3)'">`;
+                updatePlayerAccess();
+                return;
+            }
+            const level = item.accessLevel || 'basic';
+            const hasAccess = checkAccessForPart(level);
+            const canStream = isPlayableUrl(item.videoUrl);
+            if(hasAccess && canStream){
+                wrapper.innerHTML = `<video id="videoPlayer" controls src="${getStreamUrl(item.videoUrl)}"></video>`;
+            } else {
+                const reason = !currentUser
+                    ? 'Injira cyangwa wiyandikishe kugirango urebe'
+                    : 'Ongera gahunda yawe kugirango urebe iki gice';
+                wrapper.innerHTML = `
+                    <img src="${(c&&c.thumbnailUrl)||''}" onerror="this.style.background='var(--bg3)'">
+                    <div class="lock-overlay" onclick="handleLockedClick('${level}')">
+                        <span class="material-symbols-outlined">lock</span>
+                        <span class="lock-title">${level.toUpperCase()} PLAN REQUIRED</span>
+                        <small>${reason}</small>
+                    </div>
+                `;
+            }
             updatePlayerAccess();
+        }
+        function handleLockedClick(level){
+            requiredPlan = level;
+            pendingMovieId = currentContentId;
+            showRulesModal(level);
         }
         function updatePlayerAccess(){
             const item = currentPartsItems[selectedPartIndex];
-            if(!item || !item.videoUrl) return;
-            const canStream = isPlayableUrl(item.videoUrl);
-            const hasAccess = checkAccessForPart(item.accessLevel || 'basic');
             const watchBtn = document.getElementById('watchBtn');
             const downloadBtn = document.getElementById('downloadMainBtn');
-            if(watchBtn){
-                if(hasAccess && canStream) watchBtn.style.display = 'inline-flex';
-                else watchBtn.style.display = 'none';
+            if(!item){
+                if(watchBtn) watchBtn.style.display = 'none';
+                if(downloadBtn) downloadBtn.style.display = 'none';
+                return;
             }
-            if(downloadBtn){
-                downloadBtn.style.display = 'inline-flex';
-            }
+            const canStream = isPlayableUrl(item.videoUrl);
+            if(watchBtn) watchBtn.style.display = canStream ? 'inline-flex' : 'none';
+            if(downloadBtn) downloadBtn.style.display = item.videoUrl ? 'inline-flex' : 'none';
         }
         function checkAccessForPart(partLevel){
             if(!currentUser) return false;
@@ -551,10 +615,12 @@
             const toShow = currentPartsItems.slice(0, revealedPartsCount);
             container.innerHTML = toShow.map((item,i)=>{
                 const label = item.title || item.name || `Episode ${item.episodeNumber || (i+1)}`;
-                const lvl = (item.accessLevel || 'basic').toUpperCase();
-                return `<div class="part-row" onclick="selectPart(${i})">
+                const lvl = (item.accessLevel || 'basic');
+                const locked = !checkAccessForPart(lvl);
+                const lockIcon = locked ? ' <span class="material-symbols-outlined" style="font-size:0.85rem;color:var(--accent);vertical-align:middle">lock</span>' : '';
+                return `<div class="part-row${i===selectedPartIndex?' active':''}" onclick="selectPart(${i})">
                     <div class="part-num">${i+1}</div>
-                    <div class="part-name">${escHtml(label)} <span style="color:var(--text3)">(${lvl})</span></div>
+                    <div class="part-name">${escHtml(label)} <span style="color:var(--text3)">(${lvl.toUpperCase()})</span>${lockIcon}</div>
                     <div class="part-actions">
                         <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();selectPart(${i})"><span class="material-symbols-outlined" style="font-size:0.8rem">play_circle</span> Reba</button>
                         <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();downloadPartItem(${i})"><span class="material-symbols-outlined" style="font-size:0.8rem">download</span></button>
@@ -574,14 +640,7 @@
             if(!item) return;
             selectedPartIndex = i;
             renderPartsList();
-            updatePlayerAccess();
-            if(item.videoUrl && isPlayableUrl(item.videoUrl) && checkAccessForPart(item.accessLevel||'basic')){
-                const videoPlayer = document.getElementById('videoPlayer');
-                if(videoPlayer){
-                    videoPlayer.src = getStreamUrl(item.videoUrl);
-                    videoPlayer.play().catch(()=>{});
-                }
-            }
+            mountPlayer(); // re-checks access for the newly selected episode before mounting anything
         }
         function downloadPartItem(i){
             selectPart(i);
@@ -597,20 +656,16 @@
                 showRulesModal(requiredPlan);
                 return;
             }
-            const canStream = isPlayableUrl(item.videoUrl);
-            if(canStream){
-                const videoPlayer = document.getElementById('videoPlayer');
-                videoPlayer.src = getStreamUrl(item.videoUrl);
+            mountPlayer(); // access confirmed — this mounts the real <video> now, not before
+            const videoPlayer = document.getElementById('videoPlayer');
+            if(videoPlayer){
                 videoPlayer.play().catch(()=>{});
-                // auto fullscreen
-                const playerWrapper = document.getElementById('playerWrapper') || videoPlayer.parentElement;
-                if(playerWrapper.requestFullscreen){
+                const playerWrapper = document.getElementById('playerWrapper');
+                if(playerWrapper && playerWrapper.requestFullscreen){
                     playerWrapper.requestFullscreen().catch(()=>{});
                 } else if(videoPlayer.requestFullscreen){
                     videoPlayer.requestFullscreen().catch(()=>{});
                 }
-            } else {
-                toast('Iyi video ntabwo ishobora kurebwa hano, ikurure.');
             }
         }
         function downloadCurrentContent(){
@@ -724,7 +779,7 @@
             loadComments(currentContentId);
         }
 
-        // Plans & Subscription
+        // Plans & Subscription — UNCHANGED per your instruction
         async function loadPlans(){
             try{
                 const res = await fetch(API+'/plans');
@@ -841,6 +896,7 @@
                     updateProfileIcon();
                     toast('Mwaramutse neza!');
                     renderAuthPaymentArea();
+                    if(currentContentId) mountPlayer(); // reflect access immediately if a movie was open behind the scenes
                 } else {
                     toast(data.error || 'Injira byanze');
                 }
@@ -862,6 +918,7 @@
                     updateProfileIcon();
                     toast('Konti yafunguwe!');
                     renderAuthPaymentArea();
+                    if(currentContentId) mountPlayer();
                 } else {
                     toast(data.error || 'Kwiyandikisha byanze');
                 }
@@ -1001,6 +1058,8 @@
         window.updateCommentCounter = updateCommentCounter;
         window.closeMovieModal = closeMovieModal;
         window.goToSlide = goToSlide;
+        window.mountPlayer = mountPlayer;
+        window.handleLockedClick = handleLockedClick;
     </script>
 </body>
 </html>
