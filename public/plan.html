@@ -1,992 +1,406 @@
 <!DOCTYPE html>
 <html lang="rw">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>niroMovie VIP | Premium Movies</title>
-    <meta name="description" content="Sinema nziza za VIP kuri niroMovie.">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="niroMovie VIP">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <meta property="og:title" content="niroMovie VIP">
-    <meta property="og:description" content="Sinema nziza za VIP.">
-    <meta property="og:image" content="/icon-512.png">
-    <meta property="og:url" content="https://plan.niromovie.site">
-    <meta name="theme-color" content="#0d0d0d">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1" />
-    <style>
-        :root{--bg:#0d0d0d;--bg2:#161616;--bg3:#1e1e1e;--text:#f0f0f0;--text2:#a0a0a0;--text3:#666;--accent:#F5C518;--accentD:#d4a810;--orange:#FF6B35;--green:#4CAF50;--border:#2a2a2a;--shadow:0 8px 30px rgba(0,0,0,0.5);--shadowLg:0 16px 50px rgba(0,0,0,0.7);--radius:12px;--radiusLg:18px;--trans:all 0.25s cubic-bezier(0.4,0,0.2,1)}
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
-        body.body-no-scroll{overflow:hidden}
-        body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:40px 40px;animation:bgDrift 30s linear infinite}
-        @keyframes bgDrift{0%{background-position:0 0}100%{background-position:40px 40px}}
-        ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--text3);border-radius:10px}
-        .navbar{position:sticky;top:0;width:100%;z-index:1000;background:rgba(13,13,13,0.94);backdrop-filter:blur(20px);padding:0.6rem 1.5rem;border-bottom:1px solid var(--border)}
-        .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
-        .logo{display:flex;align-items:center;gap:0.4rem;cursor:pointer}
-        .logo-icon{font-size:1.8rem;color:var(--accent)}
-        .logo-text{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.5px}
-        .logo-text span{color:var(--accent)}
-        .hamburger{cursor:pointer;padding:0.4rem;border-radius:var(--radius);display:flex;align-items:center;color:var(--text2)}
-        .hamburger:hover{background:var(--bg3)}
-        .nav-links{display:flex;gap:0.2rem;align-items:center;flex-wrap:wrap}
-        .nav-link{color:var(--text2);text-decoration:none;font-weight:500;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:0.25rem;padding:0.4rem 0.8rem;border-radius:30px}
-        .nav-link:hover{color:var(--accent);background:rgba(245,197,24,0.06)}
-        .nav-link.active{color:var(--accent);background:rgba(245,197,24,0.08);font-weight:600}
-        .search-box{display:flex;align-items:center;background:var(--bg3);border:1.5px solid transparent;border-radius:30px;padding:0.4rem 1rem;gap:0.4rem;width:260px}
-        .search-box:focus-within{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px rgba(245,197,24,0.06)}
-        .search-box input{background:transparent;border:none;color:var(--text);padding:0.35rem;outline:none;width:100%;font-family:inherit;font-size:0.82rem}
-        .search-box input::placeholder{color:var(--text3)}
-        .profile-icon{width:35px;height:35px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:0.75rem;color:#000}
-        .profile-icon:hover{transform:scale(1.06);box-shadow:0 4px 15px rgba(245,197,24,0.25)}
-        .side-menu{position:fixed;top:0;left:-310px;width:290px;height:100%;background:var(--bg2);z-index:2000;transition:var(--trans);padding:2rem 1.5rem;box-shadow:var(--shadowLg);overflow-y:auto}
-        .side-menu.open{left:0}
-        .side-menu-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1999;display:none}
-        .side-menu-overlay.show{display:block}
-        .side-menu-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
-        .side-menu-header h3{color:var(--accent);font-weight:800;font-size:1.2rem}
-        .side-menu-item{padding:0.8rem 1rem;margin:0.25rem 0;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:0.7rem;font-weight:500;font-size:0.88rem;color:var(--text2)}
-        .side-menu-item:hover{background:var(--bg3);color:var(--accent)}
-        .section{margin:0.4rem 0;padding:0 1.5rem;max-width:1400px;margin-left:auto;margin-right:auto;position:relative;z-index:1}
-        .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7rem}
-        .section-head h2{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:0.4rem}
-        .movie-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:0.7rem;margin-top:0.7rem}
-        .movie-card{background:var(--bg2);border-radius:var(--radiusLg);overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--border);transition:var(--trans);width:100%}
-        .movie-card:hover{transform:translateY(-4px);box-shadow:var(--shadowLg);border-color:var(--accent)}
-        .movie-thumb{width:100%;object-fit:cover;background:var(--bg3);display:block}
-        .movie-badge{position:absolute;top:8px;right:8px;padding:0.15rem 0.5rem;border-radius:20px;font-size:0.58rem;font-weight:700;z-index:2}
-        .badge-basic{background:#2196F3;color:#fff}
-        .badge-standard{background:#9C27B0;color:#fff}
-        .badge-premium{background:var(--accent);color:#000}
-        .badge-ultimate{background:var(--orange);color:#fff}
-        .quality-badge{position:absolute;top:8px;left:8px;padding:0.12rem 0.35rem;border-radius:4px;font-size:0.55rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2}
-        .movie-info{padding:0.6rem}
-        .movie-title{font-weight:600;margin-bottom:0.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:0.82rem;color:var(--text)}
-        .movie-meta{font-size:0.66rem;color:var(--text2);display:flex;gap:0.6rem;margin-top:0.2rem}
-        .categories-scroll{display:flex;gap:0.4rem;overflow-x:auto;scroll-behavior:smooth;padding-bottom:0.3rem;-ms-overflow-style:none;scrollbar-width:none}
-        .categories-scroll::-webkit-scrollbar{display:none}
-        .cat-pill{padding:0.4rem 0.9rem;border-radius:30px;font-weight:500;font-size:0.8rem;cursor:pointer;background:var(--bg2);border:1.5px solid var(--border);color:var(--text2);font-family:inherit;white-space:nowrap;flex-shrink:0;transition:var(--trans)}
-        .cat-pill:hover{border-color:var(--accent);color:var(--accent)}
-        .cat-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}
-        .load-more-btn{display:block;margin:1rem auto;padding:0.6rem 1.8rem;border-radius:30px;font-weight:600;font-size:0.82rem;cursor:pointer;background:var(--bg2);border:2px solid var(--border);color:var(--text2);font-family:inherit;transition:var(--trans)}
-        .load-more-btn:hover{border-color:var(--accent);color:var(--accent)}
-        .footer{background:var(--bg2);border-top:1px solid var(--border);padding:2rem 1.5rem 1.2rem;margin-top:2.5rem;position:relative;z-index:1}
-        .footer-grid{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1.5rem}
-        .footer-col h4{font-size:0.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.7rem;font-weight:700}
-        .footer-col a{display:block;color:var(--text2);text-decoration:none;margin:0.3rem 0;font-size:0.8rem;cursor:pointer;transition:var(--trans)}
-        .footer-col a:hover{color:var(--accent)}
-        .footer-social{display:flex;gap:0.5rem;margin-top:0.4rem}
-        .footer-social a{width:34px;height:34px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);text-decoration:none;font-size:0.95rem;transition:var(--trans)}
-        .footer-social a:hover{background:var(--accent);color:#000;transform:translateY(-3px)}
-        .footer-bottom{text-align:center;padding-top:1.2rem;margin-top:1.5rem;border-top:1px solid var(--border);color:var(--text3);font-size:0.73rem;max-width:1400px;margin-left:auto;margin-right:auto}
-        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:3000;justify-content:center;align-items:center;backdrop-filter:blur(6px)}
-        .modal-overlay.active{display:flex}
-        .modal-full{max-width:100%;width:100%;height:100vh;max-height:100vh;border-radius:0;display:flex;flex-direction:column;background:var(--bg2)}
-        .modal-header{padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:5;flex-shrink:0;gap:0.8rem}
-        .modal-header h2{font-size:1.05rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .back-btn{cursor:pointer;display:flex;align-items:center;gap:0.3rem;color:var(--accent);font-weight:600;font-size:0.85rem;white-space:nowrap}
-        .back-btn:hover{opacity:0.8}
-        .modal-body{padding:1.2rem;overflow-y:auto;flex:1}
-        .close-btn{font-size:22px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--text2);transition:var(--trans)}
-        .close-btn:hover{background:var(--bg3);color:var(--accent)}
-        .modal-box-sm{max-width:440px;width:100%;background:var(--bg2);border-radius:var(--radiusLg);overflow-y:auto;max-height:92vh;border:1px solid var(--border);box-shadow:var(--shadowLg);margin:auto}
-        .detail-container{display:flex;flex-direction:column;gap:1.2rem}
-        .detail-main{display:flex;flex-wrap:wrap;gap:1.2rem}
-        .detail-left{flex:1 1 65%;min-width:0}
-        .detail-right{flex:0 0 30%;min-width:250px}
-        .trailer-video{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.8rem}
-        .trailer-video video{width:100%;height:100%;object-fit:cover}
-        .player-wrapper{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radiusLg);overflow:hidden;margin-bottom:0.8rem;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--border),var(--shadowLg)}
-        .player-wrapper video{width:100%;height:100%;display:none}
-        .player-message{color:var(--text2);text-align:center;padding:1rem;font-size:0.9rem}
-        .action-buttons{display:flex;gap:0.9rem;margin-bottom:1rem;flex-wrap:wrap}
-        .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.7rem 1.3rem;border:none;border-radius:30px;font-weight:700;cursor:pointer;transition:var(--trans);font-family:inherit;font-size:0.9rem}
-        .btn-primary{background:var(--accent);color:#000;box-shadow:0 4px 15px rgba(245,197,24,0.25)}
-        .btn-primary:hover{background:var(--accentD);transform:translateY(-2px)}
-        .btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
-        .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-        .btn-sm{padding:0.4rem 0.9rem;font-size:0.75rem}
-        /* Big, prominent watch / download buttons */
-        .btn-hero{flex:1 1 220px;padding:1.05rem 1.6rem;font-size:1.05rem;border-radius:40px;letter-spacing:0.2px}
-        .btn-hero .material-symbols-outlined{font-size:1.4rem}
-        #watchBtn.btn-hero{animation:pulseGlow 2.2s ease-in-out infinite}
-        @keyframes pulseGlow{0%,100%{box-shadow:0 4px 15px rgba(245,197,24,0.25)}50%{box-shadow:0 4px 28px rgba(245,197,24,0.6)}}
-        .desc-text{font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:0.6rem}
-        .desc-truncated{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-        .desc-expanded{display:block}
-        .view-more-link{color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.4rem}
-        .view-more-link:hover{text-decoration:underline}
-        .parts-list{margin-top:1rem}
-        .part-row{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.5rem;border-bottom:1px solid var(--border);font-size:0.82rem;gap:0.5rem;cursor:pointer;transition:var(--trans);border-radius:var(--radius)}
-        .part-row:hover{color:var(--accent);background:var(--bg3)}
-        .part-row:last-child{border-bottom:none}
-        .part-row.active{color:var(--accent);font-weight:600;background:rgba(245,197,24,0.06)}
-        .part-name{flex:1;display:flex;align-items:center}
-        .part-badge{font-size:0.65rem;font-weight:600;white-space:nowrap;padding:0.1rem 0.5rem;border-radius:20px;background:var(--bg3)}
-        .part-dl{font-size:1.1rem;cursor:pointer;color:var(--text2);transition:var(--trans)}
-        .part-dl:hover{color:var(--accent)}
-        .comment-item{background:var(--bg3);padding:0.6rem;border-radius:var(--radius);margin:0.25rem 0;border-left:3px solid var(--accent);font-size:0.8rem}
-        .comment-user{font-weight:600;color:var(--accent)}
-        .comment-date{font-size:0.65rem;color:var(--text3);margin-left:0.3rem}
-        .comment-text{margin-top:0.15rem;color:var(--text2)}
-        .comment-like{cursor:pointer;color:var(--text3);font-size:0.68rem;margin-top:0.2rem;display:inline-flex;align-items:center;gap:0.15rem;transition:var(--trans)}
-        .comment-like:hover{color:var(--accent)}
-        .comment-reply-btn{cursor:pointer;color:var(--text3);font-size:0.68rem;margin-left:0.5rem;transition:var(--trans)}
-        .comment-reply-btn:hover{color:var(--accent)}
-        .reply-form{margin-top:0.4rem;display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center}
-        .reply-form input{padding:0.3rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.7rem;background:var(--bg);color:var(--text);flex:1;min-width:80px}
-        .reply-form button{padding:0.3rem 0.6rem;border-radius:20px;font-size:0.65rem}
-        .reply-item{margin-left:1rem;border-left:2px solid var(--border);padding-left:0.5rem;margin-top:0.2rem;font-size:0.75rem}
-        .verified-badge{display:inline-flex;align-items:center;gap:0.2rem;color:var(--accent);font-weight:600;font-size:0.65rem;margin-left:0.3rem;background:rgba(245,197,24,0.1);padding:0.15rem 0.4rem;border-radius:12px}
-        .show-more-parts-btn{display:block;margin:0.5rem 0;padding:0.4rem 1rem;border-radius:20px;font-weight:600;font-size:0.75rem;cursor:pointer;background:transparent;border:1.5px solid var(--accent);color:var(--accent);font-family:inherit;transition:var(--trans)}
-        .show-more-parts-btn:hover{background:rgba(245,197,24,0.08)}
-        .subscription-view{display:none;padding:2rem 1.5rem;max-width:800px;margin:0 auto}
-        .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
-        .plan-card{background:var(--bg);border:2px solid var(--border);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;cursor:pointer;transition:var(--trans)}
-        .plan-card:hover,.plan-card.selected{border-color:var(--accent);box-shadow:0 0 15px rgba(245,197,24,0.2)}
-        .plan-card.featured{border-color:var(--orange)}
-        .plan-name{font-weight:700;font-size:1rem}
-        .plan-price{font-size:1.5rem;font-weight:800;color:var(--accent);margin:0.4rem 0}
-        .plan-price span{font-size:0.7rem;color:var(--text2)}
-        .plan-features{font-size:0.75rem;color:var(--text2);margin-top:0.5rem;text-align:left}
-        .selected-badge{display:none;background:var(--accent);color:#000;border-radius:20px;padding:0.2rem 0.6rem;font-size:0.7rem;font-weight:700;margin-top:0.5rem}
-        .plan-card.selected .selected-badge{display:inline-block}
-        .form-group{margin-bottom:1rem}
-        .form-group label{display:block;margin-bottom:0.4rem;font-weight:600;font-size:0.85rem;color:var(--text2)}
-        .form-group input,.form-group select{width:100%;padding:0.7rem 1rem;background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);font-family:inherit;font-size:0.9rem;transition:var(--trans)}
-        .form-group input:focus,.form-group select:focus{border-color:var(--accent);outline:none}
-        .auth-toggle{text-align:center;margin-top:1rem;font-size:0.85rem}
-        .auth-toggle a{color:var(--accent);cursor:pointer;font-weight:600}
-        .message{padding:0.8rem 1rem;border-radius:var(--radius);margin-bottom:1rem;display:none;font-size:0.85rem}
-        .message.success{background:rgba(76,175,80,0.1);border:1px solid var(--green);color:var(--green)}
-        .message.error{background:rgba(229,57,53,0.1);border:1px solid #E53935;color:#E53935}
-        .payment-box{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1.2rem;text-align:center;margin:1rem 0}
-        .payment-method{margin:0.8rem 0}
-        .payment-method strong{display:block;font-size:0.9rem}
-        .payment-code{font-size:1.2rem;font-weight:700;color:var(--accent);font-family:monospace}
-        .payment-note{font-size:0.75rem;color:var(--text2);margin-top:0.5rem}
-        .rules-content{max-height:60vh;overflow-y:auto;margin:1rem 0}
-        .rules-content p{margin-bottom:0.5rem;font-size:0.9rem;line-height:1.5}
-        .rules-content strong{color:var(--accent)}
-        .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg3);color:var(--text);border:1px solid var(--border);padding:0.7rem 1.2rem;border-radius:30px;font-size:0.82rem;z-index:5000;box-shadow:var(--shadowLg)}
-        @media(max-width:768px){
-            .navbar{padding:0.5rem 1rem}.search-box{width:100%;order:3;margin-top:0.4rem}
-            .detail-main{flex-direction:column}.detail-right{flex:1 1 100%}
-            .movie-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.movie-thumb{height:180px}
-            .footer-grid{grid-template-columns:repeat(2,1fr)}
-            .modal-body{padding:0.8rem}
-            .btn-hero{flex:1 1 100%}
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Choose Your Plan | niroMovie</title>
+<meta name="description" content="niroMovie VIP plans — unlock premium movies and series.">
+<meta name="theme-color" content="#0d0d0d">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1" />
+<style>
+:root{--bg:#0d0d0d;--bg2:#161616;--bg3:#1e1e1e;--text:#f0f0f0;--text2:#a0a0a0;--text3:#666;--accent:#F5C518;--accentD:#d4a810;--orange:#FF6B35;--green:#4CAF50;--border:#2a2a2a;--shadow:0 8px 30px rgba(0,0,0,0.5);--shadowLg:0 16px 50px rgba(0,0,0,0.7);--radius:12px;--radiusLg:18px;--trans:all 0.25s cubic-bezier(0.4,0,0.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--text3);border-radius:10px}html{scroll-behavior:smooth}
+
+/* Navbar (matches main site) */
+.navbar{position:sticky;top:0;width:100%;z-index:1000;background:rgba(13,13,13,0.94);backdrop-filter:blur(20px);padding:0.6rem 1.5rem;border-bottom:1px solid var(--border)}.nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}.logo{display:flex;align-items:center;gap:0.4rem;cursor:pointer;text-decoration:none}.logo-icon{font-size:1.8rem;color:var(--accent)}.logo-text{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.5px}.logo-text span{color:var(--accent)}.hamburger{cursor:pointer;padding:0.4rem;border-radius:var(--radius);display:flex;align-items:center;color:var(--text2)}.hamburger:hover{background:var(--bg3)}
+.nav-links{display:flex;gap:0.2rem;align-items:center;flex-wrap:wrap}.nav-link{color:var(--text2);text-decoration:none;font-weight:500;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:0.25rem;padding:0.4rem 0.8rem;border-radius:30px}.nav-link:hover{color:var(--accent);background:rgba(245,197,24,0.06)}.nav-link.active{color:var(--accent);background:rgba(245,197,24,0.08);font-weight:600}
+.search-box{display:flex;align-items:center;background:var(--bg3);border:1.5px solid transparent;border-radius:30px;padding:0.4rem 1rem;gap:0.4rem;width:260px}.search-box:focus-within{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px rgba(245,197,24,0.06)}.search-box input{background:transparent;border:none;color:var(--text);padding:0.35rem;outline:none;width:100%;font-family:inherit;font-size:0.82rem}.search-box input::placeholder{color:var(--text3)}
+.profile-pill{display:flex;align-items:center;gap:0.4rem;color:var(--text2);text-decoration:none;font-size:0.8rem;font-weight:600;border:1.5px solid var(--border);padding:0.4rem 0.9rem;border-radius:30px}.profile-pill:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Side menu */
+.side-menu{position:fixed;top:0;left:-310px;width:290px;height:100%;background:var(--bg2);z-index:2000;transition:var(--trans);padding:2rem 1.5rem;box-shadow:var(--shadowLg);overflow-y:auto}.side-menu.open{left:0}.side-menu-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1999;display:none}.side-menu-overlay.show{display:block}.side-menu-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}.side-menu-header h3{color:var(--accent);font-weight:800;font-size:1.2rem}.side-menu-item{padding:0.8rem 1rem;margin:0.25rem 0;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:0.7rem;font-weight:500;font-size:0.88rem;color:var(--text2);text-decoration:none}.side-menu-item:hover{background:var(--bg3);color:var(--accent)}
+
+/* Hero — rotating latest 3 */
+.hero-section{padding:1.4rem 1.5rem 0.6rem;max-width:1000px;margin:0 auto;overflow-x:hidden;text-align:center}
+.hero-slider{position:relative;overflow:hidden;border-radius:var(--radiusLg);aspect-ratio:16/7;background:var(--bg3);cursor:pointer}
+.hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;display:flex;align-items:flex-end;padding:1.5rem;background-size:cover;background-position:center}
+.hero-slide.active{opacity:1;z-index:1}
+.hero-slide-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to top,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.05) 55%)}
+.hero-slide-info{position:relative;z-index:2;max-width:70%;text-align:left}
+.hero-slide-info .eyebrow{color:var(--accent);font-size:0.7rem;letter-spacing:2px;font-weight:700;margin-bottom:0.3rem}
+.hero-slide-info h2{color:#fff;font-size:1.4rem;font-weight:800;margin-bottom:0.3rem;text-shadow:0 2px 10px rgba(0,0,0,0.6)}
+.hero-slide-info p{color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hero-dots{display:flex;gap:0.4rem;justify-content:center;margin-top:0.7rem}
+.hero-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer}
+.hero-dot.active{background:var(--accent);width:20px;border-radius:4px}
+.hero-tagline{color:var(--text2);font-size:0.95rem;margin:1.1rem auto 0;max-width:520px;line-height:1.6}
+.hero-tagline strong{color:var(--accent)}
+
+/* Search results */
+.search-results-wrap{display:none;max-width:1200px;margin:1.2rem auto 0;padding:0 1.5rem}
+.search-results-wrap.show{display:block}
+.search-results-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem}
+.search-results-head h3{font-size:1.05rem;font-weight:700}
+.search-results-head span{color:var(--text3);font-size:0.8rem;cursor:pointer}
+.search-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.7rem}
+.search-card{background:var(--bg2);border-radius:var(--radiusLg);overflow:hidden;border:1px solid var(--border);text-decoration:none;color:var(--text);display:block;transition:var(--trans)}
+.search-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.search-card img{width:100%;height:200px;object-fit:cover;background:var(--bg3);display:block}
+.search-card .sc-title{padding:0.55rem 0.6rem 0.65rem;font-size:0.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Unlock banner */
+.unlock-banner{max-width:900px;margin:1.6rem auto 0;padding:0 1.5rem}
+.unlock-banner .inner{background:rgba(245,197,24,0.08);border:1px solid var(--accent);border-radius:var(--radiusLg);padding:0.9rem 1.2rem;display:flex;align-items:center;gap:0.8rem;font-size:0.85rem;color:var(--text)}
+.unlock-banner .inner .material-symbols-outlined{color:var(--accent)}
+.unlock-banner b{color:var(--accent)}
+
+/* Plans */
+.plans-section{max-width:1300px;margin:2.2rem auto 0;padding:0 1.5rem}
+.plans-head{text-align:center;margin-bottom:1.8rem}
+.plans-head h2{font-size:1.6rem;font-weight:800;margin-bottom:0.4rem}
+.plans-head p{color:var(--text2);font-size:0.9rem}
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.2rem}
+.plan-card{background:var(--bg2);border:2px solid var(--border);border-radius:var(--radiusLg);padding:1.6rem 1.3rem;text-align:center;transition:var(--trans);position:relative;display:flex;flex-direction:column}
+.plan-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.plan-card.featured{border-color:var(--orange)}
+.plan-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,197,24,0.15)}
+.plan-card .ribbon{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:0.62rem;font-weight:700;padding:0.25rem 0.8rem;border-radius:20px;letter-spacing:1px}
+.plan-name{font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:1px;color:var(--text)}
+.plan-price{font-size:1.9rem;font-weight:800;color:var(--accent);margin:0.6rem 0 0.1rem}
+.plan-price span{font-size:0.7rem;color:var(--text2);font-weight:500}
+.plan-features{list-style:none;margin:1.1rem 0;text-align:left;flex:1}
+.plan-features li{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.8rem;color:var(--text2);margin-bottom:0.55rem}
+.plan-features li .material-symbols-outlined{color:var(--green);font-size:1rem;flex-shrink:0;margin-top:0.05rem}
+.plan-select-btn{width:100%;padding:0.7rem;border-radius:var(--radiusLg);font-weight:700;font-size:0.85rem;cursor:pointer;border:none;font-family:inherit;background:var(--accent);color:#000;transition:var(--trans)}
+.plan-select-btn:hover{background:var(--accentD)}
+
+/* Payment box */
+.payment-box{max-width:640px;margin:2.2rem auto 0;padding:0 1.5rem}
+.payment-box .inner{background:rgba(245,197,24,0.04);border:2px solid var(--accent);border-radius:var(--radiusLg);padding:1.4rem;text-align:center}
+.payment-box h4{font-size:1rem;margin-bottom:0.6rem}
+.payment-box p{color:var(--text2);font-size:0.85rem;line-height:1.6;margin-bottom:0.3rem}
+.momo-code{font-size:1.4rem;font-weight:800;color:var(--accent);margin:0.5rem 0;font-family:monospace;letter-spacing:2px}
+.payment-note{font-size:0.7rem;color:var(--text3);margin-top:0.8rem;font-style:italic}
+.selected-plan-line{font-size:0.85rem;color:var(--text);margin-bottom:0.8rem}
+.selected-plan-line b{color:var(--accent)}
+.cta-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.75rem 1.4rem;border-radius:var(--radiusLg);font-weight:700;font-size:0.85rem;cursor:pointer;border:none;font-family:inherit;text-decoration:none;background:#25D366;color:#fff;margin-top:0.6rem;transition:var(--trans)}
+.cta-btn:hover{background:#1da851;transform:translateY(-2px)}
+
+/* Footer (matches main site) */
+.footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.2rem 1.5rem 1.4rem;margin-top:2.6rem}
+.footer-wa-banner{max-width:900px;margin:0 auto 2.2rem;text-align:center}
+.footer-wa-banner a{display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--border);color:var(--text);padding:0.7rem 1.4rem;border-radius:30px;text-decoration:none;font-weight:700;font-size:0.8rem;transition:var(--trans)}
+.footer-wa-banner a:hover{border-color:#25D366;color:#25D366}
+.footer-grid{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1.3fr 1.3fr;gap:2rem}
+.footer-brand .f-logo{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;font-weight:800;font-size:1.05rem;color:var(--text)}
+.footer-brand .f-logo span{color:var(--accent)}
+.footer-brand p{color:var(--text3);font-size:0.82rem;line-height:1.6;max-width:340px;margin-bottom:0.9rem}
+.footer-contact-item{display:flex;align-items:center;gap:0.6rem;color:var(--text2);font-size:0.78rem;margin-bottom:0.6rem;text-decoration:none}
+.footer-contact-item .ic{width:28px;height:28px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0}
+.footer-col h4{font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.9rem;font-weight:700}
+.footer-col a{display:block;color:var(--text2);text-decoration:none;margin:0.3rem 0;font-size:0.8rem;cursor:pointer;transition:var(--trans)}.footer-col a:hover{color:var(--accent)}
+.footer-social{display:flex;gap:0.5rem;margin-top:0.4rem}.footer-social a{width:34px;height:34px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);text-decoration:none;font-size:0.95rem;transition:var(--trans)}.footer-social a:hover{background:var(--accent);color:#000;transform:translateY(-3px)}
+.footer-bottom{max-width:1400px;margin:2rem auto 0;padding-top:1.2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;color:var(--text3);font-size:0.75rem}
+.footer-bottom .flinks a{color:var(--text3);text-decoration:none;margin-left:1rem;cursor:pointer}
+.footer-bottom .flinks a:hover{color:var(--accent)}
+@media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.footer-grid{grid-template-columns:1fr}}
+
+/* Modals (about/contact/privacy/terms) */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.86);z-index:3000;justify-content:center;align-items:center;backdrop-filter:blur(6px);padding:1rem}.modal-overlay.active{display:flex}
+.modal-box-sm{max-width:440px;width:100%;background:var(--bg2);border-radius:var(--radiusLg);overflow-y:auto;max-height:92vh;border:1px solid var(--border);box-shadow:var(--shadowLg);margin:auto}
+.modal-header{padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.modal-header h2{font-size:1.05rem;font-weight:700}
+.close-btn{font-size:22px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--text2);transition:var(--trans)}.close-btn:hover{background:var(--bg3);color:var(--accent)}
+
+.whatsapp-btn{position:fixed;bottom:22px;right:22px;width:46px;height:46px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 18px rgba(37,211,102,0.3);transition:var(--trans)}.whatsapp-btn:hover{transform:scale(1.1)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:0.6rem 1.5rem;border-radius:30px;z-index:9999;font-weight:600;font-size:0.85rem;pointer-events:none}
+
+@media(max-width:768px){
+.navbar{padding:0.5rem 1rem}
+.search-box{width:100%;order:3;margin-top:0.4rem}
+.nav-links{display:none}
+.hero-slide-info{max-width:100%}
+.hero-slide-info h2{font-size:1.1rem}
+.plans-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-    <div class="navbar" id="navbar">
-        <div class="nav-container">
-            <div style="display:flex;align-items:center;gap:0.6rem">
-                <div class="hamburger" onclick="toggleSideMenu()"><span class="material-symbols-outlined">menu</span></div>
-                <div class="logo" onclick="showMoviesView()"><span class="material-symbols-outlined logo-icon">play_circle</span><div class="logo-text"><span>niro</span>Movie VIP</div></div>
-            </div>
-            <div class="nav-links" id="navLinks">
-                <a class="nav-link active" onclick="showMoviesView()">Byose</a>
-                <a class="nav-link" onclick="filterByAccess('basic')">Basic</a>
-                <a class="nav-link" onclick="filterByAccess('standard')">Standard</a>
-                <a class="nav-link" onclick="filterByAccess('premium')">Premium</a>
-                <a class="nav-link" onclick="filterByAccess('ultimate')">Ultimate</a>
-            </div>
-            <div class="search-box"><span class="material-symbols-outlined" style="color:var(--text3)">search</span><input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()"></div>
-            <div class="profile-icon" id="profileIcon" onclick="handleProfileClick()">LI</div>
-        </div>
+
+<div class="navbar">
+  <div class="nav-container">
+    <div style="display:flex;align-items:center;gap:0.6rem">
+      <div class="hamburger" onclick="toggleSideMenu()"><span class="material-symbols-outlined">menu</span></div>
+      <a class="logo" href="https://niromovie.site"><span class="material-symbols-outlined logo-icon">play_circle</span><div class="logo-text"><span>niro</span>Movie</div></a>
     </div>
-
-    <div class="side-menu-overlay" id="sideMenuOverlay" onclick="toggleSideMenu()"></div>
-    <div class="side-menu" id="sideMenu">
-        <div class="side-menu-header"><h3>niroMovie VIP</h3><span class="material-symbols-outlined" onclick="toggleSideMenu()" style="cursor:pointer">close</span></div>
-        <div class="side-menu-item" onclick="closeSideMenu();showMoviesView()"><span class="material-symbols-outlined">movie</span> Sinema Zose</div>
-        <div class="side-menu-item" onclick="closeSideMenu();filterByAccess('basic')"><span class="material-symbols-outlined">star</span> Basic</div>
-        <div class="side-menu-item" onclick="closeSideMenu();filterByAccess('standard')"><span class="material-symbols-outlined">star_half</span> Standard</div>
-        <div class="side-menu-item" onclick="closeSideMenu();filterByAccess('premium')"><span class="material-symbols-outlined">workspace_premium</span> Premium</div>
-        <div class="side-menu-item" onclick="closeSideMenu();filterByAccess('ultimate')"><span class="material-symbols-outlined">diamond</span> Ultimate</div>
-        <hr style="border-color:var(--border);margin:1rem 0">
-        <div class="side-menu-item" id="sideMenuAuth" onclick="handleProfileClick()"><span class="material-symbols-outlined">login</span> Injira / Fungura Konti</div>
+    <div class="nav-links">
+      <a class="nav-link" href="https://niromovie.site">Home</a>
+      <a class="nav-link" href="https://niromovie.site/?filter=series">Series</a>
+      <a class="nav-link" href="https://niromovie.site/?filter=free">Free</a>
+      <a class="nav-link" href="https://news.niromovie.site">News</a>
+      <a class="nav-link active">VIP Plans</a>
     </div>
+    <div class="search-box"><span class="material-symbols-outlined" style="color:var(--text3)">search</span><input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()"></div>
+    <a class="profile-pill" href="https://niromovie.site"><span class="material-symbols-outlined" style="font-size:1.1rem">arrow_back</span> Back to niroMovie</a>
+  </div>
+</div>
+<div class="side-menu-overlay" id="sideMenuOverlay" onclick="toggleSideMenu()"></div>
+<div class="side-menu" id="sideMenu">
+  <div class="side-menu-header"><h3>niroMovie</h3><span class="material-symbols-outlined" onclick="toggleSideMenu()" style="cursor:pointer">close</span></div>
+  <a class="side-menu-item" href="https://niromovie.site"><span class="material-symbols-outlined">home</span>Home</a>
+  <a class="side-menu-item" href="https://niromovie.site/?filter=series"><span class="material-symbols-outlined">tv</span>Series</a>
+  <a class="side-menu-item" href="https://niromovie.site/?filter=free"><span class="material-symbols-outlined">redeem</span>Free Movies</a>
+  <a class="side-menu-item" href="https://news.niromovie.site"><span class="material-symbols-outlined">article</span>News</a>
+  <a class="side-menu-item" href="#plans"><span class="material-symbols-outlined">workspace_premium</span>VIP Plans</a>
+  <hr style="border-color:var(--border);margin:1rem 0">
+  <div class="side-menu-item" onclick="closeSideMenu();openModal('aboutModal')"><span class="material-symbols-outlined">info</span>About Us</div>
+  <div class="side-menu-item" onclick="closeSideMenu();openModal('contactModal')"><span class="material-symbols-outlined">contact_support</span>Contact</div>
+  <div class="side-menu-item" onclick="closeSideMenu();openModal('privacyModal')"><span class="material-symbols-outlined">privacy_tip</span>Privacy</div>
+  <div class="side-menu-item" onclick="closeSideMenu();openModal('termsModal')"><span class="material-symbols-outlined">description</span>Terms</div>
+</div>
 
-    <div id="moviesView">
-        <div class="section">
-            <div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">category</span> Ibyiciro</h2></div>
-            <div class="categories-scroll" id="catRow"></div>
-        </div>
-        <div class="section">
-            <div class="section-head"><h2><span class="material-symbols-outlined" style="color:var(--accent)">movie</span> Sinema & Series za Premium</h2></div>
-            <div class="movie-grid" id="movieGrid"></div>
-            <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreMovies()">Erekana izindi ▼</button>
-        </div>
+<div class="hero-section">
+  <div class="hero-slider" id="heroSlider" onclick="heroClick()">
+    <div class="hero-slide active" id="heroSlide0"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><div class="eyebrow">LATEST ADDED</div><h2 id="heroTitle0"></h2><p id="heroDesc0"></p></div></div>
+    <div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><div class="eyebrow">LATEST ADDED</div><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div>
+    <div class="hero-slide" id="heroSlide2"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><div class="eyebrow">LATEST ADDED</div><h2 id="heroTitle2"></h2><p id="heroDesc2"></p></div></div>
+  </div>
+  <div class="hero-dots" id="heroDots"><div class="hero-dot active" onclick="goToSlide(0)"></div><div class="hero-dot" onclick="goToSlide(1)"></div><div class="hero-dot" onclick="goToSlide(2)"></div></div>
+  <p class="hero-tagline">Go <strong>VIP</strong> on niroMovie and unlock every premium movie and series — no ads, no waiting, no limits.</p>
+</div>
+
+<div class="search-results-wrap" id="searchResultsWrap">
+  <div class="search-results-head"><h3 id="searchResultsTitle">Results</h3><span onclick="clearSearch()">Clear ✕</span></div>
+  <div class="search-grid" id="searchGrid"></div>
+</div>
+
+<div class="unlock-banner" id="unlockBanner" style="display:none">
+  <div class="inner">
+    <span class="material-symbols-outlined">lock_open</span>
+    <div>To watch <b id="unlockTitle"></b> you need the <b id="unlockPlan"></b> plan or higher. Pick it below to unlock it.</div>
+  </div>
+</div>
+
+<div class="plans-section" id="plans">
+  <div class="plans-head">
+    <h2>Choose Your Plan</h2>
+    <p>Pick the plan that fits how much you watch. Upgrade or cancel anytime.</p>
+  </div>
+  <div class="plans-grid" id="plansGrid"></div>
+</div>
+
+<div class="payment-box">
+  <div class="inner">
+    <h4 id="paymentHeading">How to pay</h4>
+    <div class="selected-plan-line" id="selectedPlanLine" style="display:none"></div>
+    <p>Send the plan amount via MoMo Pay to the code below, then send your payment screenshot on WhatsApp so we can activate your plan.</p>
+    <div class="momo-code" id="momoCode">*182*8*1*1294634#</div>
+    <a class="cta-btn" id="whatsappConfirmBtn" href="#" target="_blank"><i class="fab fa-whatsapp"></i> Send Payment Proof on WhatsApp</a>
+    <div class="payment-note">Note: MoMo code and prices shown here are placeholders — replace with your real MoMo Pay code and pricing before going live.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-wa-banner">
+    <a href="https://wa.me/250795064502" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Ugize ikibazo ku miti yo kwishyura? Twandikire kuri WhatsApp 0795 064 502</a>
+  </div>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="f-logo"><span class="material-symbols-outlined logo-icon">play_circle</span> niro<span>Movie</span></div>
+      <p>Byose ukeneye ni ibyishimo — your destination for the latest movies, series, and entertainment content from across Africa and beyond.</p>
+      <a class="footer-contact-item" href="https://maps.google.com/?q=Kigali,Rwanda" target="_blank"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">location_on</span></span> Kigali, Rwanda</a>
+      <a class="footer-contact-item" href="mailto:info@niromovie.site"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">mail</span></span> info@niromovie.site</a>
+      <a class="footer-contact-item" href="tel:+250795064502"><span class="ic"><span class="material-symbols-outlined" style="font-size:1rem">call</span></span> +250 795 064 502</a>
     </div>
-
-    <div class="subscription-view" id="subscriptionView">
-        <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:1rem;">Iyandikishe kugirango urebe</h1>
-        <p style="color:var(--text2);margin-bottom:1.5rem;">Hitamo gahunda wandikireho, wishyure, ubone kwireba.</p>
-        <div class="plan-grid" id="plansContainer"></div>
-        <div id="authPaymentArea"></div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <a href="https://niromovie.site">Home</a>
+      <a href="https://niromovie.site/?filter=series">Series</a>
+      <a href="https://niromovie.site/?filter=free">Free Movies</a>
+      <a href="https://news.niromovie.site">News</a>
+      <a href="#plans">VIP Plans</a>
     </div>
-
-    <div class="modal-overlay" id="movieModal" onclick="if(event.target===this)closeMovieModal()">
-        <div class="modal-full">
-            <div class="modal-header">
-                <span class="back-btn" onclick="closeMovieModal()"><span class="material-symbols-outlined">arrow_back</span> Subira inyuma</span>
-                <h2 id="modalTitle"></h2>
-                <span class="close-btn" onclick="closeMovieModal()">&times;</span>
-            </div>
-            <div class="modal-body" id="modalBodyContent">
-                <div class="detail-container">
-                    <div class="detail-main">
-                        <div class="detail-left">
-                            <div class="trailer-video" id="trailerContainer" style="display:none;">
-                                <video id="trailerVideo" controls playsinline></video>
-                            </div>
-                            <div class="player-wrapper" id="playerWrapper" style="display:none;">
-                                <video id="videoPlayer" controls playsinline></video>
-                                <div class="player-message" id="playerMessage" style="display:none;"></div>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="btn btn-primary btn-hero" id="watchBtn" onclick="watchCurrentContent()" style="display:none;"><span class="material-symbols-outlined">play_circle</span> Reba Ubu</button>
-                                <button class="btn btn-outline btn-hero" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Kuramo</button>
-                            </div>
-                            <div class="desc-text desc-truncated" id="modalDesc"></div><span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:none">... soma byinshi</span>
-                            <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin:0.5rem 0;font-size:0.75rem;color:var(--text2)" id="modalMeta"></div>
-                            <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.5rem" id="modalTags"></div>
-                            <h4 style="margin-bottom:0.3rem;font-size:0.9rem">Ibyiciro / Episode</h4>
-                            <div id="partsList" class="parts-list"></div>
-                            <div id="showMorePartsContainer"></div>
-                            <h4 style="margin:1rem 0 0.3rem;font-size:0.9rem">Ibitekerezo</h4>
-                            <div id="commentsList"></div>
-                            <div style="display:flex;gap:0.4rem;margin-top:0.4rem;flex-wrap:wrap">
-                                <input type="text" id="commentName" placeholder="Izina" style="flex:1;min-width:70px;padding:0.4rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.76rem;background:var(--bg);color:var(--text)">
-                                <input type="text" id="newComment" placeholder="Igitekerezo..." style="flex:2;min-width:100px;padding:0.4rem 0.5rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.76rem;background:var(--bg);color:var(--text)">
-                                <button class="btn btn-primary btn-sm" onclick="addComment()">Ohereza</button>
-                            </div>
-                        </div>
-                        <div class="detail-right">
-                            <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">Reba n'izindi</h4>
-                            <div class="movie-grid" id="relatedGrid" style="grid-template-columns:repeat(2,1fr);gap:0.7rem;"></div>
-                            <button class="load-more-btn" id="relatedLoadMore" onclick="loadMoreRelated()" style="display:none">Erekana izindi ▼</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a onclick="openModal('aboutModal')">About Us</a>
+      <a onclick="openModal('contactModal')">Contact</a>
+      <a onclick="openModal('privacyModal')">Privacy Policy</a>
+      <a onclick="openModal('termsModal')">Terms</a>
     </div>
-
-    <div class="modal-overlay" id="rulesModal">
-        <div class="modal-box-sm" style="max-width:520px;">
-            <div class="modal-header"><h2>Subscribe Ukenewe</h2><span class="close-btn" onclick="closeRulesModal(false)">&times;</span></div>
-            <div style="padding:1.5rem;">
-                <div class="rules-content" id="rulesContent"></div>
-                <div style="display:flex; gap:0.8rem; justify-content:flex-end; margin-top:1rem;">
-                    <button class="btn btn-outline" onclick="closeRulesModal(false)">Bireke</button>
-                    <button class="btn btn-primary" style="width:auto;" onclick="agreeAndContinue()">Emera ukomeze</button>
-                </div>
-            </div>
-        </div>
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <p style="color:var(--text3);font-size:0.8rem;margin-bottom:0.6rem">Join the community and never miss a new release.</p>
+      <div class="footer-social">
+        <a href="https://whatsapp.com/channel/0029VbCelw91HspyYX7Vps0g" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/nirobwimba" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@nirobwimba" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+      </div>
     </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 niroMovie. All rights reserved.</div>
+    <div class="flinks"><a onclick="openModal('privacyModal')">Privacy Policy</a><a onclick="openModal('termsModal')">Terms of Service</a></div>
+  </div>
+</div>
 
-    <div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeStaticModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p>niroMovie ni urubuga rwa sinema nziza. Byose ukeneye ni ibyishimo.</p></div></div></div>
-    <div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Twandikire</h2><span class="close-btn" onclick="closeStaticModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p>Email: info@niromovie.site<br>Telefoni: +250 795 064 502</p></div></div></div>
-    <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Uburyo bwo kubika amakuru</h2><span class="close-btn" onclick="closeStaticModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p>Amakuru yawe ararenzwe. Ntidusangiza amakuru yawe n'undi.</p></div></div></div>
-    <div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Amabwiriza</h2><span class="close-btn" onclick="closeStaticModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p>Ukoresheje niroMovie, uba wemeye aya mabwiriza.</p></div></div></div>
+<div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;margin-bottom:0.8rem;font-size:0.88rem">niroMovie is your gateway to unlimited entertainment. Byose ukeneye ni ibyishimo. We bring you the best movies and series from across Africa and beyond, carefully curated and accessible anytime, anywhere.</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502<br><strong>Location:</strong> Kigali, Rwanda</p></div></div></div>
+<div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Contact Us</h2><span class="close-btn" onclick="closeModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p style="font-size:0.88rem;margin-bottom:1rem">Questions about your plan or payment? Reach out any time.</p><p style="color:var(--text2);font-size:0.85rem"><strong>Email:</strong> info@niromovie.site<br><strong>Phone:</strong> +250 795 064 502</p><a class="cta-btn" style="width:100%;justify-content:center;text-decoration:none" href="https://wa.me/250795064502" target="_blank"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a></div></div></div>
+<div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Privacy Policy</h2><span class="close-btn" onclick="closeModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">At niroMovie, we take your privacy seriously. Payment details submitted via WhatsApp are used solely to verify and activate your plan and are not shared with third parties.</p></div></div></div>
+<div class="modal-overlay" id="termsModal"><div class="modal-box-sm"><div class="modal-header"><h2>Terms</h2><span class="close-btn" onclick="closeModal('termsModal')">&times;</span></div><div style="padding:1.2rem"><p style="line-height:1.6;font-size:0.88rem">VIP plans grant personal, non-transferable access to premium content for the duration of the plan period. Content may not be redistributed, resold, or publicly broadcast. Plan activation happens after payment is confirmed by our team.</p></div></div></div>
 
-    <div class="footer" id="footer">
-        <div class="footer-grid">
-            <div class="footer-col"><h4>Ihuza</h4><a onclick="showMoviesView()">Sinema Premium</a><a href="https://niromovie.site">Sinema za bure</a><a href="https://news.niromovie.site">Amakuru</a></div>
-            <div class="footer-col"><h4>niroMovie</h4><a onclick="openStaticModal('aboutModal')">About Us</a><a onclick="openStaticModal('contactModal')">Twandikire</a><a onclick="openStaticModal('privacyModal')">Uburyo bwo kubika</a><a onclick="openStaticModal('termsModal')">Amabwiriza</a></div>
-            <div class="footer-col"><h4>Dukurikire</h4><div class="footer-social"><a href="https://www.tiktok.com/@nirobwimba" target="_blank"><i class="fab fa-tiktok"></i></a><a href="https://www.instagram.com/nirobwimba" target="_blank"><i class="fab fa-instagram"></i></a></div></div>
-        </div>
-        <div class="footer-bottom">© 2026 — powered by <strong>niroflixx</strong></div>
-    </div>
+<div class="whatsapp-btn" onclick="window.open('https://wa.me/250795064502','_blank')"><i class="fab fa-whatsapp" style="font-size:22px;color:#fff"></i></div>
 
-    <script>
-        const API = 'https://niromovie-api.onrender.com/api';
-        let token = localStorage.getItem('token') || null;
-        let currentUser = null;
-        let premiumContents = [];
-        let currentContentId = null;
-        let currentContentData = null;
-        let currentPartsItems = [];
-        let selectedPartIndex = 0;
-        let revealedPartsCount = 5;
-        const partsRevealStep = 10;
-        let visibleRows = 2;
-        const moviesPerRow = 6;
-        let selectedPlan = null;
-        let requiredPlan = null;
-        let pendingMovieId = null;
-        let isRegisterMode = false;
-        let plansData = null;
-        let relatedAll = [];
-        let relatedStart = 0;
-        const relatedPageSize = 8;
-        const MIN_ACCESS = 'basic'; // no free tier anywhere on this site
+<script>
+var API='https://niromovie-api.onrender.com/api';
+var allContents=[];
+var heroSlideData=[];
+var currentSlide=0;
+var heroTimer=null;
 
-        function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
-        function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
-        function closeModal(id){document.getElementById(id).classList.remove('active');document.body.classList.remove('body-no-scroll')}
-        function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
-        function closeMovieModal(){closeModal('movieModal');history.pushState(null,'','/')}
-        function toggleSideMenu(){document.getElementById('sideMenu').classList.toggle('open');document.getElementById('sideMenuOverlay').classList.toggle('show')}
-        function closeSideMenu(){document.getElementById('sideMenu').classList.remove('open');document.getElementById('sideMenuOverlay').classList.remove('show')}
-        function handleProfileClick(){closeSideMenu();if(currentUser)logout();else{showSubscriptionView();}}
+/* ---------- Plans (EDIT these to your real prices / features) ---------- */
+var PLANS=[
+  {key:'basic', name:'Basic', price:'1,000', badge:null,
+    features:['Access to Basic-tier movies & series','Standard definition streaming','Ads supported']},
+  {key:'standard', name:'Standard', price:'2,500', badge:null,
+    features:['Everything in Basic','HD streaming','Fewer ads','Access to Standard-tier titles']},
+  {key:'premium', name:'Premium', price:'5,000', badge:'MOST POPULAR',
+    features:['Everything in Standard','Full HD / 2K streaming','No watermark on videos','Access to Premium-tier titles']},
+  {key:'ultimate', name:'Ultimate', price:'8,000', badge:null,
+    features:['Everything in Premium','Access to all content, every tier','Priority support on WhatsApp','Early access to new releases']}
+];
+var MOMO_CODE = '*182*8*1*1294634#'; // placeholder — replace with your real MoMo Pay code
+var WHATSAPP_NUMBER = '250795064502';
 
-        function showMoviesView(){
-            document.getElementById('moviesView').style.display = 'block';
-            document.getElementById('subscriptionView').style.display = 'none';
-            document.getElementById('footer').style.display = 'block';
-            document.querySelectorAll('.nav-link').forEach(el=>el.classList.remove('active'));
-            document.querySelector('.nav-link[onclick="showMoviesView()"]').classList.add('active');
-            // reset any active category/access/search filter back to the full catalogue
-            document.getElementById('searchInput').value = '';
-            document.getElementById('loadMoreBtn').style.display = 'block';
-            if(premiumContents.length) renderAll();
-        }
-        function showSubscriptionView(){
-            document.getElementById('moviesView').style.display = 'none';
-            document.getElementById('subscriptionView').style.display = 'block';
-            document.getElementById('footer').style.display = 'none';
-            document.querySelectorAll('.nav-link').forEach(el=>el.classList.remove('active'));
-            if(!plansData) loadPlans();
-            if(requiredPlan && plansData) selectPlan(requiredPlan);
-            renderAuthPaymentArea();
-        }
+function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
+function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
+function toggleSideMenu(){document.getElementById('sideMenu').classList.toggle('open');document.getElementById('sideMenuOverlay').classList.toggle('show')}
+function closeSideMenu(){document.getElementById('sideMenu').classList.remove('open');document.getElementById('sideMenuOverlay').classList.remove('show')}
+function openModal(id){document.getElementById(id).classList.add('active')}
+function closeModal(id){document.getElementById(id).classList.remove('active')}
 
-        async function loadAllContent(){
-            try{
-                const res = await fetch(API+'/contents');
-                const data = await res.json();
-                if(Array.isArray(data)){
-                    // this site is subscription-only: never show free content
-                    premiumContents = data.filter(c => c.accessLevel && c.accessLevel !== 'free');
-                    renderAll();
-                }
-            }catch(e){ console.error(e); toast('Ntibishoboka kubona sinema. Gerageza nanone.'); }
+/* ---------- Hero: rotating latest 3 ---------- */
+function setupHero(){
+    heroSlideData = allContents.slice().sort(function(a,b){return new Date(b.uploadedAt)-new Date(a.uploadedAt)}).slice(0,3);
+    for(var i=0;i<3;i++){
+        var s = heroSlideData[i];
+        var slide = document.getElementById('heroSlide'+i);
+        if(!slide) continue;
+        if(s){
+            slide.style.backgroundImage = 'url('+(s.thumbnailUrl||'')+')';
+            document.getElementById('heroTitle'+i).textContent = s.title;
+            document.getElementById('heroDesc'+i).textContent = (s.description||'').substring(0,110);
+        } else {
+            slide.style.display = 'none';
         }
-        function renderAll(){
-            const cats = [...new Set(premiumContents.map(c=>c.category).filter(Boolean))];
-            document.getElementById('catRow').innerHTML = cats.map(cat=>`<button class="cat-pill" onclick="filterByCategory('${escHtml(cat)}')">${escHtml(cat)}</button>`).join('');
-            visibleRows = 2;
-            document.getElementById('loadMoreBtn').style.display = 'block';
-            renderGrid();
-        }
-        function renderGrid(filteredList){
-            const list = filteredList || premiumContents;
-            const total = visibleRows * moviesPerRow;
-            const shown = list.slice(0,total);
-            document.getElementById('movieGrid').innerHTML = shown.length ? shown.map(m=>movieCardHTML(m,'240px')).join('') : '<p style="color:var(--text3)">Nta sinema zibonetse.</p>';
-            const btn = document.getElementById('loadMoreBtn');
-            if(total >= list.length){
-                btn.textContent = 'Zose zerekanwe ✓';
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
-            } else {
-                btn.textContent = 'Erekana izindi ▼';
-                btn.disabled = false;
-                btn.style.opacity = '1';
-            }
-        }
-        function loadMoreMovies(){
-            visibleRows += 2;
-            renderGrid();
-        }
-        function filterByCategory(cat){
-            const f = premiumContents.filter(c=>c.category===cat);
-            renderGrid(f);
-            document.getElementById('loadMoreBtn').style.display='none';
-        }
-        function filterByAccess(level){
-            closeSideMenu();
-            document.querySelectorAll('.nav-link').forEach(el=>el.classList.remove('active'));
-            const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(a=>a.textContent.trim().toLowerCase()===level.toLowerCase());
-            if(activeLink) activeLink.classList.add('active');
-            const f = premiumContents.filter(c=>c.accessLevel===level);
-            renderGrid(f);
-            document.getElementById('loadMoreBtn').style.display='none';
-        }
-        function searchMovies(){
-            const t = document.getElementById('searchInput').value.toLowerCase().trim();
-            if(!t){ showMoviesView(); return; }
-            document.getElementById('moviesView').style.display = 'block';
-            document.getElementById('subscriptionView').style.display = 'none';
-            document.getElementById('footer').style.display = 'block';
-            const f = premiumContents.filter(c=>c.title.toLowerCase().includes(t) || (c.category||'').toLowerCase().includes(t));
-            renderGrid(f);
-            document.getElementById('loadMoreBtn').style.display='none';
-        }
+    }
+    currentSlide = 0; showSlide(0); startHeroRotation();
+}
+function startHeroRotation(){ if(heroTimer) clearInterval(heroTimer); heroTimer = setInterval(function(){ currentSlide=(currentSlide+1)%3; showSlide(currentSlide); }, 6000); }
+function showSlide(i){
+    currentSlide=i;
+    document.querySelectorAll('.hero-slide').forEach(function(s){s.classList.remove('active')});
+    document.querySelectorAll('.hero-dot').forEach(function(d){d.classList.remove('active')});
+    var slide=document.getElementById('heroSlide'+i); if(slide) slide.classList.add('active');
+    var dots=document.querySelectorAll('.hero-dot'); if(dots[i]) dots[i].classList.add('active');
+}
+function goToSlide(i){ showSlide(i); startHeroRotation(); }
+function heroClick(){ var m=heroSlideData[currentSlide]; if(m&&m._id) window.location.href='https://niromovie.site/?movie='+m._id; }
 
-        function movieCardHTML(m, thumbH){
-            const bc = {'basic':'badge-basic','standard':'badge-standard','premium':'badge-premium','ultimate':'badge-ultimate'};
-            const ep = getEpCount(m);
-            const epBadge = ep>1?`<div style="position:absolute;bottom:6px;right:6px;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.5rem;font-weight:700;background:rgba(0,0,0,0.8);color:#fff;z-index:2">${ep}</div>`:'';
-            return `<div class="movie-card" onclick="openContent('${m._id}')">
-                <img class="movie-thumb" src="${m.thumbnailUrl||''}" onerror="this.style.background='var(--bg3)'" style="height:${thumbH}">
-                <div class="quality-badge">${m.quality||'HD'}</div>
-                ${epBadge}
-                <div class="movie-badge ${bc[m.accessLevel]||'badge-basic'}">${(m.accessLevel||'basic').toUpperCase()}</div>
-                <div class="movie-info"><div class="movie-title">${escHtml(m.title)}</div><div class="movie-meta">${m.views?`<span>👁 ${m.views.toLocaleString()}</span>`:''}${m.downloads?`<span>⬇ ${m.downloads.toLocaleString()}</span>`:''}</div></div>
-            </div>`;
-        }
-        function getEpCount(c){
-            if(c.type==='movie') return c.parts?c.parts.length:0;
-            let count=0; if(c.seasons){c.seasons.forEach(s=>count+=(s.episodes?s.episodes.length:0));}
-            return count;
-        }
+/* ---------- Search (results link back to the main site) ---------- */
+function searchMovies(){
+    var t = document.getElementById('searchInput').value.toLowerCase().trim();
+    var wrap = document.getElementById('searchResultsWrap');
+    if(!t){ wrap.classList.remove('show'); return; }
+    var results = allContents.filter(function(c){
+        return c.title.toLowerCase().indexOf(t)!==-1 ||
+               (c.category||'').toLowerCase().indexOf(t)!==-1 ||
+               (c.translator||'').toLowerCase().indexOf(t)!==-1;
+    }).slice(0,12);
+    document.getElementById('searchResultsTitle').textContent = 'Results for "'+t+'" ('+results.length+')';
+    document.getElementById('searchGrid').innerHTML = results.length
+        ? results.map(function(m){
+            return '<a class="search-card" href="https://niromovie.site/?movie='+m._id+'">'+
+                '<img src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'">'+
+                '<div class="sc-title">'+escHtml(m.title)+'</div>'+
+            '</a>';
+        }).join('')
+        : '<p style="color:var(--text2);padding:1rem 0">No matches — try another title.</p>';
+    wrap.classList.add('show');
+}
+function clearSearch(){ document.getElementById('searchInput').value=''; document.getElementById('searchResultsWrap').classList.remove('show'); }
 
-        async function openContent(id){
-            currentContentId = id;
-            selectedPartIndex = 0;
-            revealedPartsCount = 5;
-            const c = premiumContents.find(x=>x._id===id);
-            if(!c) return;
-            currentContentData = c;
-            history.pushState(null,'','/?movie='+id);
-            document.getElementById('modalTitle').innerText = c.title;
-            document.getElementById('modalDesc').textContent = c.description || 'Nta bisobanuro bihari';
-            document.getElementById('modalDesc').classList.add('desc-truncated');
-            document.getElementById('modalDesc').classList.remove('desc-expanded');
-            document.getElementById('viewMoreLink').style.display = (c.description && c.description.length>80)?'inline-block':'none';
-            document.getElementById('viewMoreLink').textContent = '... soma byinshi';
-            document.getElementById('modalMeta').innerHTML = `<span>${c.year||'N/A'}</span> · <span>${c.quality||'HD'}</span> · <span>${(c.accessLevel||'basic').toUpperCase()}</span> · <span>${c.country||''}</span>`;
-            document.getElementById('modalTags').innerHTML = [c.category,c.country,c.translator,c.director].filter(Boolean).map(t=>`<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">${escHtml(t)}</span>`).join('');
-            const trailerContainer = document.getElementById('trailerContainer');
-            const trailerVideo = document.getElementById('trailerVideo');
-            if(c.trailerUrl){
-                trailerContainer.style.display='block';
-                trailerVideo.src = c.trailerUrl;
-                trailerVideo.load();
-            } else {
-                trailerContainer.style.display='none';
-                trailerVideo.src='';
-            }
-            try{
-                const partsRes = await fetch(API+'/contents/'+id+'/parts');
-                const partsData = await partsRes.json();
-                currentPartsItems = partsData.items || [];
-            }catch(e){ currentPartsItems = []; }
-            renderPartsList();
-            loadComments(id);
-            loadRelated(id);
-            updatePlayerAccess();
-            openModal('movieModal');
-        }
+/* ---------- Plans rendering + selection ---------- */
+var selectedPlanKey = null;
+var targetMovie = null;
 
-        // Renders the episode/part list into #partsList (previously missing -> this was breaking the whole modal)
-        function renderPartsList(){
-            const container = document.getElementById('partsList');
-            const moreContainer = document.getElementById('showMorePartsContainer');
-            if(!container) return;
-            if(!currentPartsItems.length){
-                container.innerHTML = '<p style="color:var(--text3);font-size:0.8rem">Nta bice bihari.</p>';
-                if(moreContainer) moreContainer.innerHTML = '';
-                return;
-            }
-            const toShow = currentPartsItems.slice(0, revealedPartsCount);
-            container.innerHTML = toShow.map((item,i)=>{
-                const isMovie = currentContentData && currentContentData.type === 'movie';
-                const label = item.title || item.name || (isMovie ? `Ubuziranenge ${i+1}` : `Episode ${item.episodeNumber || (i+1)}`);
-                const lvl = (item.accessLevel || MIN_ACCESS).toUpperCase();
-                const activeClass = i===selectedPartIndex ? ' active' : '';
-                return `<div class="part-row${activeClass}" onclick="selectPart(${i})">
-                    <span class="part-name"><span class="material-symbols-outlined" style="font-size:1.05rem;margin-right:0.4rem;color:var(--accent)">play_circle</span>${escHtml(label)}</span>
-                    <span class="part-badge">${lvl}</span>
-                    <span class="material-symbols-outlined part-dl" title="Kuramo" onclick="event.stopPropagation();downloadPartItem(${i})">download</span>
-                </div>`;
-            }).join('');
-            if(currentPartsItems.length > revealedPartsCount){
-                moreContainer.innerHTML = `<button class="show-more-parts-btn" onclick="revealMoreParts()">Erekana ibindi bice (${currentPartsItems.length - revealedPartsCount})</button>`;
-            } else {
-                moreContainer.innerHTML = '';
-            }
-        }
-        function revealMoreParts(){
-            revealedPartsCount += partsRevealStep;
-            renderPartsList();
-        }
+function planCardHTML(p, isSuggested){
+    return '<div class="plan-card'+(isSuggested?' featured selected':'')+'" id="planCard-'+p.key+'">'+
+        (p.badge ? '<div class="ribbon">'+p.badge+'</div>' : '')+
+        '<div class="plan-name">'+p.name+'</div>'+
+        '<div class="plan-price">'+p.price+' <span>RWF / month</span></div>'+
+        '<ul class="plan-features">'+p.features.map(function(f){return '<li><span class="material-symbols-outlined">check_circle</span>'+escHtml(f)+'</li>'}).join('')+'</ul>'+
+        '<button class="plan-select-btn" onclick="selectPlan(\''+p.key+'\')">Select '+p.name+'</button>'+
+    '</div>';
+}
 
-        function updatePlayerAccess(){
-            const playerWrapper = document.getElementById('playerWrapper');
-            const videoPlayer = document.getElementById('videoPlayer');
-            const playerMessage = document.getElementById('playerMessage');
-            const watchBtn = document.getElementById('watchBtn');
-            const downloadBtn = document.getElementById('downloadMainBtn');
-            let item = currentPartsItems[selectedPartIndex];
-            if(!item || !item.videoUrl){
-                playerWrapper.style.display = 'none';
-                watchBtn.style.display = 'none';
-                downloadBtn.style.display = 'none';
-                return;
-            }
-            playerWrapper.style.display = 'flex';
-            const canStream = isPlayableUrl(item.videoUrl);
-            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
-            if(hasAccess && canStream){
-                videoPlayer.src = getStreamUrl(item.videoUrl);
-                videoPlayer.style.display = 'block';
-                playerMessage.style.display = 'none';
-                watchBtn.style.display = 'inline-flex';
-            } else {
-                videoPlayer.style.display = 'none';
-                playerMessage.style.display = 'block';
-                playerMessage.textContent = hasAccess ? 'Iyi video ntabwo ishobora kurebwa hano, ikurure.' : 'Iyandikishe kugirango urebe iyi sinema.';
-                watchBtn.style.display = hasAccess && canStream ? 'inline-flex' : 'none';
-            }
-            downloadBtn.style.display = 'inline-flex';
-        }
+function renderPlans(){
+    var grid = document.getElementById('plansGrid');
+    grid.innerHTML = PLANS.map(function(p){ return planCardHTML(p, p.key===selectedPlanKey); }).join('');
+}
 
-        function checkAccessForPart(partLevel){
-            if(!currentUser) return false;
-            const status = currentUser.subscription?.status;
-            if(status !== 'active') return false;
-            const plan = getUserPlan();
-            const planLevels = { basic:1, standard:2, premium:3, ultimate:4 };
-            return (planLevels[plan]||0) >= (planLevels[partLevel]||1);
-        }
+function selectPlan(key){
+    selectedPlanKey = key;
+    document.querySelectorAll('.plan-card').forEach(function(c){ c.classList.remove('selected'); });
+    var card = document.getElementById('planCard-'+key);
+    if (card) card.classList.add('selected');
+    var plan = PLANS.find(function(p){ return p.key===key; });
+    if (!plan) return;
+    document.getElementById('selectedPlanLine').style.display='block';
+    document.getElementById('selectedPlanLine').innerHTML = 'You selected the <b>'+plan.name+'</b> plan — <b>'+plan.price+' RWF/month</b>.';
+    var msg = 'Hello niroMovie, I want to activate the '+plan.name+' plan ('+plan.price+' RWF).'+
+        (targetMovie ? ' I was trying to watch: '+targetMovie.title+'.' : '') +
+        ' I have sent the payment via MoMo, here is my proof.';
+    document.getElementById('whatsappConfirmBtn').href = 'https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg);
+    document.getElementById('plans').scrollIntoView({behavior:'smooth', block:'start'});
+    toast(plan.name+' plan selected — scroll down to finish payment.');
+}
 
-        function getUserPlan(){ return currentUser && currentUser.subscription && currentUser.subscription.plan ? currentUser.subscription.plan : null; }
+/* ---------- Read ?movie= & ?plan= from redirectToPlan() on the main site ---------- */
+function applyUrlParams(){
+    var p = new URLSearchParams(window.location.search);
+    var movieId = p.get('movie');
+    var planParam = p.get('plan');
+    if (movieId) {
+        targetMovie = allContents.find(function(c){ return c._id === movieId; }) || null;
+        if (targetMovie) {
+            document.getElementById('unlockBanner').style.display = 'block';
+            document.getElementById('unlockTitle').textContent = targetMovie.title;
+            document.getElementById('unlockPlan').textContent = (planParam || targetMovie.accessLevel || 'basic').toUpperCase();
+        }
+    }
+    if (planParam && PLANS.some(function(p){return p.key===planParam})) {
+        selectPlan(planParam);
+    }
+}
 
-        function showRulesModal(requiredPlan){
-            const content = document.getElementById('rulesContent');
-            content.innerHTML = `
-                <p><strong>Kugirango urebe cyangwa ukuremo, ukeneye gahunda ya ${requiredPlan.toUpperCase()} cyangwa hejuru.</strong></p>
-                <p>Wemeye ko:</p>
-                <ul style="padding-left:1.2rem; margin:0.5rem 0;">
-                    <li>Ntugomba gusangira konti yawe.</li>
-                    <li>Ibikoresho ntibirenze 6.</li>
-                    <li>Kunyuranya n'aya mabwiriza bitera guhagarikwa.</li>
-                    <li>Kwishyura binyuze muri MTN MoMo cyangwa banki; admin abigenzura mu masaha 24.</li>
-                </ul>
-                <p>Kanda "Emera ukomeze" kugirango ukomeze.</p>
-            `;
-            openModal('rulesModal');
-        }
-        function closeRulesModal(agreed){
-            closeModal('rulesModal');
-            if(agreed){
-                // the movie modal is still open on top (z-index 3000) and was hiding
-                // the subscription/login page behind it — close it first
-                closeMovieModal();
-                showSubscriptionView();
-                if(requiredPlan && plansData) selectPlan(requiredPlan);
-            }
-        }
-        function agreeAndContinue(){ closeRulesModal(true); }
-
-        function selectPart(i){
-            const item = currentPartsItems[i];
-            if(!item) return;
-            selectedPartIndex = i;
-            renderPartsList();
-            updatePlayerAccess();
-        }
-        function downloadPartItem(i){
-            selectPart(i);
-            downloadCurrentContent();
-        }
-        function watchCurrentContent(){
-            const item = currentPartsItems[selectedPartIndex];
-            if(!item || !item.videoUrl) return;
-            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
-            if(!hasAccess){
-                requiredPlan = item.accessLevel || MIN_ACCESS;
-                pendingMovieId = currentContentId;
-                showRulesModal(requiredPlan);
-                return;
-            }
-            const canStream = isPlayableUrl(item.videoUrl);
-            if(canStream){
-                const videoPlayer = document.getElementById('videoPlayer');
-                videoPlayer.src = getStreamUrl(item.videoUrl);
-                videoPlayer.style.display = 'block';
-                videoPlayer.load();
-                videoPlayer.play().catch(()=>{});
-            } else {
-                toast('Iyi video ntabwo ishobora kurebwa hano, ikurure.');
-            }
-        }
-        function downloadCurrentContent(){
-            const item = currentPartsItems[selectedPartIndex];
-            if(!item || !item.videoUrl) return;
-            const hasAccess = checkAccessForPart(item.accessLevel || MIN_ACCESS);
-            if(!hasAccess){
-                requiredPlan = item.accessLevel || MIN_ACCESS;
-                pendingMovieId = currentContentId;
-                showRulesModal(requiredPlan);
-                return;
-            }
-            window.open(getDownloadUrl(item.videoUrl),'_blank');
-            incrementDownload(currentContentId);
-        }
-
-        // Comments
-        async function loadComments(id){
-            const cl = document.getElementById('commentsList');
-            try{
-                const comments = await fetch(API+'/comments/'+id).then(r=>r.json());
-                let html = '';
-                if(comments.length){
-                    html = comments.slice(0,2).map(commentHTML).join('');
-                    if(comments.length>2){
-                        html += `<button class="show-more-parts-btn" onclick="showAllComments()">Reba ibindi (${comments.length-2})</button>`;
-                    }
-                } else {
-                    html = '<p style="color:var(--text3)">Nta bitekerezo bihari.</p>';
-                }
-                cl.innerHTML = html;
-                window._allComments = comments;
-            }catch(e){ cl.innerHTML='<p>Ntibishoboka kubona ibitekerezo</p>'; }
-        }
-        function commentHTML(c){
-            const rawName = c.userName || 'Anon';
-            const isVer = rawName.startsWith('🔵 ');
-            const displayName = isVer ? rawName.substring(3) : rawName;
-            const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Byemewe</span>' : '';
-            return `<div class="comment-item">
-                <span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}
-                <span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span>
-                <div class="comment-text">${escHtml(c.text)}</div>
-                <span class="comment-like" onclick="likeComment('${c._id}')">👍 ${c.likes||0}</span>
-            </div>`;
-        }
-        function showAllComments(){
-            const comments = window._allComments;
-            if(!comments) return;
-            document.getElementById('commentsList').innerHTML = comments.map(commentHTML).join('');
-        }
-        async function addComment(){
-            const nameInput = document.getElementById('commentName');
-            const textInput = document.getElementById('newComment');
-            const name = nameInput.value.trim();
-            const text = textInput.value.trim();
-            if(!name || !text){ toast("Izina n'igitekerezo birakenewe"); return; }
-            try{
-                const r = await fetch(API+'/comments/'+currentContentId, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userName: name, text: text})});
-                const d = await r.json();
-                if(d.success){
-                    toast('Igitekerezo cyoherejwe!');
-                    textInput.value='';
-                    if(!currentUser) nameInput.value='';
-                    loadComments(currentContentId);
-                } else {
-                    toast(d.error || 'Byanze');
-                }
-            }catch(e){ toast('Ikosa mu itumanaho'); }
-        }
-        async function likeComment(cid){
-            await fetch(API+'/comments/'+currentContentId+'/'+cid+'/like', {method:'POST'});
-            loadComments(currentContentId);
-        }
-
-        // Related movies
-        function loadRelated(id){
-            relatedAll = premiumContents.filter(c=>c._id!==id);
-            relatedStart = 0;
-            renderRelated();
-        }
-        function renderRelated(){
-            const grid = document.getElementById('relatedGrid');
-            const items = relatedAll.slice(relatedStart, relatedStart+relatedPageSize);
-            grid.innerHTML = items.map(m=>movieCardHTML(m,'120px')).join('');
-            const btn = document.getElementById('relatedLoadMore');
-            btn.style.display = (relatedStart+relatedPageSize < relatedAll.length) ? 'block' : 'none';
-        }
-        function loadMoreRelated(){
-            relatedStart += relatedPageSize;
-            renderRelated();
-        }
-
-        // Plans & Subscription
-        async function loadPlans(){
-            try{
-                const res = await fetch(API+'/plans');
-                plansData = await res.json();
-                renderPlans();
-                if(requiredPlan && plansData[requiredPlan]) selectPlan(requiredPlan);
-            }catch(e){ console.error(e); toast('Ntibishoboka kubona gahunda.'); }
-        }
-        function renderPlans(){
-            const container = document.getElementById('plansContainer');
-            container.innerHTML = '';
-            const planKeys = ['basic','standard','premium','ultimate'];
-            planKeys.forEach(key=>{
-                const plan = plansData[key];
-                if(!plan) return;
-                const card = document.createElement('div');
-                card.className = 'plan-card' + (selectedPlan===key?' selected':'') + (key==='premium'?' featured':'');
-                card.innerHTML = `
-                    <div class="plan-name">${plan.name}</div>
-                    <div class="plan-price">${plan.monthly} RWF <span>/ukwezi</span></div>
-                    <div class="plan-features">${plan.features.join('<br>')}</div>
-                    <div class="selected-badge">Byahiswemo</div>
-                `;
-                card.onclick = ()=> selectPlan(key);
-                container.appendChild(card);
-            });
-        }
-        function selectPlan(key){
-            selectedPlan = key;
-            document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
-            const cards = document.querySelectorAll('.plan-card');
-            const idx = ['basic','standard','premium','ultimate'].indexOf(key);
-            if(idx>=0 && cards[idx]) cards[idx].classList.add('selected');
-            renderAuthPaymentArea();
-        }
-
-        function renderAuthPaymentArea(){
-            const area = document.getElementById('authPaymentArea');
-            if(!selectedPlan){
-                area.innerHTML = '<p style="color:var(--text2)">Hitamo gahunda hejuru.</p>';
-                return;
-            }
-            if(!currentUser){
-                area.innerHTML = `
-                    <div class="message" id="msg"></div>
-                    <div id="authForms">
-                        <div id="loginDiv">
-                            <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="email@example.com"></div>
-                            <div class="form-group"><label>Ijambobanga</label><input type="password" id="loginPassword" placeholder="Andika ijambobanga"></div>
-                            <button class="btn btn-primary" onclick="handleLogin()" style="width:100%">Injira</button>
-                            <p class="auth-toggle">Nta konti? <a onclick="toggleAuthMode()">Fungura</a></p>
-                        </div>
-                        <div id="registerDiv" style="display:none">
-                            <div class="form-group"><label>Amazina</label><input type="text" id="regName" placeholder="Amazina yawe"></div>
-                            <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="email@example.com"></div>
-                            <div class="form-group"><label>Ijambobanga</label><input type="password" id="regPassword" placeholder="Nibura inyuguti 6"></div>
-                            <button class="btn btn-primary" onclick="handleRegister()" style="width:100%">Fungura Konti</button>
-                            <p class="auth-toggle">Ufite konti? <a onclick="toggleAuthMode()">Injira</a></p>
-                        </div>
-                    </div>
-                `;
-                isRegisterMode = false;
-            } else {
-                area.innerHTML = `
-                    <div class="message" id="msg"></div>
-                    <p style="margin:1rem 0"><strong>Gahunda yatoranyijwe:</strong> ${plansData[selectedPlan].name} - ${plansData[selectedPlan].monthly} RWF / ukwezi</p>
-                    <div class="payment-box">
-                        <div style="font-weight:700;margin-bottom:0.5rem;">Aho wishyura</div>
-                        <div class="payment-method">
-                            <strong>MTN Mobile Money</strong>
-                            Numero: <span class="payment-code">0795064502</span><br>
-                            Izina: ROBERT NIYONKURU
-                        </div>
-                        <div class="payment-method">
-                            <strong>Momo Pay Code</strong>
-                            Kode: <span class="payment-code">1294634</span><br>
-                            Izina: ROBERT NIYONKURU
-                        </div>
-                        <div class="payment-method">
-                            <strong>I&M Bank</strong>
-                            Konti: <span class="payment-code">21168124001</span><br>
-                            Izina: ROBERT NIYONKURU
-                        </div>
-                    </div>
-                    <div class="form-group"><label>Telefoni yawe (MoMo)</label><input type="text" id="phone" placeholder="07XXXXXXXX"></div>
-                    <div class="form-group"><label>Izina ry'uwishyuye</label><input type="text" id="senderName" placeholder="Izina ryawe"></div>
-                    <div class="form-group"><label>Ifoto y'ubwishyu *</label><input type="file" id="screenshot" accept="image/*"></div>
-                    <button class="btn btn-primary" onclick="submitPayment()" style="width:100%">Ohereza ubwishyu</button>
-                    <p class="payment-note">Admin azabigenzura mumasaha 24.</p>
-                `;
-            }
-        }
-        function toggleAuthMode(){
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('loginDiv').style.display = isRegisterMode?'none':'block';
-            document.getElementById('registerDiv').style.display = isRegisterMode?'block':'none';
-        }
-        async function handleLogin(){
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            if(!email || !password){ toast('Email na ijambobanga birakenewe'); return; }
-            try{
-                const res = await fetch(API+'/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
-                const data = await res.json();
-                if(res.ok){
-                    token = data.token;
-                    localStorage.setItem('token', token);
-                    currentUser = data.user;
-                    updateProfileIcon();
-                    toast('Mwaramutse neza!');
-                    renderAuthPaymentArea();
-                } else {
-                    toast(data.error || 'Injira byanze');
-                }
-            }catch(e){ toast('Ikosa mu itumanaho'); }
-        }
-        async function handleRegister(){
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            if(!name || !email || !password){ toast('Amakuru yose arakenewe'); return; }
-            if(password.length < 6){ toast('Ijambobanga rigira nibura inyuguti 6'); return; }
-            try{
-                const res = await fetch(API+'/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password, fullName: name})});
-                const data = await res.json();
-                if(res.ok){
-                    token = data.token;
-                    localStorage.setItem('token', token);
-                    currentUser = data.user;
-                    updateProfileIcon();
-                    toast('Konti yafunguwe!');
-                    renderAuthPaymentArea();
-                } else {
-                    toast(data.error || 'Kwiyandikisha byanze');
-                }
-            }catch(e){ toast('Ikosa mu itumanaho'); }
-        }
-        async function submitPayment(){
-            const phone = document.getElementById('phone').value.trim();
-            const senderName = document.getElementById('senderName').value.trim();
-            const screenshot = document.getElementById('screenshot').files[0];
-            if(!phone || !senderName){ toast("Telefoni n'izina rirakenewe"); return; }
-            if(!screenshot){ toast("Ifoto y'ubwishyu irakenewe"); return; }
-            const fd = new FormData();
-            fd.append('plan', selectedPlan);
-            fd.append('duration', 'monthly');
-            fd.append('phone', phone);
-            fd.append('senderName', senderName);
-            fd.append('paymentMethod', 'momo');
-            fd.append('paymentScreenshot', screenshot);
-            try{
-                const res = await fetch(API+'/subscribe', {method:'POST', headers: {'Authorization': 'Bearer '+token}, body: fd});
-                const data = await res.json();
-                if(res.ok){
-                    toast('Ubwishyu bwoherejwe!');
-                    // stay on THIS site (was previously redirecting off to a different domain)
-                    let redirectUrl = window.location.origin + '/?movie=' + encodeURIComponent(pendingMovieId || '');
-                    redirectUrl += '&token=' + encodeURIComponent(token);
-                    window.location.href = redirectUrl;
-                } else {
-                    toast(data.error || 'Ubwishyu bwanzwe');
-                }
-            }catch(e){ toast('Ikosa mu itumanaho'); }
-        }
-        function logout(){
-            localStorage.removeItem('token');
-            token = null;
-            currentUser = null;
-            updateProfileIcon();
-            toast('Wasohotse');
-            showMoviesView();
-        }
-        function updateProfileIcon(){
-            const icon = document.getElementById('profileIcon');
-            const authItem = document.getElementById('sideMenuAuth');
-            if(currentUser){
-                icon.innerHTML = (currentUser.fullName || currentUser.email).charAt(0).toUpperCase();
-                icon.style.background = 'var(--green)';
-                if(authItem) authItem.innerHTML = '<span class="material-symbols-outlined">logout</span>Sohoka';
-            } else {
-                icon.innerHTML = 'LI';
-                icon.style.background = 'var(--accent)';
-                if(authItem) authItem.innerHTML = '<span class="material-symbols-outlined">login</span>Injira / Fungura Konti';
-            }
-        }
-
-        function isPlayableUrl(url){
-            if(!url)return false;
-            var lower=url.toLowerCase();
-            if(lower.includes('isatafilez.my'))return false;
-            if(lower.includes('drive.google.com'))return false;
-            if(lower.includes('dropbox.com'))return false;
-            if(lower.includes('mega.nz'))return false;
-            if(lower.includes('mediafire.com'))return false;
-            if(lower.includes('pixeldrain.com'))return false;
-            return(lower.endsWith('.mp4')||lower.endsWith('.webm')||lower.endsWith('.ogg')||
-                   lower.endsWith('.mov')||lower.endsWith('.mkv')||lower.endsWith('.m3u8')||
-                   lower.includes('archive.org/download/')||lower.includes('cdn.')||
-                   lower.includes('stream.')||lower.includes('video.')||lower.includes('media.'));
-        }
-        function getStreamUrl(url){return url;}
-        function getDownloadUrl(url){return url;}
-        async function incrementDownload(id){
-            try{ await fetch(API+'/contents/'+id+'/download',{method:'POST'}); }catch(e){}
-        }
-        function toggleDescription(){
-            const desc = document.getElementById('modalDesc');
-            const link = document.getElementById('viewMoreLink');
-            if(desc.classList.contains('desc-truncated')){
-                desc.classList.remove('desc-truncated');
-                desc.classList.add('desc-expanded');
-                link.textContent='Funga';
-            } else {
-                desc.classList.add('desc-truncated');
-                desc.classList.remove('desc-expanded');
-                link.textContent='... soma byinshi';
-            }
-        }
-        function closeStaticModal(id){ document.getElementById(id).classList.remove('active'); }
-        function openStaticModal(id){ document.getElementById(id).classList.add('active'); }
-
-                (async function(){
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlToken = urlParams.get('token');
-            if(urlToken){ 
-                localStorage.setItem('token', urlToken); 
-                token = urlToken; 
-                history.replaceState({}, '', window.location.pathname + (urlParams.get('movie') ? ('?movie='+urlParams.get('movie')) : '')); 
-            }
-            // Wait for user data to load if token exists
-            if(token){
-                try{
-                    const res = await fetch(API+'/me', {headers:{'Authorization':'Bearer '+token}});
-                    const user = await res.json();
-                    if(user && user.email){ 
-                        currentUser = user; 
-                        updateProfileIcon(); 
-                    }
-                }catch(e){ /* ignore */ }
-            }
-            await loadAllContent();
-            const movieId = urlParams.get('movie');
-            const plan = urlParams.get('plan');
-            if(movieId){
-                setTimeout(()=> openContent(movieId), 300); // reduced delay since user already loaded
-                if(plan) requiredPlan = plan;
-            }
-        })();
-
-        window.showMoviesView = showMoviesView;
-        window.showSubscriptionView = showSubscriptionView;
-        window.openContent = openContent;
-        window.selectPart = selectPart;
-        window.downloadPartItem = downloadPartItem;
-        window.toggleAuthMode = toggleAuthMode;
-        window.handleLogin = handleLogin;
-        window.handleRegister = handleRegister;
-        window.submitPayment = submitPayment;
-        window.filterByCategory = filterByCategory;
-        window.filterByAccess = filterByAccess;
-        window.searchMovies = searchMovies;
-        window.loadMoreMovies = loadMoreMovies;
-        window.toggleSideMenu = toggleSideMenu;
-        window.handleProfileClick = handleProfileClick;
-        window.closeRulesModal = closeRulesModal;
-        window.agreeAndContinue = agreeAndContinue;
-        window.openStaticModal = openStaticModal;
-        window.closeStaticModal = closeStaticModal;
-        window.toggleDescription = toggleDescription;
-        window.watchCurrentContent = watchCurrentContent;
-        window.downloadCurrentContent = downloadCurrentContent;
-        window.addComment = addComment;
-        window.likeComment = likeComment;
-        window.loadMoreRelated = loadMoreRelated;
-        window.revealMoreParts = revealMoreParts;
-        window.showAllComments = showAllComments;
-        window.renderPartsList = renderPartsList;
-        window.updatePlayerAccess = updatePlayerAccess;
-        window.closeMovieModal = closeMovieModal;
-    </script>
+/* ---------- Init ---------- */
+async function init(){
+    document.getElementById('momoCode').textContent = MOMO_CODE;
+    renderPlans();
+    try{
+        var res = await fetch(API+'/contents');
+        var data = await res.json();
+        if(Array.isArray(data)) allContents = data;
+    }catch(e){ console.error(e); }
+    setupHero();
+    applyUrlParams();
+}
+init();
+</script>
 </body>
 </html>
