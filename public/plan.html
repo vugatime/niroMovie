@@ -47,10 +47,45 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);over
 .search-results-head h3{font-size:1.05rem;font-weight:700}
 .search-results-head span{color:var(--text3);font-size:0.8rem;cursor:pointer}
 .search-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.7rem}
-.search-card{background:var(--bg2);border-radius:var(--radiusLg);overflow:hidden;border:1px solid var(--border);text-decoration:none;color:var(--text);display:block;transition:var(--trans)}
+.search-card{background:var(--bg2);border-radius:var(--radiusLg);overflow:hidden;border:1px solid var(--border);text-decoration:none;color:var(--text);display:block;transition:var(--trans);cursor:pointer}
 .search-card:hover{border-color:var(--accent);transform:translateY(-3px)}
 .search-card img{width:100%;height:200px;object-fit:cover;background:var(--bg3);display:block}
 .search-card .sc-title{padding:0.55rem 0.6rem 0.65rem;font-size:0.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Tier rows */
+.tiers-wrap{max-width:1400px;margin:2rem auto 0;padding:0 1.5rem}
+.tier-section{margin-bottom:1.8rem;scroll-margin-top:80px}
+.tier-head{display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.7rem}
+.tier-head h3{font-size:1.05rem;font-weight:700}
+.tier-head span{color:var(--text3);font-size:0.78rem}
+.movies-row{display:flex;gap:0.7rem;overflow-x:auto;scroll-behavior:smooth;padding-bottom:0.4rem;-ms-overflow-style:none;scrollbar-width:none}
+.movies-row::-webkit-scrollbar{display:none}
+.movie-card-row{min-width:150px;width:150px;background:var(--bg2);border-radius:var(--radiusLg);overflow:hidden;cursor:pointer;position:relative;flex-shrink:0;border:1px solid var(--border);transition:var(--trans)}
+.movie-card-row:hover{transform:translateY(-4px);box-shadow:var(--shadowLg);border-color:var(--accent)}
+.movie-card-row .movie-thumb{width:100%;height:210px;object-fit:cover;background:var(--bg3);display:block}
+.movie-card-row .movie-info{padding:0.55rem}
+.movie-card-row .movie-title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:0.8rem;color:var(--text)}
+.tier-empty{color:var(--text3);font-size:0.8rem;padding:0.5rem 0}
+
+/* Movie detail modal */
+.detail-media{width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;margin-bottom:0.9rem}
+.detail-media img,.detail-media video{width:100%;height:100%;object-fit:cover;display:block}
+.detail-modal-body{padding:1.3rem}
+.detail-modal-body h2{font-size:1.3rem;font-weight:800;margin-bottom:0.4rem}
+.detail-desc{color:var(--text2);font-size:0.85rem;line-height:1.6;margin-bottom:0.5rem}
+.detail-desc.truncated{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.detail-view-more{color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.8rem}
+.detail-meta{display:flex;flex-wrap:wrap;gap:1rem;font-size:0.8rem;color:var(--text2);margin-bottom:1rem}
+.detail-meta .mi{display:inline-flex;align-items:center;gap:0.3rem}
+.detail-meta .mi .material-symbols-outlined{font-size:1rem;color:var(--accent)}
+.lock-banner{background:rgba(245,197,24,0.08);border:1px solid var(--accent);border-radius:var(--radius);padding:0.8rem 1rem;font-size:0.82rem;color:var(--text);margin-bottom:0.7rem;display:flex;align-items:center;gap:0.6rem}
+.lock-banner .material-symbols-outlined{color:var(--accent)}
+.detail-actions{display:flex;flex-direction:column;gap:0.6rem;margin-top:0.6rem}
+.detail-divider{border-top:1px solid var(--border);margin:1rem 0 0.8rem;padding-top:0.9rem;font-size:0.8rem;color:var(--text2)}
+.btn-outline-accent{display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.7rem 1rem;border-radius:var(--radiusLg);font-weight:700;font-size:0.85rem;cursor:pointer;border:2px solid var(--accent);background:transparent;color:var(--accent);font-family:inherit;transition:var(--trans)}
+.btn-outline-accent:hover{background:rgba(245,197,24,0.08)}
+.btn-solid-accent{display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.7rem 1rem;border-radius:var(--radiusLg);font-weight:700;font-size:0.85rem;cursor:pointer;border:none;background:var(--accent);color:#000;font-family:inherit;text-decoration:none;transition:var(--trans)}
+.btn-solid-accent:hover{background:var(--accentD)}
 
 /* Unlock banner */
 .unlock-banner{max-width:900px;margin:1.6rem auto 0;padding:0 1.5rem}
@@ -136,14 +171,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);over
   <div class="nav-container">
     <div style="display:flex;align-items:center;gap:0.6rem">
       <div class="hamburger" onclick="toggleSideMenu()"><span class="material-symbols-outlined">menu</span></div>
-      <a class="logo" href="https://niromovie.site"><span class="material-symbols-outlined logo-icon">play_circle</span><div class="logo-text"><span>niro</span>Movie</div></a>
+      <a class="logo" href="#top"><span class="material-symbols-outlined logo-icon">play_circle</span><div class="logo-text"><span>niro</span>Movie</div></a>
     </div>
     <div class="nav-links">
-      <a class="nav-link" href="https://niromovie.site">Home</a>
-      <a class="nav-link" href="https://niromovie.site/?filter=series">Series</a>
-      <a class="nav-link" href="https://niromovie.site/?filter=free">Free</a>
-      <a class="nav-link" href="https://news.niromovie.site">News</a>
-      <a class="nav-link active">VIP Plans</a>
+      <a class="nav-link active" href="#top">Home</a>
+      <a class="nav-link" href="#tier-basic">Basic</a>
+      <a class="nav-link" href="#tier-standard">Standard</a>
+      <a class="nav-link" href="#tier-premium">Premium</a>
+      <a class="nav-link" href="#tier-ultimate">Ultimate</a>
     </div>
     <div class="search-box"><span class="material-symbols-outlined" style="color:var(--text3)">search</span><input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()"></div>
     <a class="profile-pill" href="https://niromovie.site"><span class="material-symbols-outlined" style="font-size:1.1rem">arrow_back</span> Back to niroMovie</a>
@@ -152,11 +187,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);over
 <div class="side-menu-overlay" id="sideMenuOverlay" onclick="toggleSideMenu()"></div>
 <div class="side-menu" id="sideMenu">
   <div class="side-menu-header"><h3>niroMovie</h3><span class="material-symbols-outlined" onclick="toggleSideMenu()" style="cursor:pointer">close</span></div>
-  <a class="side-menu-item" href="https://niromovie.site"><span class="material-symbols-outlined">home</span>Home</a>
-  <a class="side-menu-item" href="https://niromovie.site/?filter=series"><span class="material-symbols-outlined">tv</span>Series</a>
-  <a class="side-menu-item" href="https://niromovie.site/?filter=free"><span class="material-symbols-outlined">redeem</span>Free Movies</a>
-  <a class="side-menu-item" href="https://news.niromovie.site"><span class="material-symbols-outlined">article</span>News</a>
-  <a class="side-menu-item" href="#plans"><span class="material-symbols-outlined">workspace_premium</span>VIP Plans</a>
+  <a class="side-menu-item" href="#top" onclick="closeSideMenu()"><span class="material-symbols-outlined">home</span>Home</a>
+  <a class="side-menu-item" href="#tier-basic" onclick="closeSideMenu()"><span class="material-symbols-outlined">looks_one</span>Basic</a>
+  <a class="side-menu-item" href="#tier-standard" onclick="closeSideMenu()"><span class="material-symbols-outlined">looks_two</span>Standard</a>
+  <a class="side-menu-item" href="#tier-premium" onclick="closeSideMenu()"><span class="material-symbols-outlined">workspace_premium</span>Premium</a>
+  <a class="side-menu-item" href="#tier-ultimate" onclick="closeSideMenu()"><span class="material-symbols-outlined">military_tech</span>Ultimate</a>
+  <a class="side-menu-item" href="#plans" onclick="closeSideMenu()"><span class="material-symbols-outlined">payments</span>Pricing</a>
   <hr style="border-color:var(--border);margin:1rem 0">
   <div class="side-menu-item" onclick="closeSideMenu();openModal('aboutModal')"><span class="material-symbols-outlined">info</span>About Us</div>
   <div class="side-menu-item" onclick="closeSideMenu();openModal('contactModal')"><span class="material-symbols-outlined">contact_support</span>Contact</div>
@@ -164,7 +200,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);over
   <div class="side-menu-item" onclick="closeSideMenu();openModal('termsModal')"><span class="material-symbols-outlined">description</span>Terms</div>
 </div>
 
-<div class="hero-section">
+<div class="hero-section" id="top">
   <div class="hero-slider" id="heroSlider" onclick="heroClick()">
     <div class="hero-slide active" id="heroSlide0"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><div class="eyebrow">LATEST ADDED</div><h2 id="heroTitle0"></h2><p id="heroDesc0"></p></div></div>
     <div class="hero-slide" id="heroSlide1"><div class="hero-slide-overlay"></div><div class="hero-slide-info"><div class="eyebrow">LATEST ADDED</div><h2 id="heroTitle1"></h2><p id="heroDesc1"></p></div></div>
@@ -177,6 +213,13 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);over
 <div class="search-results-wrap" id="searchResultsWrap">
   <div class="search-results-head"><h3 id="searchResultsTitle">Results</h3><span onclick="clearSearch()">Clear ✕</span></div>
   <div class="search-grid" id="searchGrid"></div>
+</div>
+
+<div class="tiers-wrap" id="tiersWrap">
+  <div class="tier-section" id="tier-basic"><div class="tier-head"><h3>Basic</h3><span>Movies &amp; series on the Basic plan</span></div><div class="movies-row" id="rowBasic"></div></div>
+  <div class="tier-section" id="tier-standard"><div class="tier-head"><h3>Standard</h3><span>Movies &amp; series on the Standard plan</span></div><div class="movies-row" id="rowStandard"></div></div>
+  <div class="tier-section" id="tier-premium"><div class="tier-head"><h3>Premium</h3><span>Movies &amp; series on the Premium plan</span></div><div class="movies-row" id="rowPremium"></div></div>
+  <div class="tier-section" id="tier-ultimate"><div class="tier-head"><h3>Ultimate</h3><span>Movies &amp; series on the Ultimate plan</span></div><div class="movies-row" id="rowUltimate"></div></div>
 </div>
 
 <div class="unlock-banner" id="unlockBanner" style="display:none">
@@ -199,8 +242,32 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);over
     <h4 id="paymentHeading">How to pay</h4>
     <div class="selected-plan-line" id="selectedPlanLine" style="display:none"></div>
     <p>Send the plan amount via MoMo Pay to the code below, then send your payment screenshot on WhatsApp so we can activate your plan.</p>
+    <div class="momo-code" id="momoCode">*182*8*1*XXXXXX#</div>
     <a class="cta-btn" id="whatsappConfirmBtn" href="#" target="_blank"><i class="fab fa-whatsapp"></i> Send Payment Proof on WhatsApp</a>
     <div class="payment-note">Note: MoMo code and prices shown here are placeholders — replace with your real MoMo Pay code and pricing before going live.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="movieDetailModal" onclick="if(event.target===this)closeDetailModal()">
+  <div class="modal-box-sm" style="max-width:560px">
+    <div class="modal-header"><span class="close-btn" onclick="closeDetailModal()" style="order:2">&times;</span><span style="cursor:pointer;color:var(--text2);font-size:0.85rem;display:flex;align-items:center;gap:0.3rem" onclick="closeDetailModal()"><span class="material-symbols-outlined">arrow_back</span> Back</span></div>
+    <div class="detail-modal-body">
+      <div class="detail-media" id="detailMedia"></div>
+      <h2 id="detailTitle"></h2>
+      <div class="detail-desc truncated" id="detailDesc"></div>
+      <span class="detail-view-more" id="detailViewMore" onclick="toggleDetailDesc()" style="display:none">... View more</span>
+      <div class="detail-meta" id="detailMeta"></div>
+      <div class="lock-banner"><span class="material-symbols-outlined">lock</span><span>This title needs the <b id="detailRequiredPlan"></b> plan or higher.</span></div>
+      <div class="detail-actions">
+        <button class="btn-solid-accent" id="detailSelectPlanBtn" onclick="selectPlanFromDetail()"><span class="material-symbols-outlined">workspace_premium</span> Select <span id="detailSelectPlanLabel"></span> plan</button>
+      </div>
+      <div class="detail-divider">
+        Already subscribed and paid?
+        <div class="detail-actions" style="margin-top:0.5rem">
+          <button class="btn-outline-accent" id="detailWatchBtn" onclick="watchNowClick()"><span class="material-symbols-outlined">play_circle</span> Watch Now on niroMovie</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -218,11 +285,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);over
     </div>
     <div class="footer-col">
       <h4>Navigation</h4>
-      <a href="https://niromovie.site">Home</a>
-      <a href="https://niromovie.site/?filter=series">Series</a>
-      <a href="https://niromovie.site/?filter=free">Free Movies</a>
-      <a href="https://news.niromovie.site">News</a>
-      <a href="#plans">VIP Plans</a>
+      <a href="#top">Home</a>
+      <a href="#tier-basic">Basic</a>
+      <a href="#tier-standard">Standard</a>
+      <a href="#tier-premium">Premium</a>
+      <a href="#tier-ultimate">Ultimate</a>
+      <a href="#plans">Pricing</a>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
@@ -272,7 +340,7 @@ var PLANS=[
   {key:'ultimate', name:'Ultimate', price:'8,000', badge:null,
     features:['Everything in Premium','Access to all content, every tier','Priority support on WhatsApp','Early access to new releases']}
 ];
-var MOMO_CODE = '*182*8*1*1294634#'; // placeholder — replace with your real MoMo Pay code
+var MOMO_CODE = '*182*8*1*XXXXXX#'; // TODO: put your real SUBSCRIPTION MoMo Pay code here — this must NOT be the same code used for the "buy us a fanta" donation ask in comments
 var WHATSAPP_NUMBER = '250795064502';
 
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
@@ -308,30 +376,56 @@ function showSlide(i){
     var dots=document.querySelectorAll('.hero-dot'); if(dots[i]) dots[i].classList.add('active');
 }
 function goToSlide(i){ showSlide(i); startHeroRotation(); }
-function heroClick(){ var m=heroSlideData[currentSlide]; if(m&&m._id) window.location.href='https://niromovie.site/?movie='+m._id; }
+function heroClick(){ var m=heroSlideData[currentSlide]; if(m&&m._id) openDetail(m._id); }
 
-/* ---------- Search (results link back to the main site) ---------- */
+/* ---------- Search (stays on this page — opens the in-page detail panel) ---------- */
 function searchMovies(){
     var t = document.getElementById('searchInput').value.toLowerCase().trim();
     var wrap = document.getElementById('searchResultsWrap');
     if(!t){ wrap.classList.remove('show'); return; }
     var results = allContents.filter(function(c){
-        return c.title.toLowerCase().indexOf(t)!==-1 ||
+        return c.accessLevel!=='free' && (
+               c.title.toLowerCase().indexOf(t)!==-1 ||
                (c.category||'').toLowerCase().indexOf(t)!==-1 ||
-               (c.translator||'').toLowerCase().indexOf(t)!==-1;
+               (c.translator||'').toLowerCase().indexOf(t)!==-1);
     }).slice(0,12);
     document.getElementById('searchResultsTitle').textContent = 'Results for "'+t+'" ('+results.length+')';
     document.getElementById('searchGrid').innerHTML = results.length
         ? results.map(function(m){
-            return '<a class="search-card" href="https://niromovie.site/?movie='+m._id+'">'+
+            return '<div class="search-card" onclick="openDetail(\''+m._id+'\')">'+
                 '<img src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'">'+
                 '<div class="sc-title">'+escHtml(m.title)+'</div>'+
-            '</a>';
+            '</div>';
         }).join('')
-        : '<p style="color:var(--text2);padding:1rem 0">No matches — try another title.</p>';
+        : '<p style="color:var(--text2);padding:1rem 0">No VIP-tier matches — try another title.</p>';
     wrap.classList.add('show');
 }
 function clearSearch(){ document.getElementById('searchInput').value=''; document.getElementById('searchResultsWrap').classList.remove('show'); }
+
+/* ---------- Tier rows: the actual posted movies, grouped by plan ---------- */
+function tierCardHTML(m){
+    return '<div class="movie-card-row" onclick="openDetail(\''+m._id+'\')">'+
+        '<img class="movie-thumb" src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'">'+
+        '<div class="movie-info"><div class="movie-title">'+escHtml(m.title)+'</div></div>'+
+    '</div>';
+}
+function renderTierRows(){
+    var tiers = [
+        {level:'basic', el:'rowBasic'},
+        {level:'standard', el:'rowStandard'},
+        {level:'premium', el:'rowPremium'},
+        {level:'ultimate', el:'rowUltimate'}
+    ];
+    tiers.forEach(function(t){
+        var items = allContents.filter(function(c){ return c.accessLevel === t.level; });
+        var row = document.getElementById(t.el);
+        if (!row) return;
+        row.innerHTML = items.length ? items.map(tierCardHTML).join('') : '';
+        if (!items.length) {
+            row.outerHTML = '<div class="tier-empty" id="'+t.el+'">No '+t.level+'-tier titles posted yet.</div>';
+        }
+    });
+}
 
 /* ---------- Plans rendering + selection ---------- */
 var selectedPlanKey = null;
@@ -369,6 +463,54 @@ function selectPlan(key){
     toast(plan.name+' plan selected — scroll down to finish payment.');
 }
 
+/* ---------- Movie detail panel (opens IN this page — only "Watch Now" leaves it) ---------- */
+var detailMovie = null;
+function openDetail(id){
+    var m = allContents.find(function(x){ return x._id === id; });
+    if (!m) return;
+    detailMovie = m;
+    document.getElementById('detailTitle').textContent = m.title;
+    var desc = m.description || 'No description available';
+    var descEl = document.getElementById('detailDesc');
+    descEl.textContent = desc;
+    descEl.classList.add('truncated');
+    var vm = document.getElementById('detailViewMore');
+    if (desc.length > 140) { vm.style.display='inline-block'; vm.textContent='... View more'; } else { vm.style.display='none'; }
+    document.getElementById('detailMeta').innerHTML =
+        '<span class="mi"><span class="material-symbols-outlined">calendar_month</span>'+(m.year||'N/A')+'</span>'+
+        '<span class="mi"><span class="material-symbols-outlined">hd</span>'+(m.quality||'HD')+'</span>'+
+        (m.category?'<span class="mi"><span class="material-symbols-outlined">sell</span>'+escHtml(m.category)+'</span>':'');
+    var media = document.getElementById('detailMedia');
+    if (m.trailerUrl) {
+        media.innerHTML = '<video src="'+m.trailerUrl+'" controls poster="'+(m.thumbnailUrl||'')+'"></video>';
+    } else {
+        media.innerHTML = '<img src="'+(m.thumbnailUrl||'')+'" onerror="this.style.background=\'var(--bg3)\'">';
+    }
+    var reqPlan = (m.accessLevel || 'basic');
+    document.getElementById('detailRequiredPlan').textContent = reqPlan.toUpperCase();
+    document.getElementById('detailSelectPlanLabel').textContent = reqPlan.charAt(0).toUpperCase()+reqPlan.slice(1);
+    document.getElementById('movieDetailModal').classList.add('active');
+}
+function closeDetailModal(){ document.getElementById('movieDetailModal').classList.remove('active'); }
+function toggleDetailDesc(){
+    var d = document.getElementById('detailDesc');
+    var l = document.getElementById('detailViewMore');
+    if (d.classList.contains('truncated')) { d.classList.remove('truncated'); l.textContent='Show less'; }
+    else { d.classList.add('truncated'); l.textContent='... View more'; }
+}
+function selectPlanFromDetail(){
+    if (!detailMovie) return;
+    targetMovie = detailMovie;
+    closeDetailModal();
+    var lvl = (detailMovie.accessLevel || 'basic');
+    if (PLANS.some(function(p){return p.key===lvl})) selectPlan(lvl);
+    else document.getElementById('plans').scrollIntoView({behavior:'smooth'});
+}
+function watchNowClick(){
+    if (!detailMovie) return;
+    window.location.href = 'https://niromovie.site/?movie='+detailMovie._id;
+}
+
 /* ---------- Read ?movie= & ?plan= from redirectToPlan() on the main site ---------- */
 function applyUrlParams(){
     var p = new URLSearchParams(window.location.search);
@@ -380,6 +522,7 @@ function applyUrlParams(){
             document.getElementById('unlockBanner').style.display = 'block';
             document.getElementById('unlockTitle').textContent = targetMovie.title;
             document.getElementById('unlockPlan').textContent = (planParam || targetMovie.accessLevel || 'basic').toUpperCase();
+            openDetail(targetMovie._id);
         }
     }
     if (planParam && PLANS.some(function(p){return p.key===planParam})) {
@@ -397,6 +540,7 @@ async function init(){
         if(Array.isArray(data)) allContents = data;
     }catch(e){ console.error(e); }
     setupHero();
+    renderTierRows();
     applyUrlParams();
 }
 init();
