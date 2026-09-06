@@ -253,6 +253,21 @@ const adminMiddleware = (req, res, next) => {
     next();
 };
 
+const optionalAuth = async (req, res, next) => {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+        req.user = null;
+        return next();
+    }
+    try {
+        const verified = jwt.verify(token, process.env.JWT_SECRET || 'agnews_final_secret_2026');
+        const user = await User.findById(verified.id);
+        req.user = user || null;
+    } catch (err) {
+        req.user = null;
+    }
+    next();
+};
 const headAdminMiddleware = (req, res, next) => {
     if (!req.user || req.user.adminLevel !== 'head') return res.status(403).json({ error: 'Only Head Admin can perform this action.' });
     next();
@@ -509,18 +524,56 @@ app.post('/api/contents/:id/download', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-app.get('/api/contents/:id/parts', async (req, res) => {
+app.get('/api/contents/:id/parts', optionalAuth, async (req, res) => {
     try {
         const content = await Content.findById(req.params.id);
         if (!content) return res.status(404).json({ error: 'Content not found' });
+
+        const user = req.user; // may be null if not logged in
+        const userPlan = user && user.subscription && user.subscription.status === 'active' ? user.subscription.plan : 'free';
+
+        const hasAccess = (accessLevel) => {
+            if (!accessLevel || accessLevel === 'free') return true;
+            return checkAccessLevel(userPlan, accessLevel);
+        };
+
         let items = [];
         if (content.type === 'movie' && content.parts) {
-            items = content.parts.map((p, i) => ({ index: i, type: 'part', number: p.partNumber || String(i + 1), title: p.title || 'Part ' + (i + 1), videoUrl: p.videoUrl, videoSource: p.videoSource, accessLevel: p.accessLevel || 'free', streamUrl: getStreamUrl(p.videoUrl), downloadUrl: getDownloadUrl(p.videoUrl), canStream: canStream(p.videoUrl) }));
+            items = content.parts.map((p, i) => {
+                const allowed = hasAccess(p.accessLevel || 'free');
+                return {
+                    index: i,
+                    type: 'part',
+                    number: p.partNumber || String(i + 1),
+                    title: p.title || 'Part ' + (i + 1),
+                    videoUrl: allowed ? p.videoUrl : '',
+                    videoSource: allowed ? p.videoSource : undefined,
+                    accessLevel: p.accessLevel || 'free',
+                    streamUrl: allowed ? getStreamUrl(p.videoUrl) : '',
+                    downloadUrl: allowed ? getDownloadUrl(p.videoUrl) : '',
+                    canStream: allowed ? canStream(p.videoUrl) : false
+                };
+            });
         } else if (content.type === 'series' && content.seasons) {
             content.seasons.forEach(function(season, si) {
                 if (season.episodes) {
                     season.episodes.forEach(function(ep, ei) {
-                        items.push({ index: items.length, type: 'episode', seasonIndex: si, episodeIndex: ei, number: 'S' + season.seasonNumber + ' E' + ep.episodeNumber, title: ep.title || 'Episode ' + ep.episodeNumber, seasonTitle: season.title || 'Season ' + season.seasonNumber, videoUrl: ep.videoUrl, videoSource: ep.videoSource, accessLevel: ep.accessLevel || 'free', streamUrl: getStreamUrl(ep.videoUrl), downloadUrl: getDownloadUrl(ep.videoUrl), canStream: canStream(ep.videoUrl) });
+                        const allowed = hasAccess(ep.accessLevel || 'free');
+                        items.push({
+                            index: items.length,
+                            type: 'episode',
+                            seasonIndex: si,
+                            episodeIndex: ei,
+                            number: 'S' + season.seasonNumber + ' E' + ep.episodeNumber,
+                            title: ep.title || 'Episode ' + ep.episodeNumber,
+                            seasonTitle: season.title || 'Season ' + season.seasonNumber,
+                            videoUrl: allowed ? ep.videoUrl : '',
+                            videoSource: allowed ? ep.videoSource : undefined,
+                            accessLevel: ep.accessLevel || 'free',
+                            streamUrl: allowed ? getStreamUrl(ep.videoUrl) : '',
+                            downloadUrl: allowed ? getDownloadUrl(ep.videoUrl) : '',
+                            canStream: allowed ? canStream(ep.videoUrl) : false
+                        });
                     });
                 }
             });
@@ -528,7 +581,6 @@ app.get('/api/contents/:id/parts', async (req, res) => {
         res.json({ contentTitle: content.title, contentType: content.type, accessLevel: content.accessLevel, thumbnailUrl: content.thumbnailUrl, items: items, totalItems: items.length });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 // ========== COMMENTS (unchanged) ==========
 app.get('/api/comments/:contentId', async (req, res) => { const content = await Content.findById(req.params.contentId); if (!content) return res.status(404).json({ error: 'Not found' }); res.json((content.comments || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); });
 app.post('/api/comments/:contentId', async (req, res) => { const { userName, text } = req.body; if (!userName || !text) return res.status(400).json({ error: 'Name and comment required' }); const content = await Content.findById(req.params.contentId); if (!content) return res.status(404).json({ error: 'Not found' }); content.comments.push({ userName: userName.trim(), text: text.trim() }); await content.save(); res.json({ success: true }); });
