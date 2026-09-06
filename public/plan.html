@@ -183,6 +183,30 @@
         .footer-bottom .flinks a:hover{color:var(--accent)}
         @media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}.hero-slider{aspect-ratio:16/7}}
         @media(max-width:600px){.footer-grid{grid-template-columns:1fr}.parts-list{grid-template-columns:1fr}.detail-hero{aspect-ratio:16/9}}
+       .show-more-parts-btn{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:0.5rem;
+        width:100%;
+        padding:0.8rem 1rem;
+        border-radius:var(--radius);
+        font-weight:700;
+        font-size:0.85rem;
+        cursor:pointer;
+        background:var(--bg3);
+        border:1.5px solid var(--accent);
+        color:var(--accent);
+        font-family:inherit;
+        transition:var(--trans);
+        box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    }
+    .show-more-parts-btn:hover{
+        background:var(--accent);
+        color:#000;
+        transform:translateY(-2px);
+        box-shadow:0 6px 18px rgba(245,197,24,0.4);
+    }
     </style>
 </head>
 <body>
@@ -629,7 +653,7 @@
             }).join('');
             const moreContainer = document.getElementById('showMorePartsContainer');
             if(currentPartsItems.length > revealedPartsCount){
-                moreContainer.innerHTML = `<button class="show-more-parts-btn" onclick="revealMoreParts()">Erekana ibindi bice (${currentPartsItems.length - revealedPartsCount})</button>`;
+                moreContainer.innerHTML = `<button class="show-more-parts-btn" onclick="revealMoreParts()"> <span class="material-symbols-outlined" style="font-size:1.1rem">expand_more</span>Reba ibindi bice (${currentPartsItems.length - revealedPartsCount}) </button>`;
             } else {
                 moreContainer.innerHTML = '';
             }
