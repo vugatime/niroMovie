@@ -136,6 +136,8 @@
         .comment-text{margin-top:0.15rem;color:var(--text2);word-break:break-word;line-height:1.5}
         .comment-like{cursor:pointer;color:var(--text3);font-size:0.7rem;margin-top:0.3rem;display:inline-flex;align-items:center;gap:0.15rem}
         .comment-like:hover{color:var(--accent)}
+        .comment-reply-btn{cursor:pointer;color:var(--text3);font-size:0.7rem;margin-left:0.7rem;transition:var(--trans)}
+        .comment-reply-btn:hover{color:var(--accent)}
         .comment-composer{border:1px solid var(--border);border-radius:var(--radiusLg);padding:0.8rem;background:var(--bg3);margin-top:0.4rem;margin-bottom:0.8rem}
         .comment-composer input,.comment-composer textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:0.5rem 0.7rem;font-family:inherit;font-size:0.8rem;margin-bottom:0.55rem}
         .comment-composer textarea{resize:none;min-height:64px}
@@ -805,77 +807,148 @@
         function agreeAndContinue(){ closeRulesModal(true); }
 
         async function loadComments(id){
-            const cl = document.getElementById('commentsList');
-            if(!cl) return;
-            try{
-                const comments = await fetch(API+'/comments/'+id).then(r=>r.json());
-                let html = '';
-                if(comments.length){
-                    html = comments.slice(0,2).map(commentHTML).join('');
-                    if(comments.length>2){
-                        html += `<button class="show-more-parts-btn" onclick="showAllComments()">Reba ibindi (${comments.length-2})</button>`;
-                    }
-                } else {
-                    html = '<p style="color:var(--text3)">Nta bitekerezo bihari.</p>';
-                }
-                cl.innerHTML = html;
-                window._allComments = comments;
-            }catch(e){ cl.innerHTML='<p>Ntibishoboka kubona ibitekerezo</p>'; }
-        }
-        function commentHTML(c){
-            const rawName = c.userName || 'Anon';
-            const isVer = rawName.startsWith('🔵 ');
-            const displayName = isVer ? rawName.substring(3) : rawName;
-            const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Byemewe</span>' : '';
-            const avatarColor = stringToColor(displayName);
-            return `<div class="comment-item">
-                <div class="comment-avatar" style="background:${avatarColor}">${displayName.charAt(0).toUpperCase()}</div>
+    const cl = document.getElementById('commentsList');
+    if(!cl) return;
+    try{
+        const comments = await fetch(API+'/comments/'+id).then(r=>r.json());
+        window._allComments = comments; // now nested (parents with replies)
+        renderComments(comments, false);
+    }catch(e){ cl.innerHTML='<p>Ntibishoboka kubona ibitekerezo</p>'; }
+}
+
+function renderComments(comments, showAll) {
+    const cl = document.getElementById('commentsList');
+    if (!comments || !comments.length) {
+        cl.innerHTML = '<p style="color:var(--text3)">Nta bitekerezo bihari.</p>';
+        return;
+    }
+    const displayed = showAll ? comments : comments.slice(0, 2);
+    let html = displayed.map(commentHTML).join('');
+    if (!showAll && comments.length > 2) {
+        html += `<button class="show-more-parts-btn" onclick="renderComments(window._allComments, true)">Reba ibindi (${comments.length - 2})</button>`;
+    }
+    cl.innerHTML = html;
+}
+
+function commentHTML(c) {
+    const rawName = c.userName || 'Anon';
+    const isVer = rawName.startsWith('🔵 ');
+    const displayName = isVer ? rawName.substring(3) : rawName;
+    const verifiedBadge = isVer ? '<span class="verified-badge">🔵 Byemewe</span>' : '';
+    const avatarColor = stringToColor(displayName);
+
+    let repliesHtml = '';
+    if (c.replies && c.replies.length) {
+        repliesHtml = '<div style="margin-left:2.5rem;margin-top:0.4rem">' + c.replies.map(r => {
+            const rRaw = r.userName || 'Anon';
+            const rIsVer = rRaw.startsWith('🔵 ');
+            const rDisplay = rIsVer ? rRaw.substring(3) : rRaw;
+            const rVerified = rIsVer ? '<span class="mini-check">✓</span>' : '';
+            const rAvatarColor = stringToColor(rDisplay);
+            return `<div class="comment-item" style="border-bottom:none;padding:0.4rem 0">
+                <div class="comment-avatar" style="background:${rAvatarColor};width:26px;height:26px;font-size:0.7rem">${rDisplay.charAt(0).toUpperCase()}</div>
                 <div class="comment-body">
-                    <div><span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}<span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span></div>
-                    <div class="comment-text">${escHtml(c.text)}</div>
-                    <span class="comment-like" onclick="likeComment('${c._id}')">👍 ${c.likes||0}</span>
+                    <div><span class="comment-user">${escHtml(rDisplay)}</span>${rVerified}<span class="comment-date">${new Date(r.createdAt).toLocaleDateString()}</span></div>
+                    <div class="comment-text">${escHtml(r.text)}</div>
                 </div>
             </div>`;
-        }
-        function stringToColor(str){
-            let hash = 0; for(let i=0;i<str.length;i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            const colors = ['#F5C518','#4CAF50','#2196F3','#9C27B0','#FF6B35','#00BCD4'];
-            return colors[Math.abs(hash) % colors.length];
-        }
-        function showAllComments(){
-            const comments = window._allComments;
-            if(!comments) return;
-            document.getElementById('commentsList').innerHTML = comments.map(commentHTML).join('');
-        }
-        function updateCommentCounter(){
-            const t=document.getElementById('newComment');
-            const c=document.getElementById('commentCounter');
-            if(t&&c) c.textContent = t.value.length+'/1000';
-        }
-        async function addComment(){
-            const nameInput = document.getElementById('commentName');
-            const textInput = document.getElementById('newComment');
-            const name = nameInput.value.trim();
-            const text = textInput.value.trim();
-            if(!name || !text){ toast("Izina n'igitekerezo birakenewe"); return; }
-            try{
-                const r = await fetch(API+'/comments/'+currentContentId, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userName: name, text: text})});
-                const d = await r.json();
-                if(d.success){
-                    toast('Igitekerezo cyoherejwe!');
-                    textInput.value='';
-                    updateCommentCounter();
-                    loadComments(currentContentId);
-                } else {
-                    toast(d.error || 'Byanze');
-                }
-            }catch(e){ toast('Ikosa mu itumanaho'); }
-        }
-        async function likeComment(cid){
-            await fetch(API+'/comments/'+currentContentId+'/'+cid+'/like', {method:'POST'});
-            loadComments(currentContentId);
-        }
+        }).join('') + '</div>';
+    }
 
+    return `<div class="comment-item" id="comment-${c._id}">
+        <div class="comment-avatar" style="background:${avatarColor}">${displayName.charAt(0).toUpperCase()}</div>
+        <div class="comment-body">
+            <div><span class="comment-user">${escHtml(displayName)}</span>${verifiedBadge}<span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span></div>
+            <div class="comment-text">${escHtml(c.text)}</div>
+            <span class="comment-like" onclick="likeComment('${c._id}')">👍 ${c.likes||0}</span>
+            <span class="comment-reply-btn" onclick="showReplyForm('${c._id}')">Reply</span>
+            <div class="reply-form" id="replyForm-${c._id}" style="display:none;margin-top:0.5rem">
+                <input type="text" id="replyName-${c._id}" placeholder="Izina" style="flex:1;min-width:80px">
+                <input type="text" id="replyText-${c._id}" placeholder="Igitekerezo..." style="flex:2;min-width:120px">
+                <button class="btn btn-primary btn-sm" onclick="addReply('${currentContentId}','${c._id}')">Reply</button>
+            </div>
+            ${repliesHtml}
+        </div>
+    </div>`;
+}
+
+function stringToColor(str){
+    let hash = 0; for(let i=0;i<str.length;i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    const colors = ['#F5C518','#4CAF50','#2196F3','#9C27B0','#FF6B35','#00BCD4'];
+    return colors[Math.abs(hash) % colors.length];
+}
+
+function showAllComments(){
+    renderComments(window._allComments, true);
+}
+
+function showReplyForm(cid){
+    const f = document.getElementById('replyForm-'+cid);
+    f.style.display = f.style.display === 'none' ? 'flex' : 'none';
+    const nameInput = document.getElementById('replyName-'+cid);
+    if(nameInput && !nameInput.value){
+        const saved = localStorage.getItem('commenterName') || '';
+        if(saved) nameInput.value = saved;
+    }
+}
+
+async function addReply(contentId, parentId){
+    const nameInput = document.getElementById('replyName-'+parentId);
+    const textInput = document.getElementById('replyText-'+parentId);
+    const name = nameInput.value.trim();
+    const text = textInput.value.trim();
+    if(!name || !text){ toast("Izina n'igitekerezo birakenewe"); return; }
+    try{
+        const r = await fetch(API+'/comments/'+contentId, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({userName: name, text: text, parentId: parentId})
+        });
+        const d = await r.json();
+        if(d.success){
+            localStorage.setItem('commenterName', name);
+            textInput.value = '';
+            loadComments(contentId);
+        } else {
+            toast(d.error || 'Byanze');
+        }
+    }catch(e){ toast('Ikosa mu itumanaho'); }
+}
+
+function updateCommentCounter(){
+    const t=document.getElementById('newComment');
+    const c=document.getElementById('commentCounter');
+    if(t&&c) c.textContent = t.value.length+'/1000';
+}
+
+async function addComment(){
+    const nameInput = document.getElementById('commentName');
+    const textInput = document.getElementById('newComment');
+    const name = nameInput.value.trim();
+    const text = textInput.value.trim();
+    if(!name || !text){ toast("Izina n'igitekerezo birakenewe"); return; }
+    try{
+        const r = await fetch(API+'/comments/'+currentContentId, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({userName: name, text: text})
+        });
+        const d = await r.json();
+        if(d.success){
+            localStorage.setItem('commenterName', name);
+            textInput.value='';
+            updateCommentCounter();
+            loadComments(currentContentId);
+        } else {
+            toast(d.error || 'Byanze');
+        }
+    }catch(e){ toast('Ikosa mu itumanaho'); }
+}
+
+async function likeComment(cid){
+    await fetch(API+'/comments/'+currentContentId+'/'+cid+'/like', {method:'POST'});
+    loadComments(currentContentId);
+}
         // Plans & Subscription — UNCHANGED per your instruction
         async function loadPlans(){
             try{
