@@ -566,59 +566,84 @@
            part is outside this HTML file and needs a backend change.
         ================================================================ */
         function mountPlayer(){
-            const wrapper = document.getElementById('playerWrapper');
-            if(!wrapper) return;
-            const c = currentContentData;
-            // Trailers are a public preview clip, not the full title — always fine to show.
-            if(c && c.trailerUrl && !currentPartsItems.length){
-                wrapper.innerHTML = `<video src="${c.trailerUrl}" controls poster="${c.thumbnailUrl||''}"></video>`;
-                updatePlayerAccess();
-                return;
-            }
-            const item = currentPartsItems[selectedPartIndex];
-            if(!item || !item.videoUrl){
-                wrapper.innerHTML = `<img src="${(c&&c.thumbnailUrl)||''}" onerror="this.style.background='var(--bg3)'">`;
-                updatePlayerAccess();
-                return;
-            }
-            const level = item.accessLevel || 'basic';
-            const hasAccess = checkAccessForPart(level);
-            const canStream = isPlayableUrl(item.videoUrl);
-            if(hasAccess && canStream){
-                wrapper.innerHTML = `<video id="videoPlayer" controls src="${getStreamUrl(item.videoUrl)}"></video>`;
-            } else {
-                const reason = !currentUser
-                    ? 'Injira cyangwa wiyandikishe kugirango urebe'
-                    : 'Ongera gahunda yawe kugirango urebe iki gice';
-                wrapper.innerHTML = `
-                    <img src="${(c&&c.thumbnailUrl)||''}" onerror="this.style.background='var(--bg3)'">
-                    <div class="lock-overlay" onclick="handleLockedClick('${level}')">
-                        <span class="material-symbols-outlined">lock</span>
-                        <span class="lock-title">${level.toUpperCase()} PLAN REQUIRED</span>
-                        <small>${reason}</small>
-                    </div>
-                `;
-            }
+        const wrapper = document.getElementById('playerWrapper');
+        if(!wrapper) return;
+        const c = currentContentData;
+        if(c && c.trailerUrl && !currentPartsItems.length){
+            wrapper.innerHTML = `<video src="${c.trailerUrl}" controls poster="${c.thumbnailUrl||''}"></video>`;
             updatePlayerAccess();
+            return;
         }
+        const item = currentPartsItems[selectedPartIndex];
+        if(!item){
+            wrapper.innerHTML = `<img src="${(c&&c.thumbnailUrl)||''}" onerror="this.style.background='var(--bg3)'">`;
+            updatePlayerAccess();
+            return;
+        }
+        const level = item.accessLevel || 'basic';
+        const hasAccess = checkAccessForPart(level);
+    
+        // If videoUrl is empty because the server hid it (no access), show upgrade prompt
+        if(!hasAccess){
+            const reason = !currentUser
+                ? 'Injira cyangwa wiyandikishe kugirango urebe'
+                : 'Gahunda yawe ntirihuje na iki gice. Ongera gahunda yawe.';
+            wrapper.innerHTML = `
+                <img src="${(c&&c.thumbnailUrl)||''}" onerror="this.style.background='var(--bg3)'">
+                <div class="lock-overlay" onclick="handleLockedClick('${level}')">
+                    <span class="material-symbols-outlined">lock</span>
+                    <span class="lock-title">${level.toUpperCase()} PLAN REQUIRED</span>
+                    <small>${reason}</small>
+                </div>
+            `;
+            updatePlayerAccess();
+            return;
+        }
+    
+        // User has access, but check if the part actually has a video URL
+        if(!item.videoUrl){
+            wrapper.innerHTML = `<img src="${(c&&c.thumbnailUrl)||''}" onerror="this.style.background='var(--bg3)'">`;
+            updatePlayerAccess();
+            return;
+        }
+    
+        // User has access and video exists — mount the real player
+        const canStream = isPlayableUrl(item.videoUrl);
+        if(canStream){
+            wrapper.innerHTML = `<video id="videoPlayer" controls src="${getStreamUrl(item.videoUrl)}"></video>`;
+        } else {
+            // Download only content – show poster and a message
+            wrapper.innerHTML = `
+                <img src="${(c&&c.thumbnailUrl)||''}" onerror="this.style.background='var(--bg3)'">
+                <div class="lock-overlay" style="background:rgba(0,0,0,0.5)">
+                    <span class="material-symbols-outlined" style="color:var(--text2)">download</span>
+                    <span class="lock-title" style="color:var(--text)">DOWNLOAD ONLY</span>
+                    <small>Iki gice nticyarebwa hano, cyakururwa gusa.</small>
+                </div>
+            `;
+        }
+        updatePlayerAccess();
+    }
         function handleLockedClick(level){
             requiredPlan = level;
             pendingMovieId = currentContentId;
             showRulesModal(level);
         }
         function updatePlayerAccess(){
-            const item = currentPartsItems[selectedPartIndex];
-            const watchBtn = document.getElementById('watchBtn');
-            const downloadBtn = document.getElementById('downloadMainBtn');
-            if(!item){
-                if(watchBtn) watchBtn.style.display = 'none';
-                if(downloadBtn) downloadBtn.style.display = 'none';
-                return;
-            }
-            const canStream = isPlayableUrl(item.videoUrl);
-            if(watchBtn) watchBtn.style.display = canStream ? 'inline-flex' : 'none';
-            if(downloadBtn) downloadBtn.style.display = item.videoUrl ? 'inline-flex' : 'none';
+        const item = currentPartsItems[selectedPartIndex];
+        const watchBtn = document.getElementById('watchBtn');
+        const downloadBtn = document.getElementById('downloadMainBtn');
+        if(!item){
+            if(watchBtn) watchBtn.style.display = 'none';
+            if(downloadBtn) downloadBtn.style.display = 'none';
+            return;
         }
+        const hasAccess = checkAccessForPart(item.accessLevel || 'basic');
+        const canStream = hasAccess && isPlayableUrl(item.videoUrl);
+        if(watchBtn) watchBtn.style.display = canStream ? 'inline-flex' : 'none';
+        // Download button should show if the user has access AND there is a video URL
+        if(downloadBtn) downloadBtn.style.display = (hasAccess && item.videoUrl) ? 'inline-flex' : 'none';
+    }
         function checkAccessForPart(partLevel){
             if(!currentUser) return false;
             const status = currentUser.subscription?.status;
