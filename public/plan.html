@@ -895,8 +895,21 @@
                     currentUser = data.user;
                     updateProfileIcon();
                     toast('Mwaramutse neza!');
-                    renderAuthPaymentArea();
-                    if(currentContentId) mountPlayer(); // reflect access immediately if a movie was open behind the scenes
+                
+                    // If the user came here from a movie they were trying to access
+                    if (pendingMovieId && requiredPlan) {
+                        if (checkAccessForPart(requiredPlan)) {
+                            // User already has the required plan (maybe subscription was activated elsewhere)
+                            showMoviesView();
+                            openContent(pendingMovieId);
+                        } else {
+                            // Still needs to subscribe/upgrade
+                            renderAuthPaymentArea();
+                        }
+                    } else {
+                        // User came to subscription view manually, keep them on payment
+                        renderAuthPaymentArea();
+                    }
                 } else {
                     toast(data.error || 'Injira byanze');
                 }
@@ -911,17 +924,24 @@
             try{
                 const res = await fetch(API+'/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password, fullName: name})});
                 const data = await res.json();
-                if(res.ok){
-                    token = data.token;
-                    localStorage.setItem('token', token);
-                    currentUser = data.user;
-                    updateProfileIcon();
-                    toast('Konti yafunguwe!');
+               if(res.ok){
+                token = data.token;
+                localStorage.setItem('token', token);
+                currentUser = data.user;
+                updateProfileIcon();
+                toast('Konti yafunguwe!');
+            
+                // If the user came here from a movie they were trying to access
+                if (pendingMovieId && requiredPlan) {
+                    // Newly registered users usually have no active subscription
                     renderAuthPaymentArea();
-                    if(currentContentId) mountPlayer();
                 } else {
-                    toast(data.error || 'Kwiyandikisha byanze');
+                    // User came to subscription view manually
+                    renderAuthPaymentArea();
                 }
+            } else {
+                toast(data.error || 'Kwiyandikisha byanze');
+            }
             }catch(e){ toast('Ikosa mu itumanaho'); }
         }
         async function submitPayment(){
