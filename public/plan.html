@@ -292,7 +292,31 @@
             </div>
         </div>
     </div>
-    <!-- Static modals -->
+    <!-- Auth Modal for login/register from profile icon -->
+<div class="modal-overlay" id="authModal">
+    <div class="modal-box-sm">
+        <div class="modal-header">
+            <h2 id="authTitle">Injira</h2>
+            <span class="close-btn" onclick="closeModal('authModal')">&times;</span>
+        </div>
+        <div style="padding:1.2rem">
+            <div id="loginDiv">
+                <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="email@example.com"></div>
+                <div class="form-group"><label>Ijambobanga</label><input type="password" id="loginPassword" placeholder="Andika ijambobanga"></div>
+                <button class="btn btn-primary" onclick="handleLogin()" style="width:100%">Injira</button>
+                <p class="auth-toggle">Nta konti? <a onclick="showRegisterDiv()">Fungura</a></p>
+            </div>
+            <div id="registerDiv" style="display:none">
+                <div class="form-group"><label>Amazina</label><input type="text" id="regName" placeholder="Amazina yawe"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="email@example.com"></div>
+                <div class="form-group"><label>Ijambobanga</label><input type="password" id="regPassword" placeholder="Nibura inyuguti 6"></div>
+                <button class="btn btn-primary" onclick="handleRegister()" style="width:100%">Fungura Konti</button>
+                <p class="auth-toggle">Ufite konti? <a onclick="showLoginDiv()">Injira</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- Static modals -->
     <div class="modal-overlay" id="aboutModal"><div class="modal-box-sm"><div class="modal-header"><h2>About niroMovie</h2><span class="close-btn" onclick="closeStaticModal('aboutModal')">&times;</span></div><div style="padding:1.2rem"><p>niroMovie ni urubuga rwa sinema nziza. Byose ukeneye ni ibyishimo.</p></div></div></div>
     <div class="modal-overlay" id="contactModal"><div class="modal-box-sm"><div class="modal-header"><h2>Twandikire</h2><span class="close-btn" onclick="closeStaticModal('contactModal')">&times;</span></div><div style="padding:1.2rem"><p>Email: info@niromovie.site<br>Telefoni: +250 795 064 502</p></div></div></div>
     <div class="modal-overlay" id="privacyModal"><div class="modal-box-sm"><div class="modal-header"><h2>Uburyo bwo kubika amakuru</h2><span class="close-btn" onclick="closeStaticModal('privacyModal')">&times;</span></div><div style="padding:1.2rem"><p>Amakuru yawe ararenzwe. Ntidusangiza amakuru yawe n'undi.</p></div></div></div>
@@ -360,7 +384,15 @@
         function closeMovieModal(){closeModal('movieModal');history.pushState(null,'','/')}
         function toggleSideMenu(){document.getElementById('sideMenu').classList.toggle('open');document.getElementById('sideMenuOverlay').classList.toggle('show')}
         function closeSideMenu(){document.getElementById('sideMenu').classList.remove('open');document.getElementById('sideMenuOverlay').classList.remove('show')}
-        function handleProfileClick(){closeSideMenu();if(currentUser)logout();else{showSubscriptionView();}}
+        function handleProfileClick(){
+        closeSideMenu();
+        if(currentUser){
+            logout();
+        } else {
+            showLoginDiv();
+            openModal('authModal');
+        }
+    }
 
         function showMoviesView(){
             document.getElementById('moviesView').style.display = 'block';
@@ -948,71 +980,69 @@
             document.getElementById('registerDiv').style.display = isRegisterMode?'block':'none';
         }
         async function handleLogin(){
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            if(!email || !password){ toast('Email na ijambobanga birakenewe'); return; }
-            try{
-                const res = await fetch(API+'/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
-                const data = await res.json();
-                if(res.ok){
-                    token = data.token;
-                    localStorage.setItem('token', token);
-                    currentUser = data.user;
-                    updateProfileIcon();
-                    toast('Mwaramutse neza!');
-                
-                    // If user was trying to open a specific premium movie
-                    if (pendingMovieId && requiredPlan) {
-                        if (checkAccessForPart(requiredPlan)) {
-                            // Plan is sufficient -> go straight to that movie
-                            closeModal('authModal'); // in case auth modal still open
-                            showMoviesView();
-                            setTimeout(() => openContent(pendingMovieId), 300);
-                        } else {
-                            // Plan not enough -> show upgrade message, not payment directly
-                            closeModal('authModal');
-                            showUpgradeModal(requiredPlan);
-                        }
-                    } else {
-                        // No specific movie: just go to movies
-                        closeModal('authModal');
-                        showMoviesView();
-                    }
-                } else {
-                    toast(data.error || 'Injira byanze');
-                }
-            }catch(e){ toast('Ikosa mu itumanaho'); }
-        }
-        async function handleRegister(){
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            if(!name || !email || !password){ toast('Amakuru yose arakenewe'); return; }
-            if(password.length < 6){ toast('Ijambobanga rigira nibura inyuguti 6'); return; }
-            try{
-                const res = await fetch(API+'/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password, fullName: name})});
-                const data = await res.json();
-               if(res.ok){
-                token = data.token;
-                localStorage.setItem('token', token);
-                currentUser = data.user;
-                updateProfileIcon();
-                toast('Konti yafunguwe!');
-            
-                // If they were trying to watch a movie, they need to subscribe/upgrade
-                if (pendingMovieId && requiredPlan) {
-                    closeModal('authModal');
-                    showUpgradeModal(requiredPlan);
-                } else {
-                    // Just browsing: go to movies
-                    closeModal('authModal');
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if(!email || !password){ toast('Email na ijambobanga birakenewe'); return; }
+    try{
+        const res = await fetch(API+'/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
+        const data = await res.json();
+        if(res.ok){
+            token = data.token;
+            localStorage.setItem('token', token);
+            currentUser = data.user;
+            updateProfileIcon();
+            closeModal('authModal');
+            toast('Mwaramutse neza!');
+
+            // If user was trying to open a specific premium movie
+            if (pendingMovieId && requiredPlan) {
+                if (checkAccessForPart(requiredPlan)) {
+                    // Plan is sufficient -> go straight to that movie
                     showMoviesView();
+                    setTimeout(() => openContent(pendingMovieId), 300);
+                } else {
+                    // Plan not enough -> show upgrade message
+                    showUpgradeModal(requiredPlan);
                 }
             } else {
-                toast(data.error || 'Kwiyandikisha byanze');
+                // No specific movie: just go to movies
+                showMoviesView();
             }
-            }catch(e){ toast('Ikosa mu itumanaho'); }
+        } else {
+            toast(data.error || 'Injira byanze');
         }
+    }catch(e){ toast('Ikosa mu itumanaho'); }
+}
+
+async function handleRegister(){
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    if(!name || !email || !password){ toast('Amakuru yose arakenewe'); return; }
+    if(password.length < 6){ toast('Ijambobanga rigira nibura inyuguti 6'); return; }
+    try{
+        const res = await fetch(API+'/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password, fullName: name})});
+        const data = await res.json();
+        if(res.ok){
+            token = data.token;
+            localStorage.setItem('token', token);
+            currentUser = data.user;
+            updateProfileIcon();
+            closeModal('authModal');
+            toast('Konti yafunguwe!');
+
+            // If they were trying to watch a movie, they need to subscribe/upgrade
+            if (pendingMovieId && requiredPlan) {
+                showUpgradeModal(requiredPlan);
+            } else {
+                // Just browsing: go to movies
+                showMoviesView();
+            }
+        } else {
+            toast(data.error || 'Kwiyandikisha byanze');
+        }
+    }catch(e){ toast('Ikosa mu itumanaho'); }
+}
         async function submitPayment(){
             const phone = document.getElementById('phone').value.trim();
             const senderName = document.getElementById('senderName').value.trim();
@@ -1093,6 +1123,22 @@
         }
         function closeStaticModal(id){ document.getElementById(id).classList.remove('active'); }
         function openStaticModal(id){ document.getElementById(id).classList.add('active'); }
+        function showLoginDiv(){
+        document.getElementById('loginDiv').style.display = 'block';
+        document.getElementById('registerDiv').style.display = 'none';
+        document.getElementById('authTitle').textContent = 'Injira';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+    }
+    
+    function showRegisterDiv(){
+        document.getElementById('loginDiv').style.display = 'none';
+        document.getElementById('registerDiv').style.display = 'block';
+        document.getElementById('authTitle').textContent = 'Fungura Konti';
+        document.getElementById('regName').value = '';
+        document.getElementById('regEmail').value = '';
+        document.getElementById('regPassword').value = '';
+    }
 
         (async function(){
             const urlParams = new URLSearchParams(window.location.search);
