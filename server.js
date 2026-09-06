@@ -122,6 +122,7 @@ const ContentSchema = new mongoose.Schema({
     likes: { type: Number, default: 0 },
     likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     likedByDevice: [String],
+    parentId: { type: String, default: null },
     createdAt: { type: Date, default: Date.now }
 }],
     tags: [String], uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, uploadedByEmail: String,
@@ -582,8 +583,31 @@ app.get('/api/contents/:id/parts', optionalAuth, async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 // ========== COMMENTS (unchanged) ==========
-app.get('/api/comments/:contentId', async (req, res) => { const content = await Content.findById(req.params.contentId); if (!content) return res.status(404).json({ error: 'Not found' }); res.json((content.comments || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); });
-app.post('/api/comments/:contentId', async (req, res) => { const { userName, text } = req.body; if (!userName || !text) return res.status(400).json({ error: 'Name and comment required' }); const content = await Content.findById(req.params.contentId); if (!content) return res.status(404).json({ error: 'Not found' }); content.comments.push({ userName: userName.trim(), text: text.trim() }); await content.save(); res.json({ success: true }); });
+app.get('/api/comments/:contentId', async (req, res) => {
+    try {
+        const content = await Content.findById(req.params.contentId);
+        if (!content) return res.status(404).json({ error: 'Not found' });
+        const comments = content.comments || [];
+        const parentComments = comments.filter(c => !c.parentId);
+        const replies = comments.filter(c => c.parentId);
+        const result = parentComments.map(p => ({
+            ...p.toObject(),
+            replies: replies.filter(r => r.parentId && r.parentId.toString() === p._id.toString())
+        }));
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+app.post('/api/comments/:contentId', async (req, res) => {
+    const { userName, text, parentId } = req.body;
+    if (!userName || !text) return res.status(400).json({ error: 'Name and comment required' });
+    const content = await Content.findById(req.params.contentId);
+    if (!content) return res.status(404).json({ error: 'Not found' });
+    content.comments.push({ userName: userName.trim(), text: text.trim(), parentId: parentId || null });
+    await content.save();
+    res.json({ success: true });
+});
 app.post('/api/comments/:contentId/:commentId/like', async (req, res) => {
     try {
         const content = await Content.findById(req.params.contentId);
