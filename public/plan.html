@@ -697,6 +697,20 @@
             `;
             openModal('rulesModal');
         }
+        function showUpgradeModal(requiredPlan){
+            const content = document.getElementById('rulesContent');
+            const currentPlan = getUserPlan() || 'Free';
+            content.innerHTML = `
+                <p><strong>Gahunda yawe ya ${currentPlan.toUpperCase()} ntirihuje na iyi filime.</strong></p>
+                <p>Ukeneye gahunda ya <strong>${requiredPlan.toUpperCase()}</strong> cyangwa hejuru kugirango uyirebe cyangwa uyikuremo.</p>
+                <p>Hitamo gahunda nshya hano hepfo hanyuma wishyure kugirango ubone ubushobozi.</p>
+                <p style="margin-top:0.6rem;font-size:0.8rem;color:var(--text2)">Niba ufite ikibazo, twandikire kuri WhatsApp.</p>
+            `;
+            openModal('rulesModal');
+            // Set requiredPlan so after agree it goes to upgrade/payment
+            requiredPlan = requiredPlan;
+            pendingMovieId = currentContentId;
+        }
         function closeRulesModal(agreed){
             closeModal('rulesModal');
             if(agreed){
@@ -896,19 +910,22 @@
                     updateProfileIcon();
                     toast('Mwaramutse neza!');
                 
-                    // If the user came here from a movie they were trying to access
+                    // If user was trying to open a specific premium movie
                     if (pendingMovieId && requiredPlan) {
                         if (checkAccessForPart(requiredPlan)) {
-                            // User already has the required plan (maybe subscription was activated elsewhere)
+                            // Plan is sufficient -> go straight to that movie
+                            closeModal('authModal'); // in case auth modal still open
                             showMoviesView();
-                            openContent(pendingMovieId);
+                            setTimeout(() => openContent(pendingMovieId), 300);
                         } else {
-                            // Still needs to subscribe/upgrade
-                            renderAuthPaymentArea();
+                            // Plan not enough -> show upgrade message, not payment directly
+                            closeModal('authModal');
+                            showUpgradeModal(requiredPlan);
                         }
                     } else {
-                        // User came to subscription view manually, keep them on payment
-                        renderAuthPaymentArea();
+                        // No specific movie: just go to movies
+                        closeModal('authModal');
+                        showMoviesView();
                     }
                 } else {
                     toast(data.error || 'Injira byanze');
@@ -931,13 +948,14 @@
                 updateProfileIcon();
                 toast('Konti yafunguwe!');
             
-                // If the user came here from a movie they were trying to access
+                // If they were trying to watch a movie, they need to subscribe/upgrade
                 if (pendingMovieId && requiredPlan) {
-                    // Newly registered users usually have no active subscription
-                    renderAuthPaymentArea();
+                    closeModal('authModal');
+                    showUpgradeModal(requiredPlan);
                 } else {
-                    // User came to subscription view manually
-                    renderAuthPaymentArea();
+                    // Just browsing: go to movies
+                    closeModal('authModal');
+                    showMoviesView();
                 }
             } else {
                 toast(data.error || 'Kwiyandikisha byanze');
