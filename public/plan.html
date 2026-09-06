@@ -500,7 +500,9 @@
             history.pushState(null,'','/?movie='+id);
             const modalBody = document.getElementById('modalBodyContent');
             try{
-                const partsRes = await fetch(API+'/contents/'+id+'/parts');
+                const partsRes = await fetch(API+'/contents/'+id+'/parts', {
+                    headers: token ? {'Authorization': 'Bearer '+token} : {}
+                });
                 const partsData = await partsRes.json();
                 currentPartsItems = partsData.items || [];
             }catch(e){ currentPartsItems = []; }
