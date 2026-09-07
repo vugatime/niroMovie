@@ -106,6 +106,10 @@
     letter-spacing: 0.3px;
     text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
+    .channel-text {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: inline-block;
+}
 </style>
 </head>
 <body>
@@ -881,7 +885,22 @@ function toggleLoginPassword() { var input = document.getElementById('loginPassw
 function toggleWrapperFullscreen() { var wrapper = document.getElementById('playerWrapper'); if (document.fullscreenElement) { document.exitFullscreen(); } else { wrapper.requestFullscreen(); } }
 (function(){ var p = new URLSearchParams(window.location.search); var mid = p.get('movie'); var plans = p.has('plans'); loadAllContent().then(function(){ if (mid) { setTimeout(function(){ openContent(mid); }, 800); } loadLatestNews(); if (plans) { setTimeout(function(){ showPlans(); }, 600); } }); updateProfileIcon(); if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(function(){}); } })();
 async function loadLatestNews() { try { const res = await fetch(API + '/news/latest'); const data = await res.json(); const section = document.getElementById('newsHomeSection'); const grid = document.getElementById('newsHomeGrid'); if (!data.length) { section.style.display = 'none'; return; } section.style.display = 'block'; grid.innerHTML = data.map(n => { const snippet = (n.description || '').replace(/<[^>]*>/g, '').substring(0, 120); const imgSrc = n.thumbnailUrl || (n.images && n.images[0]) || ''; return `<div class="news-home-card" onclick="window.location.href='https://news.niromovie.site/?id=${n._id}'"> ${imgSrc ? `<img class="news-home-thumb" src="${imgSrc}" onerror="this.style.display='none'">` : ''} <div class="news-home-body"> <div class="news-home-title">${escHtml(n.title)}</div> <div class="news-home-excerpt">${escHtml(snippet)}</div> <div class="news-home-date">📅 ${new Date(n.createdAt).toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'numeric'})}</div> </div> </div>`; }).join(''); } catch (e) { console.error('Failed to load latest news:', e); } }
-(function() { const phrases = ["Join Our Channel", "Stay Updated", "Exclusive News", "Never Miss a Movie"]; let index = 0; const el = document.getElementById('channelText'); if (!el) return; setInterval(() => { index = (index + 1) % phrases.length; el.style.opacity = '0'; setTimeout(() => { el.textContent = phrases[index]; el.style.opacity = '1'; }, 300); }, 3000); })();
+(function() {
+    const phrases = ["Join Our Channel", "Stay Updated", "Exclusive News", "Never Miss a Movie"];
+    let index = 0;
+    const el = document.getElementById('channelText');
+    if (!el) return;
+    setInterval(() => {
+        index = (index + 1) % phrases.length;
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(5px)';
+        setTimeout(() => {
+            el.textContent = phrases[index];
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, 300);
+    }, 3000);
+})();
 </script>
 </body>
 </html>
