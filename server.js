@@ -640,13 +640,21 @@ app.post('/api/contents/:id/view', async (req, res) => {
 });
 
 // ========== PLANS (unchanged) ==========
-app.get('/api/plans', (req, res) => { res.json({ free: { name: 'Free', weekly: 0, monthly: 0, quarterly: 0, yearly: 0, features: ['Free movies', 'Ads', '480p'] }, basic: { name: 'Basic', weekly: 300, monthly: 500, quarterly: 1200, yearly: 3000, features: ['Free+Basic', 'Fewer ads', '720p', 'Download'] }, standard: { name: 'Standard', weekly: 500, monthly: 1000, quarterly: 2500, yearly: 7000, features: ['Most movies', 'Very few ads', '1080p', 'HD Download'] }, premium: { name: 'Premium', weekly: 1000, monthly: 2000, quarterly: 5000, yearly: 15000, features: ['Almost all', 'Almost no ads', '2K'] }, ultimate: { name: 'Ultimate', weekly: 2000, monthly: 5000, quarterly: 12000, yearly: 30000, features: ['ALL movies', 'NO ADS', '4K', 'VIP'] } }); });
+app.get('/api/plans', (req, res) => {
+    res.json({
+        free: { name: 'Free', monthly: 0, features: ['Free movies', 'Ads', '480p'] },
+        basic: { name: 'Basic', monthly: 500, features: ['Free+Basic', 'Fewer ads', '720p', 'Download'] },
+        standard: { name: 'Standard', monthly: 1500, features: ['Most movies', 'Very few ads', '1080p', 'HD Download'] },
+        premium: { name: 'Premium', monthly: 3500, features: ['Almost all', 'Almost no ads', '2K'] }
+    });
+});
 
 // ========== SUBSCRIBE (unchanged) ==========
 app.post('/api/subscribe', authMiddleware, upload.single('paymentScreenshot'), async (req, res) => {
     try {
-        const { plan, duration, phone, senderName, paymentMethod } = req.body;
-        const plans = { basic: { weekly: 300, monthly: 500, quarterly: 1200, yearly: 3000 }, standard: { weekly: 500, monthly: 1000, quarterly: 2500, yearly: 7000 }, premium: { weekly: 1000, monthly: 2000, quarterly: 5000, yearly: 15000 }, ultimate: { weekly: 2000, monthly: 5000, quarterly: 12000, yearly: 30000 } };
+        const { plan, phone, senderName, paymentMethod } = req.body;
+        const duration = 'monthly';  // force monthly for now
+        const plans = { basic: { monthly: 500 }, standard: { monthly: 1500 }, premium: { monthly: 3500 } };
         if (!plans[plan]?.[duration]) return res.status(400).json({ error: 'Invalid plan' });
         if (!phone || !senderName) return res.status(400).json({ error: 'Phone and name required' });
         if (!req.file) return res.status(400).json({ error: 'Payment screenshot is required!' });
