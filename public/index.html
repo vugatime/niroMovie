@@ -505,6 +505,10 @@ async function openContent(id){
             <button class="cta-btn cta-stream btn-hero" id="watchBtn" onclick="watchCurrentContent()" style="display:none"><span class="material-symbols-outlined">play_circle</span> Reba</button>
             <button class="cta-btn cta-download btn-hero" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Kuramo</button>
         </div>
+                <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem">
+            <button class="cta-btn cta-outline" id="addToListBtn" onclick="addToMyList()"><span class="material-symbols-outlined">bookmark_add</span> My List</button>
+            <button class="cta-btn cta-outline" onclick="shareMovie('copy')"><span class="material-symbols-outlined">share</span> Share</button>
+        </div>
         <h4 style="margin:1rem 0 0.5rem">Ibyiciro / Episode</h4>
         <div id="partsList" class="parts-list"></div>
         <div id="showMorePartsContainer"></div>
