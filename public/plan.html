@@ -224,7 +224,6 @@
                 <a class="nav-link" onclick="filterByAccess('basic')">Basic</a>
                 <a class="nav-link" onclick="filterByAccess('standard')">Standard</a>
                 <a class="nav-link" onclick="filterByAccess('premium')">Premium</a>
-                <a class="nav-link" onclick="filterByAccess('ultimate')">Ultimate</a>
             </div>
             <div class="search-box"><span class="material-symbols-outlined" style="color:var(--text3)">search</span><input type="text" id="searchInput" placeholder="Shakisha..." onkeyup="searchMovies()"></div>
             <div class="profile-icon" id="profileIcon" onclick="handleProfileClick()">LI</div>
@@ -238,7 +237,6 @@
         <div class="side-menu-item" onclick="closeSideMenu();filterByAccess('basic')"><span class="material-symbols-outlined">star</span> Basic</div>
         <div class="side-menu-item" onclick="closeSideMenu();filterByAccess('standard')"><span class="material-symbols-outlined">star_half</span> Standard</div>
         <div class="side-menu-item" onclick="closeSideMenu();filterByAccess('premium')"><span class="material-symbols-outlined">workspace_premium</span> Premium</div>
-        <div class="side-menu-item" onclick="closeSideMenu();filterByAccess('ultimate')"><span class="material-symbols-outlined">diamond</span> Ultimate</div>
         <hr style="border-color:var(--border);margin:1rem 0">
         <div class="side-menu-item" id="sideMenuAuth" onclick="handleProfileClick()"><span class="material-symbols-outlined">login</span> Injira / Fungura Konti</div>
     </div>
@@ -951,22 +949,22 @@ async function likeComment(cid){
 }
         // Plans & Subscription — UNCHANGED per your instruction
         async function loadPlans(){
-            try{
-                const res = await fetch(API+'/plans');
-                plansData = await res.json();
-                // override prices as requested
-                plansData.basic.monthly = 500;
-                plansData.standard.monthly = 1000;
-                plansData.premium.monthly = 2000;
-                plansData.ultimate.monthly = 4000;
-                renderPlans();
-                if(requiredPlan && plansData[requiredPlan]) selectPlan(requiredPlan);
-            }catch(e){ console.error(e); toast('Ntibishoboka kubona gahunda.'); }
-        }
+        try{
+            const res = await fetch(API+'/plans');
+            plansData = await res.json();
+            // override prices as requested
+            plansData.basic.monthly = 500;
+            plansData.standard.monthly = 1500;
+            plansData.premium.monthly = 3500;
+            delete plansData.ultimate; // remove Ultimate from data
+            renderPlans();
+            if(requiredPlan && plansData[requiredPlan]) selectPlan(requiredPlan);
+        }catch(e){ console.error(e); toast('Ntibishoboka kubona gahunda.'); }
+    }
         function renderPlans(){
             const container = document.getElementById('plansContainer');
             container.innerHTML = '';
-            const planKeys = ['basic','standard','premium','ultimate'];
+            const planKeys = ['basic','standard','premium'];
             planKeys.forEach(key=>{
                 const plan = plansData[key];
                 if(!plan) return;
