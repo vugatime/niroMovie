@@ -446,35 +446,70 @@ function renderModalBreadcrumb(c){
     bc.innerHTML = parts.join(' ');
 }
 async function openContent(id){
-    currentContentId=id;selectedPartIndex=0;revealedPartsCount=5;
-    var c=allContents.find(function(x){return x._id===id});
-    if(!c)return;currentContentData=c;
-    history.pushState(null,'','/?movie='+id);
-    document.getElementById('modalTitle').innerText=c.title;
-    var desc=c.description||'No description available';
-    var descEl=document.getElementById('modalDesc');descEl.textContent=desc;
-    descEl.classList.add('desc-truncated');descEl.classList.remove('desc-expanded');
-    var link=document.getElementById('viewMoreLink');
-    if(desc.length>140){link.style.display='inline-block';link.textContent='... View more'}else{link.style.display='none'}
-    document.getElementById('modalMeta').innerHTML=
-        '<span class="mi"><span class="material-symbols-outlined">calendar_month</span>'+(c.year||'N/A')+'</span>'+
-        '<span class="mi"><span class="material-symbols-outlined">hd</span>'+(c.quality||'HD')+'</span>'+
-        (c.category?'<span class="mi"><span class="material-symbols-outlined">sell</span>'+escHtml(c.category)+'</span>':'')+
-        (c.translator?'<span class="mi"><span class="material-symbols-outlined">person</span>'+escHtml(c.translator)+'</span>':'')+
-        '<span class="mi"><span class="material-symbols-outlined">workspace_premium</span>'+(c.accessLevel||'free').toUpperCase()+'</span>';
-    document.getElementById('modalTags').innerHTML=[c.category,c.country,c.translator,c.director].filter(Boolean).map(function(t){return'<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">'+escHtml(t)+'</span>'}).join('');
-    updateMyListButton();
-    renderPinnedComment(c);
-    var trailerBtn=document.getElementById('trailerBtn');
-    var trailerContainer=document.getElementById('trailerContainer');
-    var trailerVideo=document.getElementById('trailerVideo');
-    if(c.trailerUrl){trailerBtn.style.display='inline-flex';trailerContainer.style.display='none';trailerVideo.src=c.trailerUrl;trailerVideo.load()}else{trailerBtn.style.display='none';trailerContainer.style.display='none';trailerVideo.src=''}
-    try{var partsRes=await fetch(API+'/contents/'+id+'/parts');var partsData=await partsRes.json();currentPartsItems=partsData.items||[]}catch(e){currentPartsItems=[]}
+    currentContentId = id;
+    selectedPartIndex = 0;
+    revealedPartsCount = 5;
+    const c = allContents.find(x => x._id === id);
+    if(!c) return;
+    currentContentData = c;
+    history.pushState(null, '', '/?movie=' + id);
+
+    // Set modal title (header exists already)
+    document.getElementById('modalTitle').innerText = c.title;
+
+    // Build modal body HTML first
+    const metaHTML = `
+        <span class="mi"><span class="material-symbols-outlined">calendar_month</span>${c.year||'N/A'}</span>
+        <span class="mi"><span class="material-symbols-outlined">hd</span>${c.quality||'HD'}</span>
+        ${c.category ? `<span class="mi"><span class="material-symbols-outlined">sell</span>${escHtml(c.category)}</span>` : ''}
+        ${c.translator ? `<span class="mi"><span class="material-symbols-outlined">person</span>${escHtml(c.translator)}</span>` : ''}
+    `;
+    const tagsHTML = [c.category, c.country, c.translator, c.director]
+        .filter(Boolean)
+        .map(t => `<span style="background:var(--bg3);padding:0.2rem 0.6rem;border-radius:20px;font-size:0.68rem">${escHtml(t)}</span>`)
+        .join(' ');
+
+    const modalBody = document.getElementById('modalBodyContent');
+    modalBody.innerHTML = `
+        <div class="detail-hero" id="playerWrapper"></div>
+        <h1 class="detail-title">${escHtml(c.title)}</h1>
+        <div class="detail-desc truncated" id="modalDesc">${escHtml(c.description || 'No description')}</div>
+        <span class="view-more-link" id="viewMoreLink" onclick="toggleDescription()" style="display:${(c.description||'').length > 140 ? 'inline-block' : 'none'}">... View more</span>
+        <div class="detail-meta" id="modalMeta">${metaHTML}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem" id="modalTags">${tagsHTML}</div>
+        <div class="detail-actions">
+            <button class="cta-btn cta-stream btn-hero" id="watchBtn" onclick="watchCurrentContent()" style="display:none"><span class="material-symbols-outlined">play_circle</span> Reba</button>
+            <button class="cta-btn cta-download btn-hero" id="downloadMainBtn" onclick="downloadCurrentContent()"><span class="material-symbols-outlined">download</span> Kuramo</button>
+        </div>
+        <h4 style="margin:1rem 0 0.5rem">Ibyiciro / Episode</h4>
+        <div id="partsList" class="parts-list"></div>
+        <div id="showMorePartsContainer"></div>
+        <h4 style="margin:1.2rem 0 0.5rem">Comments</h4>
+        <div class="comment-composer">
+            <input type="text" id="commentName" placeholder="Your name">
+            <textarea id="newComment" placeholder="Comment..." maxlength="1000" oninput="updateCommentCounter()"></textarea>
+            <div class="composer-foot">
+                <span style="font-size:0.7rem;color:var(--text3)" id="commentCounter">0/1000</span>
+                <button class="cta-btn cta-download cta-sm" onclick="addComment()">Post</button>
+            </div>
+        </div>
+        <div id="commentsList"></div>
+    `;
+
+    // Now fetch parts and render
+    try {
+        const partsRes = await fetch(API + '/contents/' + id + '/parts');
+        const partsData = await partsRes.json();
+        currentPartsItems = partsData.items || [];
+    } catch(e) {
+        currentPartsItems = [];
+    }
+
     renderPartsList();
     loadComments(id);
     openModal('movieModal');
     mountPlayer();
-    document.getElementById('modalBodyContent').scrollTop=0;
+    document.getElementById('modalBodyContent').scrollTop = 0;
 }
 function mountPlayer(){
     const wrapper = document.getElementById('playerWrapper');
