@@ -1062,25 +1062,62 @@ app.get('/movie/:id', async (req, res) => {
         const content = await Content.findById(req.params.id);
         if (!content || content.type !== 'movie') return res.status(404).send('Not found');
         const baseUrl = 'https://www.niromovie.site';
+        const desc = (content.description || '').replace(/<[^>]*>/g, '').substring(0, 155);
+        const watchUrl = `${baseUrl}/?movie=${content._id}`;
         const html = `<!DOCTYPE html>
 <html lang="rw">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${content.title} | niroMovie</title>
-<meta name="description" content="${(content.description || '').replace(/<[^>]*>/g, '').substring(0, 155)}">
+<meta name="description" content="${desc}">
 <meta property="og:title" content="${content.title} | niroMovie">
-<meta property="og:description" content="${(content.description || '').replace(/<[^>]*>/g, '').substring(0, 155)}">
+<meta property="og:description" content="${desc}">
 <meta property="og:image" content="${content.thumbnailUrl || ''}">
 <meta property="og:url" content="${baseUrl}/movie/${content._id}">
 <meta property="og:type" content="video.movie">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${content.title} | niroMovie">
+<meta name="twitter:description" content="${desc}">
+<meta name="twitter:image" content="${content.thumbnailUrl || ''}">
 <link rel="canonical" href="${baseUrl}/movie/${content._id}">
-</head>
-<body style="background:#0d0d0d;color:#f0f0f0;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
-<p>Redirecting to ${content.title}…</p>
-<script>
-window.location.href = '${baseUrl}/?movie=${content._id}';
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Movie",
+  "name": "${content.title.replace(/"/g, '\\"')}",
+  "description": "${desc.replace(/"/g, '\\"')}",
+  "image": "${content.thumbnailUrl || ''}",
+  "url": "${baseUrl}/movie/${content._id}",
+  "datePublished": "${content.uploadedAt ? new Date(content.uploadedAt).toISOString() : ''}"
+}
 </script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d0d0d;color:#f0f0f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+  .card{max-width:600px;width:100%;background:#161616;border-radius:18px;overflow:hidden;border:1px solid #2a2a2a;box-shadow:0 16px 50px rgba(0,0,0,0.7)}
+  .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:#1e1e1e;display:block}
+  .body{padding:1.5rem}
+  h1{font-size:1.5rem;font-weight:800;margin-bottom:0.5rem;color:#f0f0f0}
+  p{color:#a0a0a0;line-height:1.6;font-size:0.9rem;margin-bottom:1rem}
+  .meta{color:#666;font-size:0.8rem;margin-bottom:1rem}
+  .btn{display:inline-flex;align-items:center;gap:0.5rem;background:#F5C518;color:#000;padding:0.9rem 1.8rem;border-radius:40px;text-decoration:none;font-weight:800;font-size:1rem;transition:transform 0.2s}
+  .btn:hover{transform:translateY(-2px)}
+  .logo{display:flex;align-items:center;gap:0.5rem;color:#F5C518;font-weight:800;font-size:1.1rem;margin-bottom:1rem}
+  .logo span{color:#f0f0f0}
+</style>
+</head>
+<body>
+  <div class="card">
+    <img class="thumb" src="${content.thumbnailUrl || ''}" alt="${content.title}" onerror="this.style.background='#1e1e1e'">
+    <div class="body">
+      <div class="logo">▶ niro<span>Movie</span></div>
+      <h1>${content.title}</h1>
+      <div class="meta">${content.year || ''} · ${content.quality || 'HD'} · ${(content.accessLevel || 'free').toUpperCase()}</div>
+      <p>${desc}</p>
+      <a class="btn" href="${watchUrl}">▶ Reba kuri niroMovie</a>
+    </div>
+  </div>
 </body>
 </html>`;
         res.send(html);
@@ -1088,31 +1125,66 @@ window.location.href = '${baseUrl}/?movie=${content._id}';
         res.status(500).send('Error loading content');
     }
 });
-
 app.get('/series/:id', async (req, res) => {
     try {
         const content = await Content.findById(req.params.id);
         if (!content || content.type !== 'series') return res.status(404).send('Not found');
         const baseUrl = 'https://www.niromovie.site';
+        const desc = (content.description || '').replace(/<[^>]*>/g, '').substring(0, 155);
+        const watchUrl = `${baseUrl}/?movie=${content._id}`;
         const html = `<!DOCTYPE html>
 <html lang="rw">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${content.title} | niroMovie</title>
-<meta name="description" content="${(content.description || '').replace(/<[^>]*>/g, '').substring(0, 155)}">
+<meta name="description" content="${desc}">
 <meta property="og:title" content="${content.title} | niroMovie">
-<meta property="og:description" content="${(content.description || '').replace(/<[^>]*>/g, '').substring(0, 155)}">
+<meta property="og:description" content="${desc}">
 <meta property="og:image" content="${content.thumbnailUrl || ''}">
 <meta property="og:url" content="${baseUrl}/series/${content._id}">
 <meta property="og:type" content="video.tv_show">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${content.title} | niroMovie">
+<meta name="twitter:description" content="${desc}">
+<meta name="twitter:image" content="${content.thumbnailUrl || ''}">
 <link rel="canonical" href="${baseUrl}/series/${content._id}">
-</head>
-<body style="background:#0d0d0d;color:#f0f0f0;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
-<p>Redirecting to ${content.title}…</p>
-<script>
-window.location.href = '${baseUrl}/?movie=${content._id}';
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TVSeries",
+  "name": "${content.title.replace(/"/g, '\\"')}",
+  "description": "${desc.replace(/"/g, '\\"')}",
+  "image": "${content.thumbnailUrl || ''}",
+  "url": "${baseUrl}/series/${content._id}"
+}
 </script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d0d0d;color:#f0f0f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+  .card{max-width:600px;width:100%;background:#161616;border-radius:18px;overflow:hidden;border:1px solid #2a2a2a;box-shadow:0 16px 50px rgba(0,0,0,0.7)}
+  .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:#1e1e1e;display:block}
+  .body{padding:1.5rem}
+  h1{font-size:1.5rem;font-weight:800;margin-bottom:0.5rem;color:#f0f0f0}
+  p{color:#a0a0a0;line-height:1.6;font-size:0.9rem;margin-bottom:1rem}
+  .meta{color:#666;font-size:0.8rem;margin-bottom:1rem}
+  .btn{display:inline-flex;align-items:center;gap:0.5rem;background:#F5C518;color:#000;padding:0.9rem 1.8rem;border-radius:40px;text-decoration:none;font-weight:800;font-size:1rem;transition:transform 0.2s}
+  .btn:hover{transform:translateY(-2px)}
+  .logo{display:flex;align-items:center;gap:0.5rem;color:#F5C518;font-weight:800;font-size:1.1rem;margin-bottom:1rem}
+  .logo span{color:#f0f0f0}
+</style>
+</head>
+<body>
+  <div class="card">
+    <img class="thumb" src="${content.thumbnailUrl || ''}" alt="${content.title}" onerror="this.style.background='#1e1e1e'">
+    <div class="body">
+      <div class="logo">▶ niro<span>Movie</span></div>
+      <h1>${content.title}</h1>
+      <div class="meta">${content.year || ''} · ${content.quality || 'HD'} · ${(content.accessLevel || 'free').toUpperCase()}</div>
+      <p>${desc}</p>
+      <a class="btn" href="${watchUrl}">▶ Reba kuri niroMovie</a>
+    </div>
+  </div>
 </body>
 </html>`;
         res.send(html);
