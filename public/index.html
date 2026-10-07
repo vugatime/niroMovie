@@ -357,7 +357,24 @@ function closeModal(id){
     document.body.classList.remove('body-no-scroll');
 }
 function openModal(id){document.getElementById(id).classList.add('active');if(id==='movieModal')document.body.classList.add('body-no-scroll')}
-function closeMovieModal(){closeModal('movieModal');if(window.modalAdTimer)clearInterval(window.modalAdTimer);history.pushState(null,'','/')}
+function closeMovieModal(){
+    closeModal('movieModal');
+    if(window.modalAdTimer) clearInterval(window.modalAdTimer);
+    history.pushState(null,'','/');
+    // === SEO: reset title + meta when modal closes ===
+    document.title = "niroMovie | Rwanda's #1 Streaming & Download Platform";
+    var metaDesc = document.querySelector('meta[name="description"]');
+    if(metaDesc) metaDesc.setAttribute('content', 'niroMovie - Stream or download the latest movies and series, free or premium.');
+    var ogT = document.getElementById('ogTitle');
+    if(ogT) ogT.setAttribute('content', 'niroMovie');
+    var ogD = document.getElementById('ogDesc');
+    if(ogD) ogD.setAttribute('content', 'Stream or download the latest movies and series, free or premium.');
+    var ogI = document.getElementById('ogImage');
+    if(ogI) ogI.setAttribute('content', '/icon-512.png');
+    var canonical = document.querySelector('link[rel="canonical"]');
+    if(canonical) canonical.setAttribute('href', 'https://www.niromovie.site/');
+    // === END SEO reset ===
+}
 function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
 function toggleSideMenu(){document.getElementById('sideMenu').classList.toggle('open');document.getElementById('sideMenuOverlay').classList.toggle('show')}
 function closeSideMenu(){document.getElementById('sideMenu').classList.remove('open');document.getElementById('sideMenuOverlay').classList.remove('show')}
@@ -535,6 +552,24 @@ async function openContent(id){
     currentContentData = c;
     history.pushState(null, '', '/?movie=' + id);
 
+    // === SEO: dynamic title + meta for Google ===
+    document.title = c.title + ' | niroMovie';
+    var metaDesc = document.querySelector('meta[name="description"]');
+    if(metaDesc) metaDesc.setAttribute('content', (c.description || '').substring(0, 160));
+    var ogT = document.getElementById('ogTitle');
+    if(ogT) ogT.setAttribute('content', c.title + ' | niroMovie');
+    var ogD = document.getElementById('ogDesc');
+    if(ogD) ogD.setAttribute('content', (c.description || '').substring(0, 160));
+    var ogI = document.getElementById('ogImage');
+    if(ogI) ogI.setAttribute('content', c.thumbnailUrl || '/icon-512.png');
+    var canonical = document.querySelector('link[rel="canonical"]');
+    if(!canonical){
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', 'https://www.niromovie.site/?movie=' + id);
+    // === END SEO ===
     // Set modal title (header exists already)
     document.getElementById('modalTitle').innerText = c.title;
 
